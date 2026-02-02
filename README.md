@@ -1,4 +1,4 @@
-# MCP Common API
+# MCP Common Java API
 
 This repo exposes a dynamic server (or client) model.  This model exposes MCP type-specific meta-data (e.g. title, description, meta, etc) and accessors as specified by the MCP 11-25-2025 schema.
 
