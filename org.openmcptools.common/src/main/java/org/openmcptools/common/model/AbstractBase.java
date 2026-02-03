@@ -1,5 +1,6 @@
 package org.openmcptools.common.model;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,6 +17,8 @@ public abstract class AbstractBase {
 	protected String description;
 
 	protected Map<String, Object> meta;
+	
+	protected List<Icon> icons;
 
 	protected AbstractBase(String name) {
 		Objects.requireNonNull(name, "name must not be null");
@@ -47,6 +50,14 @@ public abstract class AbstractBase {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public List<Icon> getIcons() {
+		return icons;
+	}
+
+	public void setIcons(List<Icon> icons) {
+		this.icons = icons;
 	}
 
 	public Map<String, Object> getMeta() {
