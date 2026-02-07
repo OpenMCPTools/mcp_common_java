@@ -3,7 +3,7 @@ package org.openmcptools.common.model;
 import java.util.List;
 import java.util.Objects;
 
-public interface PromptNodeConverter<PromptType> {
+public interface PromptConverter<PromptType> {
 
 	default List<PromptType> convertFromPromptNodes(List<Prompt> promptNodes) {
 		return promptNodes.stream().map(pn -> {

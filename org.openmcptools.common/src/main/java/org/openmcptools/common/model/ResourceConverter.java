@@ -3,7 +3,7 @@ package org.openmcptools.common.model;
 import java.util.List;
 import java.util.Objects;
 
-public interface ResourceNodeConverter<ResourceType> {
+public interface ResourceConverter<ResourceType> {
 
 	default List<ResourceType> convertFromResourceNodes(List<Resource> resourceNodes) {
 		return resourceNodes.stream().map(rn -> {

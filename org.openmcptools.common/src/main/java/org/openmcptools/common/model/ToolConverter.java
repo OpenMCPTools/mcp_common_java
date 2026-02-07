@@ -3,7 +3,7 @@ package org.openmcptools.common.model;
 import java.util.List;
 import java.util.Objects;
 
-public interface ToolNodeConverter<ToolType> {
+public interface ToolConverter<ToolType> {
 
 	default List<ToolType> convertFromToolNodes(List<Tool> toolNodes) {
 		return toolNodes.stream().map(tn -> {
