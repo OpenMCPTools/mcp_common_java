@@ -1,14 +1,5 @@
 package org.openmcptools.common.impl.spring;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
-import io.modelcontextprotocol.json.McpJsonDefaults;
-import io.modelcontextprotocol.json.McpJsonMapper;
-import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpSchema.JsonSchema;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -21,15 +12,23 @@ import org.openmcptools.common.model.Tool;
 import org.openmcptools.common.model.ToolAnnotations;
 import org.openmcptools.common.model.ToolAnnotationsConverter;
 import org.openmcptools.common.model.ToolConverter;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
-@Component(immediate=true, service = ToolConverter.class)
+import io.modelcontextprotocol.json.McpJsonDefaults;
+import io.modelcontextprotocol.json.McpJsonMapper;
+import io.modelcontextprotocol.spec.McpSchema;
+import io.modelcontextprotocol.spec.McpSchema.JsonSchema;
+
+@Component(immediate = true, service = ToolConverter.class)
 public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.spec.McpSchema.Tool> {
 
 	private final McpJsonMapper jsonMapper;
-	
+
 	private final ToolAnnotationsConverter<io.modelcontextprotocol.spec.McpSchema.ToolAnnotations> toolAnnotationsConverter;
 	private GroupConverter<org.openmcptools.extensions.groups.protocol.Group> groupConverter;
-	
+
 	@Activate
 	public ToolConverterImpl(
 			@Reference ToolAnnotationsConverter<io.modelcontextprotocol.spec.McpSchema.ToolAnnotations> toolAnnotationsConverter,
@@ -38,7 +37,7 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 		this.toolAnnotationsConverter = toolAnnotationsConverter;
 		this.groupConverter = groupConverter;
 	}
-	
+
 	@Override
 	public io.modelcontextprotocol.spec.McpSchema.Tool convertFromTool(Tool tool) {
 		McpSchema.Tool.Builder builder = new McpSchema.Tool.Builder();
@@ -67,8 +66,7 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 		}
 		builder.meta(meta);
 		ToolAnnotations tan = tool.getToolAnnotations();
-		builder.annotations(
-				(tan != null) ? this.toolAnnotationsConverter.convertFromToolAnnotations(tan) : null);
+		builder.annotations((tan != null) ? this.toolAnnotationsConverter.convertFromToolAnnotations(tan) : null);
 		return builder.build();
 	}
 
@@ -95,11 +93,12 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 	String getMetaGroupsName() {
 		return org.openmcptools.common.impl.spring.ToolConverterImpl.class.getName() + ".groups";
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected List<org.openmcptools.extensions.groups.protocol.Group> convertGroupsFromTool(Map<String, Object> meta) {
 		if (meta != null) {
-			Object groupsList = meta.remove(org.openmcptools.common.impl.spring.ToolConverterImpl.class.getName() + ".groups");
+			Object groupsList = meta
+					.remove(org.openmcptools.common.impl.spring.ToolConverterImpl.class.getName() + ".groups");
 			try {
 				return (List<org.openmcptools.extensions.groups.protocol.Group>) groupsList;
 			} catch (ClassCastException e) {

@@ -34,6 +34,10 @@ public class Group extends AbstractBase {
 		return this.parent;
 	}
 
+	public void setParent(Group parent) {
+		this.parent = parent;
+	}
+	
 	public Group getRoot() {
 		Group parent = this.parent;
 		if (parent == null) {

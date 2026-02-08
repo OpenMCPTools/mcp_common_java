@@ -2,4 +2,9 @@
 	io.modelcontextprotocol.sdk.mcp-core,\
 	org.osgi.service.component.annotations,\
 	org.openmcptools.common,\
-	org.openmcptools.extensions.groups
+	org.openmcptools.extensions.groups,\
+	org.openmcptools.common.server,\
+	org.springaicommunity.mcp-annotations,\
+	io.projectreactor.reactor-core,\
+	org.osgi.annotation.bundle,\
+	org.osgi.annotation.versioning

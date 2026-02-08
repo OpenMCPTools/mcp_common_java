@@ -5,12 +5,14 @@ import org.osgi.service.component.annotations.Component;
 
 import io.modelcontextprotocol.spec.McpSchema.ToolAnnotations;
 
-@Component(immediate=true, service = ToolAnnotationsConverter.class)
-public class ToolAnnotationsConverterImpl implements ToolAnnotationsConverter<io.modelcontextprotocol.spec.McpSchema.ToolAnnotations> {
+@Component(immediate = true, service = ToolAnnotationsConverter.class)
+public class ToolAnnotationsConverterImpl
+		implements ToolAnnotationsConverter<io.modelcontextprotocol.spec.McpSchema.ToolAnnotations> {
 
 	@Override
 	public ToolAnnotations convertFromToolAnnotations(org.openmcptools.common.model.ToolAnnotations tool) {
-		return new ToolAnnotations(tool.getTitle(), tool.getReadOnlyHint(), tool.getDestructiveHint(), tool.getDestructiveHint(), tool.getIdempotentHint(), tool.getReturnDirect());
+		return new ToolAnnotations(tool.getTitle(), tool.getReadOnlyHint(), tool.getDestructiveHint(),
+				tool.getDestructiveHint(), tool.getIdempotentHint(), tool.getReturnDirect());
 	}
 
 	@Override

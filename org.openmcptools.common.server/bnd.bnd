@@ -1,0 +1,5 @@
+-buildpath: \
+	org.osgi.annotation.bundle,\
+	org.osgi.annotation.versioning,\
+	org.openmcptools.common;version=snapshot,\
+	org.openmcptools.annotation

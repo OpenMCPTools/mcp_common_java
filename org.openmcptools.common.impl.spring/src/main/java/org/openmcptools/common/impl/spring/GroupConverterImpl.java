@@ -7,14 +7,15 @@ import org.openmcptools.common.model.Group;
 import org.openmcptools.common.model.GroupConverter;
 import org.osgi.service.component.annotations.Component;
 
-@Component(immediate=true, service = org.openmcptools.common.model.GroupConverter.class)
+@Component(immediate = true, service = org.openmcptools.common.model.GroupConverter.class)
 public class GroupConverterImpl implements GroupConverter<org.openmcptools.extensions.groups.protocol.Group> {
 
 	private static final Map<String, Group> groupNodeCache = new HashMap<String, Group>();
 
 	@Override
 	public org.openmcptools.extensions.groups.protocol.Group convertFromGroup(Group group) {
-		org.openmcptools.extensions.groups.protocol.Group g = new org.openmcptools.extensions.groups.protocol.Group(group.getName());
+		org.openmcptools.extensions.groups.protocol.Group g = new org.openmcptools.extensions.groups.protocol.Group(
+				group.getName());
 		g.title = group.getTitle();
 		g.description = group.getDescription();
 		g.meta = group.getMeta();

@@ -1,2 +1,7 @@
 org.slf4j:slf4j-api:2.0.16
 
+io.projectreactor:reactor-core:3.7.0
+org.reactivestreams:reactive-streams:1.0.4
+
+
+
