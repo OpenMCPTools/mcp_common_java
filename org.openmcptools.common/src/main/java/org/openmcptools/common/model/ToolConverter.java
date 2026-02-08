@@ -5,20 +5,20 @@ import java.util.Objects;
 
 public interface ToolConverter<ToolType> {
 
-	default List<ToolType> convertFromToolNodes(List<Tool> toolNodes) {
-		return toolNodes.stream().map(tn -> {
-			return convertFromToolNode(tn);
+	default List<ToolType> convertFromTools(List<Tool> tools) {
+		return tools.stream().map(tn -> {
+			return convertFromTool(tn);
 		}).filter(Objects::nonNull).toList();
 	}
 
-	ToolType convertFromToolNode(Tool toolNode);
+	ToolType convertFromTool(Tool tool);
 
-	default List<Tool> convertToToolNodes(List<ToolType> tools) {
+	default List<Tool> convertToTools(List<ToolType> tools) {
 		return tools.stream().map(t -> {
-			return convertToToolNode(t);
+			return convertToTool(t);
 		}).filter(Objects::nonNull).toList();
 	}
 
-	Tool convertToToolNode(ToolType tool);
+	Tool convertToTool(ToolType tool);
 
 }

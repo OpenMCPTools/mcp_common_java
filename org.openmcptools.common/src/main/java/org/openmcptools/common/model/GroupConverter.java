@@ -5,20 +5,20 @@ import java.util.Objects;
 
 public interface GroupConverter<GroupType> {
 
-	default List<GroupType> convertFromGroupNodes(List<Group> groupNodes) {
-		return groupNodes.stream().map(gn -> {
-			return convertFromGroupNode(gn);
+	default List<GroupType> convertFromGroups(List<Group> groups) {
+		return groups.stream().map(gn -> {
+			return convertFromGroup(gn);
 		}).filter(Objects::nonNull).toList();
 	}
 
-	GroupType convertFromGroupNode(Group groupNode);
+	GroupType convertFromGroup(Group group);
 
-	default List<Group> convertToGroupNodes(List<GroupType> groups) {
+	default List<Group> convertToGroups(List<GroupType> groups) {
 		return groups.stream().map(g -> {
-			return convertToGroupNode(g);
+			return convertToGroup(g);
 		}).filter(Objects::nonNull).toList();
 	}
 
-	Group convertToGroupNode(GroupType group);
+	Group convertToGroup(GroupType group);
 
 }

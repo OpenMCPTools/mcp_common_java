@@ -5,18 +5,16 @@
 		readOnly            =true;\
 		name                ='OSGI R8 - Build'
 
--plugin.1.runtime: aQute.bnd.repository.maven.provider.MavenBndRepository;\
-		snapshotUrl         ='https://oss.sonatype.org/content/repositories/snapshots/';\
+-plugin.2.runtime: aQute.bnd.repository.maven.provider.MavenBndRepository;\
 		releaseUrl          ='https://repo.maven.apache.org/maven2/';\
-		index               ='${.}/runtime.mvn';\
+		index               ='${.}/ecf.support.mvn';\
 		readOnly            =true;\
-		name                ='OSGI R8 - Runtime Distro'
-
+		name                ='Reactive APIs, Other Spring Dependencies'
 
 -plugin.3.Local: aQute.bnd.deployer.repository.LocalIndexedRepo;\
 		name                =Local;\
 		pretty              =true;\
-		local               ='C:/eclipse-2025-12/eclipse/cnf/local'
+		local               ='${build}/local'
 
 -plugin.3.Templates: aQute.bnd.deployer.repository.LocalIndexedRepo;\
 		name                =Templates;\
@@ -28,7 +26,9 @@
 		pretty              =true;\
 		local               ='C:/eclipse-2025-12/eclipse/cnf/release'
 
-
+-plugin.4.ECFRSSDK: aQute.bnd.repository.p2.provider.P2Repository;\
+		url                 ='https://download.eclipse.org/rt/ecf/3.16.5/site.p2/';\
+		name                ='ECF Remote Services SDK'
 		
 -runsystemcapabilities.dflt:    ${native_capability}
 
