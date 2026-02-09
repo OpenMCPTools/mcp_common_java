@@ -46,7 +46,7 @@ public class SyncToolGroupProviderImpl
 	}
 
 	@Override
-	protected ToolSpecification<SyncToolSpecification> getToolNodeSpecification(Tool tool,
+	protected ToolSpecification<SyncToolSpecification> getToolSpecification(Tool tool,
 			BiFunction<McpSyncServerExchange, CallToolRequest, CallToolResult> callHandler) {
 		SyncToolSpecification.Builder specBuilder = SyncToolSpecification.builder().tool(convertTool(tool))
 				.callHandler(callHandler);

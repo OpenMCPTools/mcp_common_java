@@ -18,7 +18,7 @@ public class PromptArgument extends AbstractBase {
 
 	@Override
 	public String toString() {
-		return "PromptArgumentNode [required=" + required + ", name=" + name + ", title=" + title + ", description="
+		return "PromptArgument [required=" + required + ", name=" + name + ", title=" + title + ", description="
 				+ description + ", meta=" + meta + "]";
 	}
 

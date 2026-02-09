@@ -48,7 +48,7 @@ public class Resource extends AbstractLeaf {
 
 	@Override
 	public String toString() {
-		return "ResourceNode [name=" + name + ", fqName=" + getFullyQualifiedName() + ", title=" + title
+		return "Resource [name=" + name + ", fqName=" + getFullyQualifiedName() + ", title=" + title
 				+ ", description=" + description + ", meta=" + meta + ", uri=" + uri + ", size=" + size + ", mimeType="
 				+ mimeType + ", annotations=" + annotations + "]";
 	}

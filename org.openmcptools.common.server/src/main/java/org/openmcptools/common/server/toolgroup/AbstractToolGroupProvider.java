@@ -120,7 +120,7 @@ public abstract class AbstractToolGroupProvider<SpecificationType, ToolType, Exc
 		return (classes.length == 0) ? new Class[] { toolObject.getClass() } : classes;
 	}
 
-	protected abstract ToolSpecification<SpecificationType> getToolNodeSpecification(Tool tool,
+	protected abstract ToolSpecification<SpecificationType> getToolSpecification(Tool tool,
 			BiFunction<ExchangeType, CallRequestType, CallResultType> callHandler);
 
 	protected McpTool getToolJavaAnnotation(Method mcpToolMethod) {
@@ -138,7 +138,7 @@ public abstract class AbstractToolGroupProvider<SpecificationType, ToolType, Exc
 			Group toolGroup) {
 		// Get annotation
 		McpTool toolJavaAnnotation = getToolJavaAnnotation(mcpToolMethod);
-		// Get ToolNode for annotation, method, and toolGroup
+		// Get Tool for annotation, method, and toolGroup
 		Objects.requireNonNull(toolJavaAnnotation,
 				"No java annotation found for annotated method=" + mcpToolMethod.getName());
 		Tool tool = getTool(toolJavaAnnotation, mcpToolMethod, toolGroup);
@@ -146,7 +146,7 @@ public abstract class AbstractToolGroupProvider<SpecificationType, ToolType, Exc
 		BiFunction<ExchangeType, CallRequestType, CallResultType> callHandler = getCallHandler(mcpToolMethod,
 				toolObject, tool.getOutputSchema() != null);
 		// Build specification with Tool and callHandler
-		return getToolNodeSpecification(tool, callHandler);
+		return getToolSpecification(tool, callHandler);
 	}
 
 	protected abstract Stream<Method> filterMethodStream(Stream<Method> inputStream);
@@ -185,7 +185,7 @@ public abstract class AbstractToolGroupProvider<SpecificationType, ToolType, Exc
 			boolean outputSchema) {
 		BiFunction<ExchangeType, CallRequestType, CallResultType> callHandler = getCallHandler(toolMethod, instance,
 				outputSchema);
-		return getToolNodeSpecification(tool, callHandler);
+		return getToolSpecification(tool, callHandler);
 	}
 
 }

@@ -42,7 +42,7 @@ public class Annotations {
 
 	@Override
 	public String toString() {
-		return "AnnotationsNode [audience=" + audience + ", priority=" + priority + ", lastModified=" + lastModified
+		return "Annotations [audience=" + audience + ", priority=" + priority + ", lastModified=" + lastModified
 				+ "]";
 	}
 

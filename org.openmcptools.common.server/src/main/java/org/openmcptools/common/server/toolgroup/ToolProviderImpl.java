@@ -119,7 +119,7 @@ public class ToolProviderImpl implements ToolProvider {
 			toolAnnotations.setIdempotentHint(mcpToolAnnotations.idempotentHint());
 			toolAnnotations.setOpenWorldHint(mcpToolAnnotations.openWorldHint());
 			toolAnnotations.setReadOnlyHint(mcpToolAnnotations.readOnlyHint());
-			// if no title already set, set it to toolAnnotationsNode title
+			// if no title already set, set it to toolAnnotations title
 			if (tool.getTitle() == null) {
 				tool.setTitle(toolAnnotations.getTitle());
 			}

@@ -95,14 +95,26 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 	}
 
 	@SuppressWarnings("unchecked")
+	protected org.openmcptools.extensions.groups.protocol.Group convertGroup(Map<String, Object> groupMap) {
+		org.openmcptools.extensions.groups.protocol.Group result = new org.openmcptools.extensions.groups.protocol.Group((String) groupMap.get("name"));
+		result.title = (String) groupMap.get("title");
+		result.description = (String) groupMap.get("description");
+		Map<String, Object> parentMap = (Map<String, Object>) groupMap.get("parent");
+		if (parentMap != null) {
+			result.parent = convertGroup(parentMap);
+		}
+		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
 	protected List<org.openmcptools.extensions.groups.protocol.Group> convertGroupsFromTool(Map<String, Object> meta) {
 		if (meta != null) {
-			Object groupsList = meta
-					.remove(org.openmcptools.common.impl.spring.ToolConverterImpl.class.getName() + ".groups");
-			try {
-				return (List<org.openmcptools.extensions.groups.protocol.Group>) groupsList;
-			} catch (ClassCastException e) {
-				e.printStackTrace(System.err);
+			List<Map<String, Object>> groupMaps = (List<Map<String, Object>>) meta
+					.remove(getMetaGroupsName());
+			if (groupMaps != null) {
+				return groupMaps.stream().map(gm -> {
+					return convertGroup(gm);
+				}).collect(Collectors.toList());
 			}
 		}
 		return null;

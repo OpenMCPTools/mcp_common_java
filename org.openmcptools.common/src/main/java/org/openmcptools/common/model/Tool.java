@@ -38,7 +38,7 @@ public class Tool extends AbstractLeaf {
 
 	@Override
 	public String toString() {
-		return "ToolNode [name=" + name + ", fqName=" + getFullyQualifiedName() + ", title=" + title + ", description="
+		return "Tool [name=" + name + ", fqName=" + getFullyQualifiedName() + ", title=" + title + ", description="
 				+ description + ", meta=" + meta + ", inputSchema=" + inputSchema + ", outputSchema=" + outputSchema
 				+ ", toolAnnotation=" + toolAnnotations + "]";
 	}

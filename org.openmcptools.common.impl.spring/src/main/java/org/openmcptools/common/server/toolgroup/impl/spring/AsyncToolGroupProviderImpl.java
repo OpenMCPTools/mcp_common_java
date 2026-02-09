@@ -46,7 +46,7 @@ public class AsyncToolGroupProviderImpl
 	}
 
 	@Override
-	protected ToolSpecification<AsyncToolSpecification> getToolNodeSpecification(Tool tool,
+	protected ToolSpecification<AsyncToolSpecification> getToolSpecification(Tool tool,
 			BiFunction<McpAsyncServerExchange, CallToolRequest, Mono<CallToolResult>> callHandler) {
 		AsyncToolSpecification.Builder specBuilder = AsyncToolSpecification.builder().tool(convertTool(tool))
 				.callHandler(callHandler);

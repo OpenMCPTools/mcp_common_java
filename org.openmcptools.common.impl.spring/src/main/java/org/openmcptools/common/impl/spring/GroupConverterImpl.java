@@ -10,7 +10,7 @@ import org.osgi.service.component.annotations.Component;
 @Component(immediate = true, service = org.openmcptools.common.model.GroupConverter.class)
 public class GroupConverterImpl implements GroupConverter<org.openmcptools.extensions.groups.protocol.Group> {
 
-	private static final Map<String, Group> groupNodeCache = new HashMap<String, Group>();
+	private static final Map<String, Group> groupCache = new HashMap<String, Group>();
 
 	@Override
 	public org.openmcptools.extensions.groups.protocol.Group convertFromGroup(Group group) {
@@ -29,10 +29,10 @@ public class GroupConverterImpl implements GroupConverter<org.openmcptools.exten
 	@Override
 	public Group convertToGroup(org.openmcptools.extensions.groups.protocol.Group group) {
 		String groupName = group.name;
-		Group gtn = groupNodeCache.get(groupName);
+		Group gtn = groupCache.get(groupName);
 		if (gtn == null) {
 			gtn = new Group(groupName);
-			groupNodeCache.put(groupName, gtn);
+			groupCache.put(groupName, gtn);
 		}
 		gtn.setTitle(group.title);
 		gtn.setDescription(group.description);

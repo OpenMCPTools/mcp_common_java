@@ -154,7 +154,7 @@ public class Group extends AbstractBase {
 
 	@Override
 	public String toString() {
-		return "GroupNode [name=" + name + ", fqName=" + getFullyQualifiedName() + ", isRoot=" + isRoot() + ", title="
+		return "Group [name=" + name + ", fqName=" + getFullyQualifiedName() + ", isRoot=" + isRoot() + ", title="
 				+ title + ", description=" + description + ", meta=" + meta + ", childGroups=" + childGroups
 				+ ", childTools=" + childTools + ", childPrompts=" + childPrompts + "]";
 	}

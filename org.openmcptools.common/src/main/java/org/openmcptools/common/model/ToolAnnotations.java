@@ -67,7 +67,7 @@ public class ToolAnnotations {
 
 	@Override
 	public String toString() {
-		return "ToolAnnotationNode [title=" + title + ", readOnlyHint=" + readOnlyHint + ", destructiveHint="
+		return "ToolAnnotation [title=" + title + ", readOnlyHint=" + readOnlyHint + ", destructiveHint="
 				+ destructiveHint + ", idempotentHint=" + idempotentHint + ", openWorldHint=" + openWorldHint
 				+ ", returnDirect=" + returnDirect + "]";
 	}

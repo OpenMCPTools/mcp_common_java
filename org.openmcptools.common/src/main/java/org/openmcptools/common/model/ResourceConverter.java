@@ -5,20 +5,20 @@ import java.util.Objects;
 
 public interface ResourceConverter<ResourceType> {
 
-	default List<ResourceType> convertFromResourceNodes(List<Resource> resourceNodes) {
-		return resourceNodes.stream().map(rn -> {
-			return convertFromResourceNode(rn);
-		}).filter(Objects::nonNull).toList();
-	}
-
-	ResourceType convertFromResourceNode(Resource resourceNode);
-
-	default List<Resource> convertToResourceNodes(List<ResourceType> resources) {
+	default List<ResourceType> convertFromResources(List<Resource> resources) {
 		return resources.stream().map(rn -> {
-			return convertToResourceNode(rn);
+			return convertFromResource(rn);
 		}).filter(Objects::nonNull).toList();
 	}
 
-	Resource convertToResourceNode(ResourceType resource);
+	ResourceType convertFromResource(Resource resource);
+
+	default List<Resource> convertToResources(List<ResourceType> resources) {
+		return resources.stream().map(rn -> {
+			return convertToResource(rn);
+		}).filter(Objects::nonNull).toList();
+	}
+
+	Resource convertToResource(ResourceType resource);
 
 }

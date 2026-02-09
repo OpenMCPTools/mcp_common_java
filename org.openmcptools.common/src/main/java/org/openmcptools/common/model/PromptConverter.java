@@ -5,20 +5,20 @@ import java.util.Objects;
 
 public interface PromptConverter<PromptType> {
 
-	default List<PromptType> convertFromPromptNodes(List<Prompt> promptNodes) {
-		return promptNodes.stream().map(pn -> {
-			return convertFromPromptNode(pn);
+	default List<PromptType> convertFromPrompts(List<Prompt> prompts) {
+		return prompts.stream().map(pn -> {
+			return convertFromPrompt(pn);
 		}).filter(Objects::nonNull).toList();
 	}
 
-	PromptType convertFromPromptNode(Prompt promptNode);
+	PromptType convertFromPrompt(Prompt prompt);
 
-	default List<Prompt> convertToPromptNodes(List<PromptType> prompts) {
+	default List<Prompt> convertToPrompts(List<PromptType> prompts) {
 		return prompts.stream().map(p -> {
-			return convertToPromptNode(p);
+			return convertToPrompt(p);
 		}).filter(Objects::nonNull).toList();
 	}
 
-	Prompt convertToPromptNode(PromptType prompt);
+	Prompt convertToPrompt(PromptType prompt);
 
 }
