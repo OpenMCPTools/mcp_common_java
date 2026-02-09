@@ -17,14 +17,16 @@ import org.openmcptools.common.util.StringUtils;
 public abstract class AbstractToolGroupProvider<SpecificationType, ToolType, ExchangeType, CallRequestType, CallResultType>
 		implements ToolGroupProvider<SpecificationType, ExchangeType, CallRequestType, CallResultType> {
 
+	protected ToolProvider toolProvider;
 	protected boolean generateOutputSchema = true;
-	protected ToolProviderImpl toolProvider;
 
-	protected AbstractToolGroupProvider() {
+	protected AbstractToolGroupProvider(ToolProvider toolProvider, boolean generateOutputSchema) {
+		Objects.requireNonNull(toolProvider, "toolProvider must not be null");
+		this.toolProvider = toolProvider;
+		this.generateOutputSchema = generateOutputSchema;
 	}
 
-	protected Group createGroup(String name, String title, String description, Group parent,
-			Map<String, Object> meta) {
+	protected Group createGroup(String name, String title, String description, Group parent, Map<String, Object> meta) {
 		Group Group = new Group(name);
 		Group.setTitle(StringUtils.cleanAnnotationString(title));
 		Group.setDescription(StringUtils.cleanAnnotationString(description));
@@ -75,7 +77,8 @@ public abstract class AbstractToolGroupProvider<SpecificationType, ToolType, Exc
 		if (StringUtils.hasText(splitPackageName[0])) {
 			Package parentPackage = getParentPackage(splitPackageName[0], classloader);
 			if (StringUtils.hasText(splitPackageName[1])) {
-				nameSuffix = splitPackageName[1] + (StringUtils.hasText(nameSuffix) ? AbstractBase.DEFAULT_SEPARATOR + nameSuffix : "");
+				nameSuffix = splitPackageName[1]
+						+ (StringUtils.hasText(nameSuffix) ? AbstractBase.DEFAULT_SEPARATOR + nameSuffix : "");
 			}
 			if (parentPackage != null) {
 				parentGroup = getToolGroupFromPackage(parentPackage, classloader, nameSuffix);
@@ -125,15 +128,14 @@ public abstract class AbstractToolGroupProvider<SpecificationType, ToolType, Exc
 	}
 
 	protected Tool getTool(McpTool toolJavaAnnotation, Method mcpToolMethod, Group toolGroup) {
-		return this.toolProvider.getTool(toolJavaAnnotation, mcpToolMethod, toolGroup,
-				this.generateOutputSchema);
+		return this.toolProvider.getTool(toolJavaAnnotation, mcpToolMethod, toolGroup, this.generateOutputSchema);
 	}
 
 	protected abstract BiFunction<ExchangeType, CallRequestType, CallResultType> getCallHandler(Method mcpToolMethod,
 			Object toolObject, boolean useStructuredOutput);
 
-	protected ToolSpecification<SpecificationType> getToolGroupSpecification(Object toolObject,
-			Method mcpToolMethod, Group toolGroup) {
+	protected ToolSpecification<SpecificationType> getToolGroupSpecification(Object toolObject, Method mcpToolMethod,
+			Group toolGroup) {
 		// Get annotation
 		McpTool toolJavaAnnotation = getToolJavaAnnotation(mcpToolMethod);
 		// Get ToolNode for annotation, method, and toolGroup
@@ -157,8 +159,8 @@ public abstract class AbstractToolGroupProvider<SpecificationType, ToolType, Exc
 				// After the the sub-class specific impl of filterMethodStream returns
 				// then sort call getToolGroupSpecification for given object, mcpToolMethod and
 				.sorted((m1, m2) -> m1.getName().compareTo(m2.getName())).map(mcpToolMethod -> {
-					return (ToolSpecification<SpecificationType>) getToolGroupSpecification(toolObject,
-							mcpToolMethod, toolGroup);
+					return (ToolSpecification<SpecificationType>) getToolGroupSpecification(toolObject, mcpToolMethod,
+							toolGroup);
 				}).toList();
 	}
 
@@ -179,11 +181,11 @@ public abstract class AbstractToolGroupProvider<SpecificationType, ToolType, Exc
 	}
 
 	@Override
-	public ToolSpecification<SpecificationType> getToolSpecification(Tool tool, Method toolMethod,
-			Object instance, boolean outputSchema) {
-		BiFunction<ExchangeType, CallRequestType, CallResultType> callHandler = getCallHandler(toolMethod, instance, outputSchema);
+	public ToolSpecification<SpecificationType> getToolSpecification(Tool tool, Method toolMethod, Object instance,
+			boolean outputSchema) {
+		BiFunction<ExchangeType, CallRequestType, CallResultType> callHandler = getCallHandler(toolMethod, instance,
+				outputSchema);
 		return getToolNodeSpecification(tool, callHandler);
 	}
-
 
 }

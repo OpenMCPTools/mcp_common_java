@@ -11,7 +11,7 @@ import org.springaicommunity.mcp.method.tool.utils.JsonSchemaGenerator;
 
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 
-public class SpringOutputSchemaGenerator {
+public class OutputSchemaGeneratorImpl {
 
 	public static class Sync extends AbstractOutputSchemaGenerator<Type> {
 

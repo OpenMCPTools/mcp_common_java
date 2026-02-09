@@ -47,5 +47,5 @@ public class Icon {
 	public String toString() {
 		return "Icon [src=" + src + ", mimeType=" + mimeType + ", sizes=" + sizes + ", theme=" + theme + "]";
 	}
-	
+
 }

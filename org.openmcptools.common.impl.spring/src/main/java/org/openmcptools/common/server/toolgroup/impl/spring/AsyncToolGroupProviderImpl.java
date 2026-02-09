@@ -5,7 +5,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 import org.openmcptools.common.model.Tool;
-import org.openmcptools.common.server.impl.spring.SpringToolNodeProvider;
+import org.openmcptools.common.model.ToolConverter;
+import org.openmcptools.common.server.toolgroup.ToolProvider;
 import org.openmcptools.common.server.toolgroup.ToolSpecification;
 import org.springaicommunity.mcp.McpPredicates;
 import org.springaicommunity.mcp.method.tool.AsyncMcpToolMethodCallback;
@@ -18,11 +19,12 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import reactor.core.publisher.Mono;
 
-public class AsyncToolGroupProvider
-		extends AbstractSpringToolGroupProvider<AsyncToolSpecification, McpAsyncServerExchange, Mono<CallToolResult>> {
+public class AsyncToolGroupProviderImpl
+		extends AbstractToolGroupProviderImpl<AsyncToolSpecification, McpAsyncServerExchange, Mono<CallToolResult>> {
 
-	public AsyncToolGroupProvider() {
-		this.toolProvider = new SpringToolNodeProvider.Async();
+	public AsyncToolGroupProviderImpl(ToolProvider toolProvider,
+			ToolConverter<io.modelcontextprotocol.spec.McpSchema.Tool> toolConverter, boolean generateOutputSchema) {
+		super(toolProvider, toolConverter, generateOutputSchema);
 	}
 
 	@Override
@@ -44,11 +46,11 @@ public class AsyncToolGroupProvider
 	}
 
 	@Override
-	protected ToolSpecification<AsyncToolSpecification> getToolNodeSpecification(Tool toolNode,
+	protected ToolSpecification<AsyncToolSpecification> getToolNodeSpecification(Tool tool,
 			BiFunction<McpAsyncServerExchange, CallToolRequest, Mono<CallToolResult>> callHandler) {
-		AsyncToolSpecification.Builder specBuilder = AsyncToolSpecification.builder().tool(convertToolNode(toolNode))
+		AsyncToolSpecification.Builder specBuilder = AsyncToolSpecification.builder().tool(convertTool(tool))
 				.callHandler(callHandler);
-		return new ToolSpecification<AsyncToolSpecification>(toolNode, specBuilder.build());
+		return new ToolSpecification<AsyncToolSpecification>(tool, specBuilder.build());
 	}
 
 }

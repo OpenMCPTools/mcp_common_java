@@ -7,4 +7,5 @@
 	org.springaicommunity.mcp-annotations,\
 	io.projectreactor.reactor-core,\
 	org.osgi.annotation.bundle,\
-	org.osgi.annotation.versioning
+	org.osgi.annotation.versioning,\
+	slf4j.api;version='2.0'

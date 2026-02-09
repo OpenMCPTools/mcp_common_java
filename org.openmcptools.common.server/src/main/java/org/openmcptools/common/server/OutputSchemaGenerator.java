@@ -1,4 +1,4 @@
-package org.openmcptools.common.server.toolgroup;
+package org.openmcptools.common.server;
 
 import java.lang.reflect.Method;
 

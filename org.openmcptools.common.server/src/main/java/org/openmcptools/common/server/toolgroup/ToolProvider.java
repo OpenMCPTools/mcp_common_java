@@ -10,7 +10,6 @@ public interface ToolProvider {
 
 	public static final String SEPARATOR = ".";
 
-	Tool getTool(McpTool mcpToolAnnotation, Method mcpToolMethod, Group group,
-			boolean generateOutputSchema);
+	Tool getTool(McpTool mcpToolAnnotation, Method mcpToolMethod, Group group, boolean generateOutputSchema);
 
 }

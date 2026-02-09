@@ -5,7 +5,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 import org.openmcptools.common.model.Tool;
-import org.openmcptools.common.server.impl.spring.SpringToolNodeProvider;
+import org.openmcptools.common.model.ToolConverter;
+import org.openmcptools.common.server.toolgroup.ToolProvider;
 import org.openmcptools.common.server.toolgroup.ToolSpecification;
 import org.springaicommunity.mcp.McpPredicates;
 import org.springaicommunity.mcp.method.tool.ReturnMode;
@@ -16,11 +17,12 @@ import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 
-public class SyncToolGroupProvider
-		extends AbstractSpringToolGroupProvider<SyncToolSpecification, McpSyncServerExchange, CallToolResult> {
+public class SyncToolGroupProviderImpl
+		extends AbstractToolGroupProviderImpl<SyncToolSpecification, McpSyncServerExchange, CallToolResult> {
 
-	public SyncToolGroupProvider() {
-		this.toolProvider = new SpringToolNodeProvider.Sync();
+	public SyncToolGroupProviderImpl(ToolProvider toolProvider,
+			ToolConverter<io.modelcontextprotocol.spec.McpSchema.Tool> toolConverter, boolean generateOutputSchema) {
+		super(toolProvider, toolConverter, generateOutputSchema);
 	}
 
 	@Override
@@ -44,11 +46,11 @@ public class SyncToolGroupProvider
 	}
 
 	@Override
-	protected ToolSpecification<SyncToolSpecification> getToolNodeSpecification(Tool toolNode,
+	protected ToolSpecification<SyncToolSpecification> getToolNodeSpecification(Tool tool,
 			BiFunction<McpSyncServerExchange, CallToolRequest, CallToolResult> callHandler) {
-		SyncToolSpecification.Builder specBuilder = SyncToolSpecification.builder().tool(convertToolNode(toolNode))
+		SyncToolSpecification.Builder specBuilder = SyncToolSpecification.builder().tool(convertTool(tool))
 				.callHandler(callHandler);
-		return new ToolSpecification<SyncToolSpecification>(toolNode, specBuilder.build());
+		return new ToolSpecification<SyncToolSpecification>(tool, specBuilder.build());
 	}
 
 }

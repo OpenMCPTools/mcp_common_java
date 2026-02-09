@@ -17,7 +17,7 @@ public abstract class AbstractBase {
 	protected String description;
 
 	protected Map<String, Object> meta;
-	
+
 	protected List<Icon> icons;
 
 	protected AbstractBase(String name) {

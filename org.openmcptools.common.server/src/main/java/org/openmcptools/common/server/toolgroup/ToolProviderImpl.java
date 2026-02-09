@@ -1,6 +1,7 @@
 package org.openmcptools.common.server.toolgroup;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 import org.openmcptools.annotation.McpTool;
 import org.openmcptools.annotation.McpTool.McpAnnotations;
@@ -8,26 +9,23 @@ import org.openmcptools.annotation.McpToolGroup;
 import org.openmcptools.common.model.Group;
 import org.openmcptools.common.model.Tool;
 import org.openmcptools.common.model.ToolAnnotations;
+import org.openmcptools.common.server.InputSchemaGenerator;
+import org.openmcptools.common.server.OutputSchemaGenerator;
 import org.openmcptools.common.util.StringUtils;
 
 public class ToolProviderImpl implements ToolProvider {
 
 	protected InputSchemaGenerator inputSchemaGenerator;
 	protected OutputSchemaGenerator outputSchemaGenerator;
-	
-	public ToolProviderImpl() {
-	}
 
 	public ToolProviderImpl(InputSchemaGenerator inputSchemaGenerator) {
-		this.inputSchemaGenerator = inputSchemaGenerator;
+		this(inputSchemaGenerator, null);
 	}
 
-	protected void setOutputSchemaGenerator(OutputSchemaGenerator outputSchemaGenerator) {
+	public ToolProviderImpl(InputSchemaGenerator inputSchemaGenerator, OutputSchemaGenerator outputSchemaGenerator) {
+		Objects.requireNonNull(inputSchemaGenerator, "inputSchemaGenerator must not be null");
+		this.inputSchemaGenerator = inputSchemaGenerator;
 		this.outputSchemaGenerator = outputSchemaGenerator;
-	}
-
-	protected void setInputSchemaGenerator(InputSchemaGenerator inputSchemaGenerator) {
-		this.inputSchemaGenerator = inputSchemaGenerator;
 	}
 
 	protected Group createGroup(String name, String title, String description, Group parent) {
@@ -100,6 +98,7 @@ public class ToolProviderImpl implements ToolProvider {
 	protected String getFullyQualifiedGroupName(Group parentGroup) {
 		return parentGroup.getFullyQualifiedName();
 	}
+
 	protected McpToolGroup getGroupAnnotation(Package p) {
 		return p.getAnnotation(McpToolGroup.class);
 	}
@@ -130,8 +129,7 @@ public class ToolProviderImpl implements ToolProvider {
 	}
 
 	@Override
-	public Tool getTool(McpTool mcpToolAnnotation, Method mcpToolMethod, Group group,
-			boolean generateOutputSchema) {
+	public Tool getTool(McpTool mcpToolAnnotation, Method mcpToolMethod, Group group, boolean generateOutputSchema) {
 		String name = StringUtils.cleanAnnotationString(mcpToolAnnotation.name());
 		if (name == null) {
 			name = mcpToolMethod.getName();
