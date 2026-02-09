@@ -2,7 +2,6 @@ package org.openmcptools.common.model;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Function;
 
 public class Group extends AbstractBase {
 
@@ -15,8 +14,6 @@ public class Group extends AbstractBase {
 	protected final List<Prompt> childPrompts;
 
 	protected final List<Resource> childResources;
-
-	protected Function<Group, ?> converter;
 
 	public Group(String name) {
 		this(name, DEFAULT_SEPARATOR);
