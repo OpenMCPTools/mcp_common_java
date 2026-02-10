@@ -122,7 +122,7 @@ public class Group extends AbstractBase {
 		return false;
 	}
 
-	public boolean removeChildPrompt(Resource childResource) {
+	public boolean removeChildResource(Resource childResource) {
 		boolean removed = childResources.remove(childResource);
 		if (removed) {
 			childResource.removeParentGroup(this);
