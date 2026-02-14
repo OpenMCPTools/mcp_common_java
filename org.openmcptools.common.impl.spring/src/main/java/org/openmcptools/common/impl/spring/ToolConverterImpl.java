@@ -61,8 +61,8 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 			if (meta == null) {
 				meta = new HashMap<String, Object>();
 			}
-			// Now add to meta
-			meta.put(getMetaGroupsName(), groups);
+			// Now add to meta using extension id
+			meta.put(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID, groups);
 		}
 		builder.meta(meta);
 		ToolAnnotations tan = tool.getToolAnnotations();
@@ -90,30 +90,14 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 		}
 	}
 
-	String getMetaGroupsName() {
-		return org.openmcptools.common.impl.spring.ToolConverterImpl.class.getName() + ".groups";
-	}
-
-	@SuppressWarnings("unchecked")
-	protected org.openmcptools.extensions.groups.protocol.Group convertGroup(Map<String, Object> groupMap) {
-		org.openmcptools.extensions.groups.protocol.Group result = new org.openmcptools.extensions.groups.protocol.Group((String) groupMap.get("name"));
-		result.title = (String) groupMap.get("title");
-		result.description = (String) groupMap.get("description");
-		Map<String, Object> parentMap = (Map<String, Object>) groupMap.get("parent");
-		if (parentMap != null) {
-			result.parent = convertGroup(parentMap);
-		}
-		return result;
-	}
-	
 	@SuppressWarnings("unchecked")
 	protected List<org.openmcptools.extensions.groups.protocol.Group> convertGroupsFromTool(Map<String, Object> meta) {
 		if (meta != null) {
 			List<Map<String, Object>> groupMaps = (List<Map<String, Object>>) meta
-					.remove(getMetaGroupsName());
+					.remove(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID);
 			if (groupMaps != null) {
 				return groupMaps.stream().map(gm -> {
-					return convertGroup(gm);
+					return org.openmcptools.extensions.groups.protocol.Group.convertMapToGroup(gm);
 				}).collect(Collectors.toList());
 			}
 		}
