@@ -8,4 +8,5 @@
 	io.projectreactor.reactor-core,\
 	org.osgi.annotation.bundle,\
 	org.osgi.annotation.versioning,\
-	slf4j.api;version='2.0'
+	slf4j.api;version='2.0',\
+	reactive-streams

@@ -1,14 +1,30 @@
 package org.openmcptools.common.server.toolgroup.impl.spring;
 
+import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 import org.openmcptools.common.server.toolgroup.AbstractToolGroupServer;
+import org.openmcptools.common.server.toolgroup.ToolGroupServer;
 
+import io.modelcontextprotocol.json.McpJsonMapper;
+import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
+import io.modelcontextprotocol.server.McpAsyncServerExchange;
+import io.modelcontextprotocol.server.McpServerFeatures;
+import io.modelcontextprotocol.server.McpServerFeatures.Async;
+import io.modelcontextprotocol.server.McpServerFeatures.AsyncResourceSpecification;
+import io.modelcontextprotocol.server.McpServerFeatures.Sync;
+import io.modelcontextprotocol.server.McpServerFeatures.SyncResourceSpecification;
+import io.modelcontextprotocol.server.McpSyncServerExchange;
+import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
-import io.modelcontextprotocol.spec.McpSchema.ServerCapabilities;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
 import io.modelcontextprotocol.spec.McpServerTransportProvider;
+import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
+import reactor.core.publisher.Mono;
 
 public abstract class AbstractToolGroupServerImpl<ServerType, SpecificationType, ExchangeType, CallToolResultType>
 		extends
@@ -18,25 +34,68 @@ public abstract class AbstractToolGroupServerImpl<ServerType, SpecificationType,
 		return this.convertTool(tool);
 	}
 
-	protected ServerCapabilities buildServerCapabilities() {
-		return ServerCapabilities.builder().tools(true).build();
+	protected McpServerFeatures.Async buildAsyncServerFeatures(McpSchema.Implementation serverInfo,
+			McpSchema.ServerCapabilities serverCapabilities, List<McpServerFeatures.AsyncToolSpecification> tools,
+			Map<String, AsyncResourceSpecification> resources,
+			Map<String, McpServerFeatures.AsyncResourceTemplateSpecification> resourceTemplates,
+			Map<String, McpServerFeatures.AsyncPromptSpecification> prompts,
+			Map<McpSchema.CompleteReference, McpServerFeatures.AsyncCompletionSpecification> completions,
+			List<BiFunction<McpAsyncServerExchange, List<McpSchema.Root>, Mono<Void>>> rootsChangeConsumers,
+			String instructions) {
+		return new McpServerFeatures.Async(serverInfo, serverCapabilities, tools, resources, resourceTemplates, prompts,
+				completions, rootsChangeConsumers, instructions);
 	}
 
-	protected abstract ServerType buildServer(String serverName, String serverVersion,
-			ServerCapabilities serverCapabilities, McpServerTransportProvider transport);
+	protected McpAsyncToolGroupServer buildMcpAsyncToolGroupServer(McpServerTransportProvider mcpTransportProvider,
+			Async mcpServerFeatures, Duration requestTimeout, McpUriTemplateManagerFactory uriTemplateManagerFactory) {
+		return buildMcpAsyncToolGroupServer(mcpTransportProvider, null, mcpServerFeatures, requestTimeout,
+				uriTemplateManagerFactory, null);
+	}
 
-	protected ServerType buildServerFromProperties(Map<String, Object> properties) {
-		String serverName = (String) properties.get(SERVER_NAME_PROP);
-		Objects.requireNonNull(serverName, SERVER_NAME_PROP + "property must not be null");
-		String serverVersion = (String) properties.get(SERVER_VERSION_PROP);
-		Objects.requireNonNull(serverVersion, SERVER_VERSION_PROP + " property must not be null");
-		McpServerTransportProvider transport = (McpServerTransportProvider) properties.get(SERVER_TRANSPORT_PROP);
-		Objects.requireNonNull(transport, SERVER_TRANSPORT_PROP + " property must not be null");
-		ServerCapabilities serverCapabilities = (ServerCapabilities) properties.get(SERVER_CAPABILITIES_PROP);
-		if (serverCapabilities == null) {
-			serverCapabilities = buildServerCapabilities();
-		}
-		return buildServer(serverName, serverVersion, serverCapabilities, transport);
+	protected McpAsyncToolGroupServer buildMcpAsyncToolGroupServer(McpServerTransportProvider mcpTransportProvider,
+			McpJsonMapper jsonMapper, Async mcpServerFeatures, Duration requestTimeout,
+			McpUriTemplateManagerFactory uriTemplateManagerFactory, JsonSchemaValidator jsonSchemaValidator) {
+		Objects.requireNonNull(mcpTransportProvider, "mcpTransportProvider must not be null");
+		Objects.requireNonNull(mcpServerFeatures, "mcpServerFeatures must not be null");
+
+		return new McpAsyncToolGroupServer(mcpTransportProvider, jsonMapper, mcpServerFeatures, requestTimeout,
+				uriTemplateManagerFactory, jsonSchemaValidator);
+	}
+
+	protected McpServerFeatures.Sync buildSyncServerFeatures(McpSchema.Implementation serverInfo,
+			McpSchema.ServerCapabilities serverCapabilities, List<McpServerFeatures.SyncToolSpecification> tools,
+			Map<String, SyncResourceSpecification> resources,
+			Map<String, McpServerFeatures.SyncResourceTemplateSpecification> resourceTemplates,
+			Map<String, McpServerFeatures.SyncPromptSpecification> prompts,
+			Map<McpSchema.CompleteReference, McpServerFeatures.SyncCompletionSpecification> completions,
+			List<BiConsumer<McpSyncServerExchange, List<McpSchema.Root>>> rootsChangeConsumers, String instructions) {
+		return new McpServerFeatures.Sync(serverInfo, serverCapabilities, tools, resources, resourceTemplates, prompts,
+				completions, rootsChangeConsumers, instructions);
+	}
+
+	protected McpSyncToolGroupServer buildMcpSyncToolGroupServer(McpServerTransportProvider mcpTransportProvider,
+			Sync mcpServerFeatures, Duration requestTimeout, McpUriTemplateManagerFactory uriTemplateManagerFactory,
+			boolean immediateExecution) {
+		return buildMcpSyncToolGroupServer(mcpTransportProvider, null, mcpServerFeatures, requestTimeout,
+				uriTemplateManagerFactory, null, immediateExecution);
+	}
+
+	protected McpSyncToolGroupServer buildMcpSyncToolGroupServer(McpServerTransportProvider mcpTransportProvider,
+			McpJsonMapper jsonMapper, Sync mcpServerFeatures, Duration requestTimeout,
+			McpUriTemplateManagerFactory uriTemplateManagerFactory, JsonSchemaValidator jsonSchemaValidator,
+			boolean immediateExecution) {
+		Objects.requireNonNull(mcpTransportProvider, "mcpTransportProvider must not be null");
+		Objects.requireNonNull(mcpServerFeatures, "mcpServerFeatures must not be null");
+
+		Duration requestTimeoutDuration = Duration.ofSeconds(ToolGroupServer.DEFAULT_REQUEST_TIMEOUT);
+
+		McpServerFeatures.Async mcpAsyncServerFeatures = McpServerFeatures.Async.fromSync(mcpServerFeatures,
+				immediateExecution);
+
+		McpAsyncToolGroupServer asyncServer = buildMcpAsyncToolGroupServer(mcpTransportProvider, mcpAsyncServerFeatures,
+				requestTimeoutDuration, uriTemplateManagerFactory);
+
+		return new McpSyncToolGroupServer(asyncServer, immediateExecution);
 	}
 
 }

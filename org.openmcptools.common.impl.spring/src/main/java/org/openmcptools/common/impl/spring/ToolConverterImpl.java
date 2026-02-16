@@ -33,7 +33,7 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 	public ToolConverterImpl(
 			@Reference ToolAnnotationsConverter<io.modelcontextprotocol.spec.McpSchema.ToolAnnotations> toolAnnotationsConverter,
 			@Reference GroupConverter<org.openmcptools.extensions.groups.protocol.Group> groupConverter) {
-		this.jsonMapper = McpJsonDefaults.getDefaultMcpJsonMapper();
+		this.jsonMapper = McpJsonDefaults.getMapper();
 		this.toolAnnotationsConverter = toolAnnotationsConverter;
 		this.groupConverter = groupConverter;
 	}
