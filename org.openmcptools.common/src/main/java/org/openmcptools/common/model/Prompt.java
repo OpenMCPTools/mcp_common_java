@@ -27,9 +27,8 @@ public class Prompt extends AbstractLeaf {
 
 	@Override
 	public String toString() {
-		return "Prompt [promptArguments=" + promptArguments + ", name=" + name + ", fqName="
-				+ getFullyQualifiedName() + ", title=" + title + ", description=" + description + ", meta=" + meta
-				+ "]";
+		return "Prompt [promptArguments=" + promptArguments + ", name=" + name + ", fqName=" + getFullyQualifiedName()
+				+ ", title=" + title + ", description=" + description + ", meta=" + meta + "]";
 	}
 
 }

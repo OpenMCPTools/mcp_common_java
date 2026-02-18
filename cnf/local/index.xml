@@ -1,24 +1,32 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<repository xmlns="http://www.osgi.org/xmlns/repository/v1.0.0" name="Local" increment="1771210149635">
+<repository xmlns="http://www.osgi.org/xmlns/repository/v1.0.0" name="Local" increment="1771349905226">
   <resource>
     <capability namespace="osgi.identity">
       <attribute name="osgi.identity" value="org.openmcptools.extensions.update"/>
       <attribute name="type" value="osgi.bundle"/>
-      <attribute name="version" value="1.0.0.202602142042" type="Version"/>
+      <attribute name="version" value="1.0.0.202602161747" type="Version"/>
+    </capability>
+    <capability namespace="osgi.wiring.package">
+      <directive name="uses" value="com.fasterxml.jackson.annotation"/>
+      <attribute name="bundle-symbolic-name" value="org.openmcptools.extensions.update"/>
+      <attribute name="bundle-version" value="1.0.0.202602161747" type="Version"/>
+      <attribute name="osgi.wiring.package" value="org.openmcptools.extensions.update"/>
+      <attribute name="version" value="1.0.0" type="Version"/>
+      <attribute name="bnd.hashes" value="1471670368,901233618,2035398868,169666570,-1923478059" type="List&lt;Long&gt;"/>
     </capability>
     <capability namespace="osgi.wiring.bundle">
-      <attribute name="bundle-version" value="1.0.0.202602142042" type="Version"/>
+      <attribute name="bundle-version" value="1.0.0.202602161747" type="Version"/>
       <attribute name="osgi.wiring.bundle" value="org.openmcptools.extensions.update"/>
     </capability>
     <capability namespace="osgi.wiring.host">
-      <attribute name="bundle-version" value="1.0.0.202602142042" type="Version"/>
+      <attribute name="bundle-version" value="1.0.0.202602161747" type="Version"/>
       <attribute name="osgi.wiring.host" value="org.openmcptools.extensions.update"/>
     </capability>
     <capability namespace="osgi.content">
-      <attribute name="size" value="5658" type="Long"/>
+      <attribute name="size" value="7395" type="Long"/>
       <attribute name="mime" value="application/vnd.osgi.bundle"/>
       <attribute name="url" value="org.openmcptools.extensions.update/org.openmcptools.extensions.update-1.0.0.jar"/>
-      <attribute name="osgi.content" value="52E0DA522AFD5F9E12939AC916C78A6997BAEAAB74191D79E66C15AC3944FA2B"/>
+      <attribute name="osgi.content" value="0404D24A56668312BAC8C173AB943F4500007A77B1DB74E84099D88694925935"/>
     </capability>
     <requirement namespace="osgi.wiring.package">
       <directive name="filter" value="(&amp;(osgi.wiring.package=com.fasterxml.jackson.annotation)(version&gt;=2.19.0)(!(version&gt;=3.0.0)))"/>
@@ -31,6 +39,10 @@
     <requirement namespace="osgi.wiring.package">
       <directive name="filter" value="(osgi.wiring.package=java.lang.invoke)"/>
       <attribute name="osgi.wiring.package" value="java.lang.invoke"/>
+    </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=java.util)"/>
+      <attribute name="osgi.wiring.package" value="java.util"/>
     </requirement>
     <requirement namespace="osgi.ee">
       <directive name="filter" value="(&amp;(osgi.ee=JavaSE)(version=17))"/>
@@ -172,10 +184,10 @@
       <attribute name="osgi.wiring.host" value="io.modelcontextprotocol.sdk.mcp-core"/>
     </capability>
     <capability namespace="osgi.content">
-      <attribute name="size" value="505430" type="Long"/>
+      <attribute name="size" value="505564" type="Long"/>
       <attribute name="mime" value="application/vnd.osgi.bundle"/>
       <attribute name="url" value="io.modelcontextprotocol.sdk.mcp-core/io.modelcontextprotocol.sdk.mcp-core-0.18.0.jar"/>
-      <attribute name="osgi.content" value="0E264C8D9A4A5181EE0D823A3717242DB49357049D39547520E05E66E9931E20"/>
+      <attribute name="osgi.content" value="6882FDD446F593FC6CC2674E5FF98B6E141CFF5EFF8967B9006484FA1B65B0F5"/>
     </capability>
     <requirement namespace="osgi.wiring.package">
       <directive name="filter" value="(&amp;(osgi.wiring.package=jakarta.servlet)(version&gt;=6.1.0)(!(version&gt;=7.0.0)))"/>

@@ -12,4 +12,12 @@ public class McpSyncToolGroupServer extends McpSyncServer {
 		super(asyncServer, immediate);
 	}
 
+	public void startToolsUpdate() {
+		((McpAsyncToolGroupServer) this.asyncServer).startToolsUpdate();
+	}
+
+	public void endToolsUpdate() {
+		((McpAsyncToolGroupServer) this.asyncServer).endToolsUpdate();
+	}
+
 }

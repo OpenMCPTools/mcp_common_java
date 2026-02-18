@@ -31,7 +31,6 @@ import io.modelcontextprotocol.server.McpServerFeatures.SyncPromptSpecification;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncResourceSpecification;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncResourceTemplateSpecification;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
-import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
@@ -42,11 +41,12 @@ import io.modelcontextprotocol.spec.McpServerTransportProvider;
 import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
 
 @Component(factory = "SpringSyncToolGroupServer", service = SyncToolGroupServer.class)
-public class SyncToolGroupServerImpl
-		extends AbstractToolGroupServerImpl<McpSyncServer, SyncToolSpecification, McpSyncServerExchange, CallToolResult>
-		implements SyncToolGroupServer {
+public class SyncToolGroupServerImpl extends
+		AbstractToolGroupServerImpl<McpSyncToolGroupServer, SyncToolSpecification, McpSyncServerExchange, CallToolResult>
+		implements SyncToolGroupServer<McpSyncToolGroupServer> {
 
 	public SyncToolGroupServerImpl() {
+		super();
 	}
 
 	@Reference
@@ -63,18 +63,13 @@ public class SyncToolGroupServerImpl
 	}
 
 	@Override
-	protected void addTool(McpSyncServer server, SyncToolSpecification toolSpec) {
+	protected void addTool(McpSyncToolGroupServer server, SyncToolSpecification toolSpec) {
 		server.addTool(toolSpec);
 	}
 
 	@Override
-	protected void removeTool(McpSyncServer server, String toolName) {
+	protected void removeTool(McpSyncToolGroupServer server, String toolName) {
 		server.removeTool(toolName);
-	}
-
-	@Override
-	public void removeTool(Tool tool) {
-		this.server.removeTool(tool.getName());
 	}
 
 	@Override
@@ -112,7 +107,7 @@ public class SyncToolGroupServerImpl
 	}
 
 	@SuppressWarnings("unchecked")
-	protected McpSyncServer buildServerFromProperties(Map<String, Object> properties) {
+	protected McpSyncToolGroupServer buildServerFromProperties(Map<String, Object> properties) {
 		String serverName = (String) properties.get(ToolGroupServer.SERVER_NAME_PROP);
 		Objects.requireNonNull(serverName, ToolGroupServer.SERVER_NAME_PROP + "property must not be null");
 		String serverVersion = (String) properties.get(ToolGroupServer.SERVER_VERSION_PROP);
@@ -185,6 +180,9 @@ public class SyncToolGroupServerImpl
 				serverCompletions, rootsChangeConsumers, serverInstructions);
 
 		Long requestTimeout = (Long) properties.get(SERVER_REQUEST_DURATION_PROP);
+		if (requestTimeout == null) {
+			requestTimeout = 10L;
+		}
 
 		McpUriTemplateManagerFactory uriTemplateManagerFactory = (McpUriTemplateManagerFactory) properties
 				.get(ToolGroupServer.SERVER_URI_TEMPLATE_MANAGER_FACTORY);
@@ -193,8 +191,21 @@ public class SyncToolGroupServerImpl
 				.get(ToolGroupServer.SERVER_JSONSCHEMAVALIDATOR_PROP);
 
 		Boolean immediateExecution = (Boolean) properties.get(ToolGroupServer.SERVER_IMMEDIATE_EXECUTION);
-
+		if (immediateExecution == null) {
+			immediateExecution = false;
+		}
 		return buildMcpSyncToolGroupServer(transport, jsonMapper, serverFeatures, Duration.ofSeconds(requestTimeout),
 				uriTemplateManagerFactory, jsonSchemaValidator, immediateExecution);
 	}
+
+	@Override
+	protected void startToolsUpdate() {
+		this.server.startToolsUpdate();
+	}
+
+	@Override
+	protected void endToolsUpdate() {
+		this.server.endToolsUpdate();
+	}
+
 }

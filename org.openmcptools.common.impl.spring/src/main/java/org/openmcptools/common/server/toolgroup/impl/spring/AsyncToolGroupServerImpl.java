@@ -24,7 +24,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
-import io.modelcontextprotocol.server.McpAsyncServer;
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncCompletionSpecification;
@@ -43,8 +42,8 @@ import reactor.core.publisher.Mono;
 
 @Component(factory = "SpringAsyncToolGroupServer", service = AsyncToolGroupServer.class)
 public class AsyncToolGroupServerImpl extends
-		AbstractToolGroupServerImpl<McpAsyncServer, AsyncToolSpecification, McpAsyncServerExchange, Mono<CallToolResult>>
-		implements AsyncToolGroupServer {
+		AbstractToolGroupServerImpl<McpAsyncToolGroupServer, AsyncToolSpecification, McpAsyncServerExchange, Mono<CallToolResult>>
+		implements AsyncToolGroupServer<McpAsyncToolGroupServer> {
 
 	public AsyncToolGroupServerImpl() {
 		super();
@@ -64,12 +63,18 @@ public class AsyncToolGroupServerImpl extends
 	}
 
 	@Override
-	protected void addTool(McpAsyncServer server, AsyncToolSpecification toolSpec) {
+	protected void addTools(List<AsyncToolSpecification> toolSpecs) {
+		super.addTools(toolSpecs);
+		this.server.endToolsUpdate();
+	}
+
+	@Override
+	protected void addTool(McpAsyncToolGroupServer server, AsyncToolSpecification toolSpec) {
 		server.addTool(toolSpec).block();
 	}
 
 	@Override
-	protected void removeTool(McpAsyncServer server, String toolName) {
+	protected void removeTool(McpAsyncToolGroupServer server, String toolName) {
 		server.removeTool(toolName).block();
 	}
 
@@ -96,12 +101,8 @@ public class AsyncToolGroupServerImpl extends
 	protected void deactivate() {
 		if (this.server != null) {
 			this.server.close();
+			this.server = null;
 		}
-	}
-
-	@Override
-	public void removeTool(Tool tool) {
-		this.server.removeTool(tool.getName()).block();
 	}
 
 	@Override
@@ -113,7 +114,7 @@ public class AsyncToolGroupServerImpl extends
 	}
 
 	@SuppressWarnings("unchecked")
-	protected McpAsyncServer buildServerFromProperties(Map<String, Object> properties) {
+	protected McpAsyncToolGroupServer buildServerFromProperties(Map<String, Object> properties) {
 		String serverName = (String) properties.get(SERVER_NAME_PROP);
 		Objects.requireNonNull(serverName, SERVER_NAME_PROP + "property must not be null");
 		String serverVersion = (String) properties.get(SERVER_VERSION_PROP);
@@ -190,9 +191,22 @@ public class AsyncToolGroupServerImpl extends
 		JsonSchemaValidator jsonSchemaValidator = (JsonSchemaValidator) properties.get(SERVER_JSONSCHEMAVALIDATOR_PROP);
 
 		Long requestTimeout = (Long) properties.get(SERVER_REQUEST_DURATION_PROP);
+		if (requestTimeout == null) {
+			requestTimeout = 10L;
+		}
 
 		return buildMcpAsyncToolGroupServer(transport, jsonMapper, features, Duration.ofSeconds(requestTimeout),
 				uriTemplateManagerFactory, jsonSchemaValidator);
+	}
+
+	@Override
+	protected void startToolsUpdate() {
+		this.server.startToolsUpdate();
+	}
+
+	@Override
+	protected void endToolsUpdate() {
+		this.server.endToolsUpdate();
 	}
 
 }

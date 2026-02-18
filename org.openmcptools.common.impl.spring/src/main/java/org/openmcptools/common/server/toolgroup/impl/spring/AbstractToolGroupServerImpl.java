@@ -6,9 +6,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import org.openmcptools.common.server.toolgroup.AbstractToolGroupServer;
 import org.openmcptools.common.server.toolgroup.ToolGroupServer;
+import org.openmcptools.common.server.toolgroup.ToolSpecification;
 
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
@@ -97,5 +99,22 @@ public abstract class AbstractToolGroupServerImpl<ServerType, SpecificationType,
 
 		return new McpSyncToolGroupServer(asyncServer, immediateExecution);
 	}
+
+	@Override
+	protected List<org.openmcptools.common.model.Tool> addSpecifications(
+			List<ToolSpecification<SpecificationType>> specs) {
+		startToolsUpdate();
+		List<org.openmcptools.common.model.Tool> result = specs.stream().map(spec -> {
+			// Add the specification to the local server
+			addTool(this.server, spec.getSpecification());
+			return spec.getTool();
+		}).collect(Collectors.toList());
+		endToolsUpdate();
+		return result;
+	}
+
+	protected abstract void startToolsUpdate();
+
+	protected abstract void endToolsUpdate();
 
 }

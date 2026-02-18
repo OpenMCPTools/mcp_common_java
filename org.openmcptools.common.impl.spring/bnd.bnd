@@ -9,4 +9,6 @@
 	org.osgi.annotation.bundle,\
 	org.osgi.annotation.versioning,\
 	slf4j.api;version='2.0',\
-	reactive-streams
+	reactive-streams,\
+	org.openmcptools.extensions.update,\
+	org.openmcptools.common.client;version=snapshot

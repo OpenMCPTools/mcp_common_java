@@ -29,11 +29,12 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 	private final ToolAnnotationsConverter<io.modelcontextprotocol.spec.McpSchema.ToolAnnotations> toolAnnotationsConverter;
 	private GroupConverter<org.openmcptools.extensions.groups.protocol.Group> groupConverter;
 
+	@SuppressWarnings("static-access")
 	@Activate
-	public ToolConverterImpl(
+	public ToolConverterImpl(@Reference McpJsonDefaults jsonDefaults,
 			@Reference ToolAnnotationsConverter<io.modelcontextprotocol.spec.McpSchema.ToolAnnotations> toolAnnotationsConverter,
 			@Reference GroupConverter<org.openmcptools.extensions.groups.protocol.Group> groupConverter) {
-		this.jsonMapper = McpJsonDefaults.getMapper();
+		this.jsonMapper = jsonDefaults.getMapper();
 		this.toolAnnotationsConverter = toolAnnotationsConverter;
 		this.groupConverter = groupConverter;
 	}

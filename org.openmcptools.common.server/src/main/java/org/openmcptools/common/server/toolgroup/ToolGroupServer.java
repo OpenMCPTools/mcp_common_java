@@ -1,12 +1,12 @@
 package org.openmcptools.common.server.toolgroup;
 
 import java.io.Closeable;
-import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 import org.openmcptools.common.model.Tool;
 
-public interface ToolGroupServer extends Closeable {
+public interface ToolGroupServer<ServerType> extends Closeable {
 
 	static final String SERVER_PROP_PREFIX = ToolGroupServer.class.getName();
 	public static final String SERVER_NAME_PROP = SERVER_PROP_PREFIX + ".serverName";
@@ -28,19 +28,20 @@ public interface ToolGroupServer extends Closeable {
 	public static final String SERVER_ROOTS_CHANGE_CONSUMERS = SERVER_PROP_PREFIX + "rootsChangeConsumers";
 
 	public static final long DEFAULT_REQUEST_TIMEOUT = Long
-			.parseLong(System.getProperty(ToolGroupServer.class.getName(), ".defaultRequestTimeout"));
+			.parseLong(System.getProperty(ToolGroupServer.class.getName() + ".defaultRequestTimeout", "10"));
 	public static final String SERVER_URI_TEMPLATE_MANAGER_FACTORY = SERVER_PROP_PREFIX + ".uriTemplateManagerFactory";
 	public static final String SERVER_IMMEDIATE_EXECUTION = SERVER_PROP_PREFIX + ".immediateExecution";
 
-	default void removeTools(List<Tool> tools) {
-		tools.forEach(tn -> {
-			removeTool(tn);
-		});
+	void removeTools(List<String> toolNames);
+
+	List<Tool> addToolGroups(Map<Object,Class<?>[]> implementerToTypes);
+	
+	default List<Tool> addToolGroup(Object instance, Class<?>...classes) {
+		return addToolGroups(Map.of(instance,classes));
 	}
-
-	void removeTool(Tool tool);
-
-	List<Tool> addToolGroup(Object instance, Class<?>... classes);
-
-	void addTool(Tool tool, Method toolMethod, Object instance);
+	
+	List<Tool> addToolInvokers(List<ToolImplementation> toolInvokers);
+	
+	ServerType getServer();
+	
 }

@@ -3,22 +3,22 @@ package org.openmcptools.common.model;
 import java.util.List;
 import java.util.Objects;
 
-public interface ToolConverter<ToolType> {
+public interface ToolConverter<ProviderToolType> {
 
-	default List<ToolType> convertFromTools(List<Tool> tools) {
+	default List<ProviderToolType> convertFromTools(List<Tool> tools) {
 		return tools.stream().map(tn -> {
 			return convertFromTool(tn);
 		}).filter(Objects::nonNull).toList();
 	}
 
-	ToolType convertFromTool(Tool tool);
+	ProviderToolType convertFromTool(Tool tool);
 
-	default List<Tool> convertToTools(List<ToolType> tools) {
-		return tools.stream().map(t -> {
+	default List<Tool> convertToTools(List<ProviderToolType> addedTools) {
+		return addedTools.stream().map(t -> {
 			return convertToTool(t);
 		}).filter(Objects::nonNull).toList();
 	}
 
-	Tool convertToTool(ToolType tool);
+	Tool convertToTool(ProviderToolType tool);
 
 }

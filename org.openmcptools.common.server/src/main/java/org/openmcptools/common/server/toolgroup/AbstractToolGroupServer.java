@@ -1,13 +1,13 @@
 package org.openmcptools.common.server.toolgroup;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import org.openmcptools.common.model.Tool;
 import org.openmcptools.common.model.ToolConverter;
@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractToolGroupServer<ServerType, ToolSpecType, ToolType, ExchangeType, CallToolRequestType, CallToolResultType>
-		implements ToolGroupServer {
+		implements ToolGroupServer<ServerType> {
 
-	private static Logger logger = LoggerFactory.getLogger(AbstractToolGroupServer.class);
+	protected static Logger logger = LoggerFactory.getLogger(AbstractToolGroupServer.class);
 
 	protected final Map<Tool, BiFunction<ExchangeType, CallToolRequestType, CallToolResultType>> toolToBiFunctionMap;
 	protected final CopyOnWriteArrayList<ToolSpecType> toolSpecs;
@@ -89,7 +89,7 @@ public abstract class AbstractToolGroupServer<ServerType, ToolSpecType, ToolType
 		}
 	}
 
-	protected ServerType getServer() {
+	public ServerType getServer() {
 		return server;
 	}
 
@@ -101,20 +101,29 @@ public abstract class AbstractToolGroupServer<ServerType, ToolSpecType, ToolType
 			BiFunction<ExchangeType, CallToolRequestType, CallToolResultType> callHandler);
 
 	@Override
-	public List<Tool> addToolGroup(Object instance, Class<?>... classes) {
-		List<ToolSpecification<ToolSpecType>> specs = this.toolGroupProvider.getToolGroupSpecifications(instance,
-				classes);
-		specs.forEach(s -> {
-			addTool(this.server, s.getSpecification());
-		});
-		return specs.stream().map(sp -> {
-			return sp.getTool();
-		}).toList();
+    public void removeTools(List<String> toolNames) {
+		removeToolsByName(toolNames);
+    }
+
+	protected abstract List<Tool> addSpecifications(List<ToolSpecification<ToolSpecType>> specs);
+	
+	@Override
+	public List<Tool> addToolGroups(Map<Object,Class<?>[]> implementerToTypes) {
+		
+		List<ToolSpecification<ToolSpecType>> specs = implementerToTypes.entrySet().stream().map((e) -> {
+			return this.toolGroupProvider.getToolGroupSpecifications(e.getKey(), e.getValue());
+		}).flatMap(List::stream).collect(Collectors.toList());
+				
+		return addSpecifications(specs);
 	}
 
 	@Override
-	public void addTool(Tool tool, Method toolMethod, Object instance) {
-		this.toolGroupProvider.getToolSpecification(tool, toolMethod, instance, tool.getOutputSchema() != null);
+	public List<Tool> addToolInvokers(List<ToolImplementation> toolInvokers) {
+		List<ToolSpecification<ToolSpecType>> specs = toolInvokers.stream().map(ti -> {
+			return this.toolGroupProvider.getToolSpecification(ti.getTool(), ti.getMethod(), ti.getInstance(), ti.getOutputSchema());
+		}).collect(Collectors.toList());
+
+		return addSpecifications(specs);
 	}
 
 }

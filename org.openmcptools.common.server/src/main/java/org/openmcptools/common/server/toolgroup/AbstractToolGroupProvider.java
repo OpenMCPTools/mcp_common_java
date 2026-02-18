@@ -187,5 +187,5 @@ public abstract class AbstractToolGroupProvider<SpecificationType, ToolType, Exc
 				outputSchema);
 		return getToolSpecification(tool, callHandler);
 	}
-
+	
 }
