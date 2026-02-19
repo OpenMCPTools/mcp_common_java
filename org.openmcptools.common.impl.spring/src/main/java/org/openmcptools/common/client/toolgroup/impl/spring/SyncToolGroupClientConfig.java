@@ -229,6 +229,9 @@ public class SyncToolGroupClientConfig extends ToolGroupClientConfig<McpClientTr
 	@Override
 	public Dictionary<String, Object> asProperties() {
 		Dictionary<String, Object> d = super.asProperties();
+		if (clientCapabilities == null) {
+			clientCapabilities = ClientCapabilities.builder().build();
+		}
 		d.put(ToolGroupClient.CLIENT_CAPABILITIES, clientCapabilities);
 		if (rootsChangeConsumers != null) {
 			d.put(ToolGroupClient.CLIENT_ROOTS_CHANGE_CONSUMERS, rootsChangeConsumers);
