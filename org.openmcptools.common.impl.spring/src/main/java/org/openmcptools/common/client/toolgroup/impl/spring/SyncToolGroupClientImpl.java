@@ -49,23 +49,23 @@ public class SyncToolGroupClientImpl extends AbstractToolGroupClientImpl<McpSync
 	@SuppressWarnings("unchecked")
 	@Activate
 	protected void activate(Map<String, Object> properties) {
-		String clientName = (String) properties.get(CLIENT_NAME_PROP);
+		String clientName = (String) properties.get(CLIENT_NAME);
 		if (clientName == null) {
 			clientName = ToolGroupClient.CLIENT_DEFAULT_NAME;
 		}
-		String clientVersion = (String) properties.get(CLIENT_VERSION_PROP);
+		String clientVersion = (String) properties.get(CLIENT_VERSION);
 		if (clientVersion == null) {
 			clientVersion = CLIENT_DEFAULT_VERSION;
 		}
 		McpSchema.Implementation clientImpl = new McpSchema.Implementation(clientName, clientVersion);
 
-		ClientCapabilities clientCapabilities = (ClientCapabilities) properties.get(CLIENT_CAPABILITIES_PROP);
+		ClientCapabilities clientCapabilities = (ClientCapabilities) properties.get(CLIENT_CAPABILITIES);
 		if (clientCapabilities == null) {
 			clientCapabilities = ClientCapabilities.builder().build();
 		}
 
-		McpClientTransport transport = (McpClientTransport) properties.get(CLIENT_TRANSPORT_PROP);
-		Objects.requireNonNull(transport, CLIENT_TRANSPORT_PROP + " property must not be null");
+		McpClientTransport transport = (McpClientTransport) properties.get(CLIENT_TRANSPORT);
+		Objects.requireNonNull(transport, CLIENT_TRANSPORT + " property must not be null");
 
 		List<ToolGroupClientListener> clientListeners = (List<ToolGroupClientListener>) properties
 				.get(CLIENT_LISTENERS);
@@ -73,10 +73,10 @@ public class SyncToolGroupClientImpl extends AbstractToolGroupClientImpl<McpSync
 			this.clientListeners.addAll(clientListeners);
 		}
 
-		JsonSchemaValidator jsonSchemaValidator = (JsonSchemaValidator) properties.get(CLIENT_JSONSCHEMAVALIDATOR_PROP);
+		JsonSchemaValidator jsonSchemaValidator = (JsonSchemaValidator) properties.get(CLIENT_JSONSCHEMAVALIDATOR);
 
 		Supplier<McpTransportContext> contextProvider = (Supplier<McpTransportContext>) properties
-				.get(CLIENT_CONTEXTPROVIDER_PROP);
+				.get(CLIENT_CONTEXTPROVIDER);
 		if (contextProvider == null) {
 			contextProvider = () -> {
 				return McpTransportContext.EMPTY;

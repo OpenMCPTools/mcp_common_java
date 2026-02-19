@@ -8,29 +8,29 @@ import org.openmcptools.common.model.Tool;
 
 public interface ToolGroupServer<ServerType> extends Closeable {
 
-	static final String SERVER_PROP_PREFIX = ToolGroupServer.class.getName();
-	public static final String SERVER_NAME_PROP = SERVER_PROP_PREFIX + ".serverName";
-	public static final String SERVER_VERSION_PROP = SERVER_PROP_PREFIX + ".serverVersion";
-	public static final String SERVER_TRANSPORT_PROP = SERVER_PROP_PREFIX + ".serverTransport";
-	public static final String SERVER_CAPABILITIES_PROP = SERVER_PROP_PREFIX + ".serverCapabilities";
-	public static final String SERVER_TOOL_GROUP_PROVIDER = SERVER_PROP_PREFIX + ".serverToolGroupProvider";
-	public static final String SERVER_GENERATE_OUTPUT_SCHEMA = SERVER_PROP_PREFIX + ".outputSchemaGenerator";
-	public static final String SERVER_COMPLETIONS_PROP = SERVER_PROP_PREFIX + ".serverCompletions";
-	public static final String SERVER_INSTRUCTIONS_PROP = SERVER_PROP_PREFIX + ".serverInstructions";
-	public static final String SERVER_JSONMAPPER_PROP = SERVER_PROP_PREFIX + ".jsonMapper";
-	public static final String SERVER_JSONSCHEMAVALIDATOR_PROP = SERVER_PROP_PREFIX + ".jsonSchemaValidator";
-	public static final String SERVER_PROMPT_SPECIFICATIONS_PROP = SERVER_PROP_PREFIX + ".promptSpecifications";
-	public static final String SERVER_REQUEST_DURATION_PROP = SERVER_PROP_PREFIX + ".requestDuration";
-	public static final String SERVER_RESOURCESPECIFICATIONS_PROP = SERVER_PROP_PREFIX + ".resourceSpecifications";
-	public static final String SERVER_RESOURCE_TEMPLATE_SPECIFICATIONS_PROP = SERVER_PROP_PREFIX
+	static final String SERVER_PREFIX = ToolGroupServer.class.getName();
+	public static final String SERVER_NAME = SERVER_PREFIX + ".serverName";
+	public static final String SERVER_VERSION = SERVER_PREFIX + ".serverVersion";
+	public static final String SERVER_TRANSPORT = SERVER_PREFIX + ".serverTransport";
+	public static final String SERVER_CAPABILITIES = SERVER_PREFIX + ".serverCapabilities";
+	public static final String SERVER_TOOL_GROUP_PROVIDER = SERVER_PREFIX + ".serverToolGroupProvider";
+	public static final String SERVER_GENERATE_OUTPUT_SCHEMA = SERVER_PREFIX + ".outputSchemaGenerator";
+	public static final String SERVER_COMPLETIONS = SERVER_PREFIX + ".serverCompletions";
+	public static final String SERVER_INSTRUCTIONS = SERVER_PREFIX + ".serverInstructions";
+	public static final String SERVER_JSONMAPPER = SERVER_PREFIX + ".jsonMapper";
+	public static final String SERVER_JSONSCHEMAVALIDATOR = SERVER_PREFIX + ".jsonSchemaValidator";
+	public static final String SERVER_PROMPT_SPECS = SERVER_PREFIX + ".promptSpecifications";
+	public static final String SERVER_REQUEST_DURATION = SERVER_PREFIX + ".requestDuration";
+	public static final String SERVER_RESOURCE_SPECS = SERVER_PREFIX + ".resourceSpecifications";
+	public static final String SERVER_RESOURCE_TEMPLATE_SPECS = SERVER_PREFIX
 			+ ".resourceTemplateSpecifications";
-	public static final String SERVER_TOOLS_SPECIFICATIONS = SERVER_PROP_PREFIX + ".toolSpecifications";
-	public static final String SERVER_ROOTS_CHANGE_CONSUMERS = SERVER_PROP_PREFIX + "rootsChangeConsumers";
+	public static final String SERVER_TOOLS_SPECS = SERVER_PREFIX + ".toolSpecifications";
+	public static final String SERVER_ROOTS_CHANGE_CONSUMERS = SERVER_PREFIX + "rootsChangeConsumers";
 
 	public static final long DEFAULT_REQUEST_TIMEOUT = Long
 			.parseLong(System.getProperty(ToolGroupServer.class.getName() + ".defaultRequestTimeout", "10"));
-	public static final String SERVER_URI_TEMPLATE_MANAGER_FACTORY = SERVER_PROP_PREFIX + ".uriTemplateManagerFactory";
-	public static final String SERVER_IMMEDIATE_EXECUTION = SERVER_PROP_PREFIX + ".immediateExecution";
+	public static final String SERVER_URI_TEMPLATE_MANAGER_FACTORY = SERVER_PREFIX + ".uriTemplateManagerFactory";
+	public static final String SERVER_IMMEDIATE_EXECUTION = SERVER_PREFIX + ".immediateExecution";
 
 	void removeTools(List<String> toolNames);
 

@@ -16,6 +16,7 @@ import org.openmcptools.common.server.impl.spring.OutputSchemaGeneratorImpl;
 import org.openmcptools.common.server.toolgroup.SyncToolGroupServer;
 import org.openmcptools.common.server.toolgroup.ToolGroupProvider;
 import org.openmcptools.common.server.toolgroup.ToolGroupServer;
+import org.openmcptools.common.server.toolgroup.ToolGroupServerConfig;
 import org.openmcptools.common.server.toolgroup.ToolProviderImpl;
 import org.openmcptools.common.server.toolgroup.ToolSpecification;
 import org.osgi.service.component.annotations.Activate;
@@ -96,7 +97,12 @@ public class SyncToolGroupServerImpl extends
 			ToolProviderImpl toolProvider = new ToolProviderImpl(isg, osg);
 			this.toolGroupProvider = new SyncToolGroupProviderImpl(toolProvider, toolConverter, osg != null);
 		}
-		this.server = buildServerFromProperties(properties);
+		SpringSyncToolGroupServerConfig tgServerConfig = (SpringSyncToolGroupServerConfig) properties
+				.get(ToolGroupServerConfig.TOOL_GROUP_SERVER_CONFIG);
+		if (tgServerConfig == null) {
+			tgServerConfig = new SpringSyncToolGroupServerConfig(properties);
+		}
+		this.server = tgServerConfig.buildMcpSyncToolGroupServer();
 	}
 
 	@Deactivate
@@ -108,14 +114,14 @@ public class SyncToolGroupServerImpl extends
 
 	@SuppressWarnings("unchecked")
 	protected McpSyncToolGroupServer buildServerFromProperties(Map<String, Object> properties) {
-		String serverName = (String) properties.get(ToolGroupServer.SERVER_NAME_PROP);
-		Objects.requireNonNull(serverName, ToolGroupServer.SERVER_NAME_PROP + "property must not be null");
-		String serverVersion = (String) properties.get(ToolGroupServer.SERVER_VERSION_PROP);
-		Objects.requireNonNull(serverVersion, ToolGroupServer.SERVER_VERSION_PROP + " property must not be null");
+		String serverName = (String) properties.get(ToolGroupServer.SERVER_NAME);
+		Objects.requireNonNull(serverName, ToolGroupServer.SERVER_NAME + "property must not be null");
+		String serverVersion = (String) properties.get(ToolGroupServer.SERVER_VERSION);
+		Objects.requireNonNull(serverVersion, ToolGroupServer.SERVER_VERSION + " property must not be null");
 		McpSchema.Implementation serverImpl = new McpSchema.Implementation(serverName, serverVersion);
 
 		ServerCapabilities serverCapabilities = (ServerCapabilities) properties
-				.get(ToolGroupServer.SERVER_CAPABILITIES_PROP);
+				.get(ToolGroupServer.SERVER_CAPABILITIES);
 		if (serverCapabilities == null) {
 			serverCapabilities = ServerCapabilities.builder().tools(true).build();
 		} else {
@@ -123,11 +129,11 @@ public class SyncToolGroupServerImpl extends
 		}
 
 		List<McpServerFeatures.SyncToolSpecification> toolSpecifications = (List<McpServerFeatures.SyncToolSpecification>) properties
-				.get(ToolGroupServer.SERVER_TOOLS_SPECIFICATIONS);
+				.get(ToolGroupServer.SERVER_TOOLS_SPECS);
 		toolSpecifications = (toolSpecifications == null) ? List.of() : toolSpecifications;
 
 		Map<String, SyncResourceSpecification> resourceSpecifications = (Map<String, SyncResourceSpecification>) properties
-				.get(ToolGroupServer.SERVER_RESOURCESPECIFICATIONS_PROP);
+				.get(ToolGroupServer.SERVER_RESOURCE_SPECS);
 		if (resourceSpecifications != null) {
 			serverCapabilities = serverCapabilities.mutate().resources(true, true).build();
 		} else {
@@ -135,7 +141,7 @@ public class SyncToolGroupServerImpl extends
 		}
 
 		List<SyncResourceTemplateSpecification> rtSpecsList = (List<SyncResourceTemplateSpecification>) properties
-				.get(ToolGroupServer.SERVER_RESOURCE_TEMPLATE_SPECIFICATIONS_PROP);
+				.get(ToolGroupServer.SERVER_RESOURCE_TEMPLATE_SPECS);
 		Map<String, SyncResourceTemplateSpecification> resourceTemplateSpecifications = Map.of();
 		if (rtSpecsList != null) {
 			serverCapabilities = serverCapabilities.mutate().resources(true, true).build();
@@ -145,7 +151,7 @@ public class SyncToolGroupServerImpl extends
 		}
 
 		Map<String, SyncPromptSpecification> promptSpecifications = (Map<String, SyncPromptSpecification>) properties
-				.get(ToolGroupServer.SERVER_PROMPT_SPECIFICATIONS_PROP);
+				.get(ToolGroupServer.SERVER_PROMPT_SPECS);
 		if (promptSpecifications != null) {
 			serverCapabilities = serverCapabilities.mutate().prompts(true).build();
 		} else {
@@ -153,7 +159,7 @@ public class SyncToolGroupServerImpl extends
 		}
 
 		List<SyncCompletionSpecification> serverCompletionsList = (List<SyncCompletionSpecification>) properties
-				.get(ToolGroupServer.SERVER_COMPLETIONS_PROP);
+				.get(ToolGroupServer.SERVER_COMPLETIONS);
 		Map<CompleteReference, SyncCompletionSpecification> serverCompletions = Map.of();
 		if (serverCompletionsList != null) {
 			for (McpServerFeatures.SyncCompletionSpecification completion : serverCompletionsList) {
@@ -167,19 +173,19 @@ public class SyncToolGroupServerImpl extends
 			rootsChangeConsumers = List.of();
 		}
 
-		String serverInstructions = (String) properties.get(ToolGroupServer.SERVER_INSTRUCTIONS_PROP);
+		String serverInstructions = (String) properties.get(ToolGroupServer.SERVER_INSTRUCTIONS);
 
 		McpServerTransportProvider transport = (McpServerTransportProvider) properties
-				.get(ToolGroupServer.SERVER_TRANSPORT_PROP);
-		Objects.requireNonNull(transport, SERVER_TRANSPORT_PROP + " property must not be null");
+				.get(ToolGroupServer.SERVER_TRANSPORT);
+		Objects.requireNonNull(transport, SERVER_TRANSPORT + " property must not be null");
 
-		McpJsonMapper jsonMapper = (McpJsonMapper) properties.get(ToolGroupServer.SERVER_JSONMAPPER_PROP);
+		McpJsonMapper jsonMapper = (McpJsonMapper) properties.get(ToolGroupServer.SERVER_JSONMAPPER);
 
 		McpServerFeatures.Sync serverFeatures = buildSyncServerFeatures(serverImpl, serverCapabilities,
 				toolSpecifications, resourceSpecifications, resourceTemplateSpecifications, promptSpecifications,
 				serverCompletions, rootsChangeConsumers, serverInstructions);
 
-		Long requestTimeout = (Long) properties.get(SERVER_REQUEST_DURATION_PROP);
+		Long requestTimeout = (Long) properties.get(SERVER_REQUEST_DURATION);
 		if (requestTimeout == null) {
 			requestTimeout = 10L;
 		}
@@ -188,7 +194,7 @@ public class SyncToolGroupServerImpl extends
 				.get(ToolGroupServer.SERVER_URI_TEMPLATE_MANAGER_FACTORY);
 
 		JsonSchemaValidator jsonSchemaValidator = (JsonSchemaValidator) properties
-				.get(ToolGroupServer.SERVER_JSONSCHEMAVALIDATOR_PROP);
+				.get(ToolGroupServer.SERVER_JSONSCHEMAVALIDATOR);
 
 		Boolean immediateExecution = (Boolean) properties.get(ToolGroupServer.SERVER_IMMEDIATE_EXECUTION);
 		if (immediateExecution == null) {

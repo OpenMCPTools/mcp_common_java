@@ -1,0 +1,162 @@
+package org.openmcptools.common.server.toolgroup.impl.spring;
+
+import java.time.Duration;
+import java.util.Dictionary;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+
+import org.openmcptools.common.server.toolgroup.ToolGroupServer;
+import org.openmcptools.common.server.toolgroup.ToolGroupServerConfig;
+
+import io.modelcontextprotocol.json.McpJsonMapper;
+import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
+import io.modelcontextprotocol.server.McpAsyncServerExchange;
+import io.modelcontextprotocol.server.McpServerFeatures;
+import io.modelcontextprotocol.server.McpServerFeatures.AsyncCompletionSpecification;
+import io.modelcontextprotocol.server.McpServerFeatures.AsyncPromptSpecification;
+import io.modelcontextprotocol.server.McpServerFeatures.AsyncResourceSpecification;
+import io.modelcontextprotocol.server.McpServerFeatures.AsyncResourceTemplateSpecification;
+import io.modelcontextprotocol.server.McpServerFeatures.AsyncToolSpecification;
+import io.modelcontextprotocol.spec.McpSchema;
+import io.modelcontextprotocol.spec.McpServerTransportProvider;
+import io.modelcontextprotocol.spec.McpSchema.Root;
+import io.modelcontextprotocol.spec.McpSchema.ServerCapabilities;
+import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
+import reactor.core.publisher.Mono;
+
+public class SpringAsyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTransportProvider> {
+
+	public static final String SERVER_FACTORY_NAME = "SpringAsyncToolGroupServer";
+	public static final String SERVER_CF_TARGET = "(component.factory=" + SERVER_FACTORY_NAME + ")";
+
+	private ServerCapabilities serverCapabilities;
+	private Map<String, AsyncPromptSpecification> promptSpecifications;
+	private List<BiFunction<McpAsyncServerExchange, List<Root>, Mono<Void>>> rootsChangeConsumers;
+	private McpJsonMapper jsonMapper;
+	private List<AsyncToolSpecification> toolSpecifications;
+	private McpUriTemplateManagerFactory uriTemplateManagerFactory;
+	private JsonSchemaValidator jsonSchemaValidator;
+	private Map<String, AsyncResourceSpecification> resourceSpecifications;
+	private Map<String, McpServerFeatures.AsyncResourceTemplateSpecification> resourceTemplateSpecifications;
+	private Map<McpSchema.CompleteReference, McpServerFeatures.AsyncCompletionSpecification> serverCompletions;
+
+	public SpringAsyncToolGroupServerConfig(String serverName, String serverVersion,
+			McpServerTransportProvider transport, Long requestTimeout, String serverInstructions) {
+		super(serverName, serverVersion, transport, requestTimeout, serverInstructions);
+	}
+
+	public SpringAsyncToolGroupServerConfig(McpServerTransportProvider transport) {
+		super(transport);
+	}
+
+	public SpringAsyncToolGroupServerConfig(String serverName, String serverVersion,
+			McpServerTransportProvider transport) {
+		super(serverName, serverVersion, transport);
+	}
+
+	@SuppressWarnings("unchecked")
+	public SpringAsyncToolGroupServerConfig(Map<String, Object> properties) {
+		super(properties);
+		this.serverCapabilities = (ServerCapabilities) properties.get(ToolGroupServer.SERVER_CAPABILITIES);
+		if (serverCapabilities == null) {
+			serverCapabilities = ServerCapabilities.builder().tools(true).build();
+		} else {
+			serverCapabilities = serverCapabilities.mutate().tools(true).build();
+		}
+		resourceSpecifications = (Map<String, AsyncResourceSpecification>) properties
+				.get(ToolGroupServer.SERVER_RESOURCE_SPECS);
+		if (resourceSpecifications != null) {
+			serverCapabilities = serverCapabilities.mutate().resources(true, true).build();
+		} else {
+			resourceSpecifications = Map.of();
+		}
+		List<AsyncResourceTemplateSpecification> rtSpecsList = (List<AsyncResourceTemplateSpecification>) properties
+				.get(ToolGroupServer.SERVER_RESOURCE_TEMPLATE_SPECS);
+		resourceTemplateSpecifications = Map.of();
+		if (rtSpecsList != null) {
+			serverCapabilities = serverCapabilities.mutate().resources(true, true).build();
+			for (var resourceTemplate : rtSpecsList) {
+				resourceTemplateSpecifications.put(resourceTemplate.resourceTemplate().uriTemplate(),
+						resourceTemplate);
+			}
+		}
+		this.promptSpecifications = (Map<String, AsyncPromptSpecification>) properties
+				.get(ToolGroupServer.SERVER_PROMPT_SPECS);
+		if (promptSpecifications != null) {
+			serverCapabilities = serverCapabilities.mutate().prompts(true).build();
+		} else {
+			promptSpecifications = Map.of();
+		}
+
+		List<AsyncCompletionSpecification> serverCompletionsList = (List<AsyncCompletionSpecification>) properties
+				.get(ToolGroupServer.SERVER_COMPLETIONS);
+		serverCompletions = Map.of();
+		if (serverCompletionsList != null) {
+			for (McpServerFeatures.AsyncCompletionSpecification completion : serverCompletionsList) {
+				serverCompletions.put(completion.referenceKey(), completion);
+			}
+		}
+
+		rootsChangeConsumers = (List<BiFunction<McpAsyncServerExchange, List<McpSchema.Root>, Mono<Void>>>) properties
+				.get(ToolGroupServer.SERVER_ROOTS_CHANGE_CONSUMERS);
+		if (rootsChangeConsumers == null) {
+			rootsChangeConsumers = List.of();
+		}
+		jsonMapper = (McpJsonMapper) properties.get(AbstractToolGroupServerImpl.SERVER_JSONMAPPER);
+		toolSpecifications = (List<McpServerFeatures.AsyncToolSpecification>) properties
+				.get(ToolGroupServer.SERVER_TOOLS_SPECS);
+		toolSpecifications = (toolSpecifications == null) ? List.of() : toolSpecifications;
+		uriTemplateManagerFactory = (McpUriTemplateManagerFactory) properties
+				.get(ToolGroupServer.SERVER_URI_TEMPLATE_MANAGER_FACTORY);
+		jsonSchemaValidator = (JsonSchemaValidator) properties.get(AbstractToolGroupServerImpl.SERVER_JSONSCHEMAVALIDATOR);
+	}
+
+	public McpServerFeatures.Async buildAsyncServerFeatures() {
+		return new McpServerFeatures.Async(
+				new McpSchema.Implementation(serverName, serverVersion),
+				this.serverCapabilities, toolSpecifications, resourceSpecifications, resourceTemplateSpecifications,
+				promptSpecifications, serverCompletions, rootsChangeConsumers, serverInstructions);
+	}
+
+	public McpAsyncToolGroupServer buildMcpAsyncToolGroupServer() {
+		return new McpAsyncToolGroupServer(transport, jsonMapper, buildAsyncServerFeatures(),
+				Duration.ofSeconds(requestTimeout), uriTemplateManagerFactory, jsonSchemaValidator);
+	}
+
+	@Override
+	public Dictionary<String, Object> asProperties() {
+		Dictionary<String, Object> d = super.asProperties();
+		if (serverCapabilities != null) {
+			d.put(ToolGroupServer.SERVER_CAPABILITIES, serverCapabilities);
+		}
+		if (promptSpecifications != null) {
+			d.put(ToolGroupServer.SERVER_PROMPT_SPECS, promptSpecifications);
+		}
+		if (rootsChangeConsumers != null) {
+			d.put(ToolGroupServer.SERVER_ROOTS_CHANGE_CONSUMERS, rootsChangeConsumers);
+		}
+		if (jsonMapper != null) {
+			d.put(ToolGroupServer.SERVER_JSONMAPPER, jsonMapper);
+		}
+		if (toolSpecifications != null) {
+			d.put(ToolGroupServer.SERVER_TOOLS_SPECS, toolSpecifications);
+		}
+		if (uriTemplateManagerFactory != null) {
+			d.put(ToolGroupServer.SERVER_URI_TEMPLATE_MANAGER_FACTORY, uriTemplateManagerFactory);
+		}
+		if (jsonSchemaValidator != null) {
+			d.put(ToolGroupServer.SERVER_JSONSCHEMAVALIDATOR, jsonSchemaValidator);
+		}
+		if (resourceSpecifications != null) {
+			d.put(ToolGroupServer.SERVER_RESOURCE_SPECS, resourceSpecifications);
+		}
+		if (resourceTemplateSpecifications != null) {
+			d.put(ToolGroupServer.SERVER_RESOURCE_TEMPLATE_SPECS, resourceTemplateSpecifications);
+		}
+		if (serverCompletions != null) {
+			d.put(ToolGroupServer.SERVER_COMPLETIONS, serverCompletions);
+		}
+		return d;
+	}
+}
