@@ -1,32 +1,32 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<repository xmlns="http://www.osgi.org/xmlns/repository/v1.0.0" name="Local" increment="1771349905226">
+<repository xmlns="http://www.osgi.org/xmlns/repository/v1.0.0" name="Local" increment="1771533859867">
   <resource>
     <capability namespace="osgi.identity">
       <attribute name="osgi.identity" value="org.openmcptools.extensions.update"/>
       <attribute name="type" value="osgi.bundle"/>
-      <attribute name="version" value="1.0.0.202602161747" type="Version"/>
+      <attribute name="version" value="1.0.0.202602192038" type="Version"/>
     </capability>
     <capability namespace="osgi.wiring.package">
       <directive name="uses" value="com.fasterxml.jackson.annotation"/>
       <attribute name="bundle-symbolic-name" value="org.openmcptools.extensions.update"/>
-      <attribute name="bundle-version" value="1.0.0.202602161747" type="Version"/>
+      <attribute name="bundle-version" value="1.0.0.202602192038" type="Version"/>
       <attribute name="osgi.wiring.package" value="org.openmcptools.extensions.update"/>
       <attribute name="version" value="1.0.0" type="Version"/>
       <attribute name="bnd.hashes" value="1471670368,901233618,2035398868,169666570,-1923478059" type="List&lt;Long&gt;"/>
     </capability>
     <capability namespace="osgi.wiring.bundle">
-      <attribute name="bundle-version" value="1.0.0.202602161747" type="Version"/>
+      <attribute name="bundle-version" value="1.0.0.202602192038" type="Version"/>
       <attribute name="osgi.wiring.bundle" value="org.openmcptools.extensions.update"/>
     </capability>
     <capability namespace="osgi.wiring.host">
-      <attribute name="bundle-version" value="1.0.0.202602161747" type="Version"/>
+      <attribute name="bundle-version" value="1.0.0.202602192038" type="Version"/>
       <attribute name="osgi.wiring.host" value="org.openmcptools.extensions.update"/>
     </capability>
     <capability namespace="osgi.content">
-      <attribute name="size" value="7395" type="Long"/>
+      <attribute name="size" value="9530" type="Long"/>
       <attribute name="mime" value="application/vnd.osgi.bundle"/>
       <attribute name="url" value="org.openmcptools.extensions.update/org.openmcptools.extensions.update-1.0.0.jar"/>
-      <attribute name="osgi.content" value="0404D24A56668312BAC8C173AB943F4500007A77B1DB74E84099D88694925935"/>
+      <attribute name="osgi.content" value="0A3D3D24A8D68F66B96F5F226370DF9238E963E937E7E75154CF531322F1F703"/>
     </capability>
     <requirement namespace="osgi.wiring.package">
       <directive name="filter" value="(&amp;(osgi.wiring.package=com.fasterxml.jackson.annotation)(version&gt;=2.19.0)(!(version&gt;=3.0.0)))"/>
@@ -44,6 +44,14 @@
       <directive name="filter" value="(osgi.wiring.package=java.util)"/>
       <attribute name="osgi.wiring.package" value="java.util"/>
     </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=java.util.function)"/>
+      <attribute name="osgi.wiring.package" value="java.util.function"/>
+    </requirement>
+    <requirement namespace="osgi.wiring.package">
+      <directive name="filter" value="(osgi.wiring.package=java.util.stream)"/>
+      <attribute name="osgi.wiring.package" value="java.util.stream"/>
+    </requirement>
     <requirement namespace="osgi.ee">
       <directive name="filter" value="(&amp;(osgi.ee=JavaSE)(version=17))"/>
     </requirement>
@@ -52,29 +60,29 @@
     <capability namespace="osgi.identity">
       <attribute name="osgi.identity" value="org.openmcptools.extensions.groups"/>
       <attribute name="type" value="osgi.bundle"/>
-      <attribute name="version" value="1.0.1.202602140003" type="Version"/>
+      <attribute name="version" value="1.0.1.202602192017" type="Version"/>
     </capability>
     <capability namespace="osgi.wiring.package">
       <directive name="uses" value="com.fasterxml.jackson.annotation"/>
       <attribute name="bundle-symbolic-name" value="org.openmcptools.extensions.groups"/>
-      <attribute name="bundle-version" value="1.0.1.202602140003" type="Version"/>
+      <attribute name="bundle-version" value="1.0.1.202602192017" type="Version"/>
       <attribute name="osgi.wiring.package" value="org.openmcptools.extensions.groups.protocol"/>
       <attribute name="version" value="1.0.0" type="Version"/>
       <attribute name="bnd.hashes" value="69076575,1090120653,-1923478059" type="List&lt;Long&gt;"/>
     </capability>
     <capability namespace="osgi.wiring.bundle">
-      <attribute name="bundle-version" value="1.0.1.202602140003" type="Version"/>
+      <attribute name="bundle-version" value="1.0.1.202602192017" type="Version"/>
       <attribute name="osgi.wiring.bundle" value="org.openmcptools.extensions.groups"/>
     </capability>
     <capability namespace="osgi.wiring.host">
-      <attribute name="bundle-version" value="1.0.1.202602140003" type="Version"/>
+      <attribute name="bundle-version" value="1.0.1.202602192017" type="Version"/>
       <attribute name="osgi.wiring.host" value="org.openmcptools.extensions.groups"/>
     </capability>
     <capability namespace="osgi.content">
       <attribute name="size" value="6980" type="Long"/>
       <attribute name="mime" value="application/vnd.osgi.bundle"/>
       <attribute name="url" value="org.openmcptools.extensions.groups/org.openmcptools.extensions.groups-1.0.1.jar"/>
-      <attribute name="osgi.content" value="B8DB354A89538F9094B6E7504B6178E2897C425BCAB7AFA22BF8278CA727D7AF"/>
+      <attribute name="osgi.content" value="BD05F805CA0B24547D1882620CCC97000B6FAFC160C507AC82D9F28D81520CD1"/>
     </capability>
     <requirement namespace="osgi.wiring.package">
       <directive name="filter" value="(&amp;(osgi.wiring.package=com.fasterxml.jackson.annotation)(version&gt;=2.19.0)(!(version&gt;=3.0.0)))"/>

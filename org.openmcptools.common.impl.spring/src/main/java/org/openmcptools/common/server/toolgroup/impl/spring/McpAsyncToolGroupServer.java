@@ -23,15 +23,13 @@ import reactor.core.publisher.Mono;
 
 public class McpAsyncToolGroupServer extends McpAsyncServer {
 
-	private final List<PrimitiveUpdateEvent> events;
-	private boolean toolUpdateInProgress = false;
+	private final List<PrimitiveUpdateEvent> toolUpdateEvents = new CopyOnWriteArrayList<PrimitiveUpdateEvent>();
 
 	public McpAsyncToolGroupServer(McpServerTransportProvider mcpTransportProvider, McpJsonMapper jsonMapper,
 			Async features, Duration requestTimeout, McpUriTemplateManagerFactory uriTemplateManagerFactory,
 			JsonSchemaValidator jsonSchemaValidator) {
 		super(mcpTransportProvider, jsonMapper, features, requestTimeout, uriTemplateManagerFactory,
 				jsonSchemaValidator);
-		this.events = new CopyOnWriteArrayList<PrimitiveUpdateEvent>();
 	}
 
 	public McpAsyncToolGroupServer(McpStreamableServerTransportProvider mcpTransportProvider, McpJsonMapper jsonMapper,
@@ -39,26 +37,18 @@ public class McpAsyncToolGroupServer extends McpAsyncServer {
 			JsonSchemaValidator jsonSchemaValidator) {
 		super(mcpTransportProvider, jsonMapper, features, requestTimeout, uriTemplateManagerFactory,
 				jsonSchemaValidator);
-		this.events = new CopyOnWriteArrayList<PrimitiveUpdateEvent>();
 	}
 
 	@Override
 	public Mono<Void> notifyToolsListChanged() {
-		if (toolUpdateInProgress) {
-			return Mono.empty();
+		List<PrimitiveUpdateEvent> toolUpdateEventsCopy = List.copyOf(toolUpdateEvents);
+		toolUpdateEvents.clear();
+		if (toolUpdateEventsCopy.size() > 0) {
+			return this.mcpTransportProvider.notifyClients("notification/tools/updated",
+					Map.of("notification/tools/updated", toolUpdateEventsCopy));
 		} else {
 			return super.notifyToolsListChanged();
 		}
-	}
-
-	public void startToolsUpdate() {
-		this.toolUpdateInProgress = true;
-	}
-
-	public void endToolsUpdate() {
-		this.mcpTransportProvider.notifyClients("notification/tools/updated",
-				Map.of("notification/tools/updated", events));
-		events.clear();
 	}
 
 	private PrimitiveUpdateEvent createAddEvent(Tool tool) {
@@ -103,13 +93,13 @@ public class McpAsyncToolGroupServer extends McpAsyncServer {
 
 	@Override
 	public Mono<Void> addTool(AsyncToolSpecification toolSpecification) {
-		events.add(createAddEvent(toolSpecification.tool()));
+		toolUpdateEvents.add(createAddEvent(toolSpecification.tool()));
 		return super.addTool(toolSpecification);
 	}
 
 	@Override
 	public Mono<Void> removeTool(String toolName) {
-		events.add(createDeleteEvent(toolName));
+		toolUpdateEvents.add(createDeleteEvent(toolName));
 		return super.removeTool(toolName);
 	}
 

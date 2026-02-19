@@ -103,18 +103,12 @@ public abstract class AbstractToolGroupServerImpl<ServerType, SpecificationType,
 	@Override
 	protected List<org.openmcptools.common.model.Tool> addSpecifications(
 			List<ToolSpecification<SpecificationType>> specs) {
-		startToolsUpdate();
 		List<org.openmcptools.common.model.Tool> result = specs.stream().map(spec -> {
 			// Add the specification to the local server
 			addTool(this.server, spec.getSpecification());
 			return spec.getTool();
 		}).collect(Collectors.toList());
-		endToolsUpdate();
 		return result;
 	}
-
-	protected abstract void startToolsUpdate();
-
-	protected abstract void endToolsUpdate();
 
 }

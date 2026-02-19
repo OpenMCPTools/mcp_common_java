@@ -35,7 +35,8 @@ public class AsyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerT
 		return this;
 	}
 
-	public AsyncToolGroupServerConfig setPromptSpecifications(Map<String, AsyncPromptSpecification> promptSpecifications) {
+	public AsyncToolGroupServerConfig setPromptSpecifications(
+			Map<String, AsyncPromptSpecification> promptSpecifications) {
 		this.promptSpecifications = promptSpecifications;
 		return this;
 	}
@@ -56,7 +57,8 @@ public class AsyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerT
 		return this;
 	}
 
-	public AsyncToolGroupServerConfig setUriTemplateManagerFactory(McpUriTemplateManagerFactory uriTemplateManagerFactory) {
+	public AsyncToolGroupServerConfig setUriTemplateManagerFactory(
+			McpUriTemplateManagerFactory uriTemplateManagerFactory) {
 		this.uriTemplateManagerFactory = uriTemplateManagerFactory;
 		return this;
 	}
@@ -66,7 +68,8 @@ public class AsyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerT
 		return this;
 	}
 
-	public AsyncToolGroupServerConfig setResourceSpecifications(Map<String, AsyncResourceSpecification> resourceSpecifications) {
+	public AsyncToolGroupServerConfig setResourceSpecifications(
+			Map<String, AsyncResourceSpecification> resourceSpecifications) {
 		this.resourceSpecifications = resourceSpecifications;
 		return this;
 	}
@@ -108,8 +111,7 @@ public class AsyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerT
 		super(serverName, serverTitle, serverVersion, transport);
 	}
 
-	public AsyncToolGroupServerConfig(String serverName, String serverVersion,
-			McpServerTransportProvider transport) {
+	public AsyncToolGroupServerConfig(String serverName, String serverVersion, McpServerTransportProvider transport) {
 		super(serverName, serverVersion, transport);
 	}
 

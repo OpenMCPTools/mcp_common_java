@@ -85,14 +85,4 @@ public class SyncToolGroupServerImpl extends
 		}
 	}
 
-	@Override
-	protected void startToolsUpdate() {
-		this.server.startToolsUpdate();
-	}
-
-	@Override
-	protected void endToolsUpdate() {
-		this.server.endToolsUpdate();
-	}
-
 }

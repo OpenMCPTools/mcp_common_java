@@ -1,6 +1,5 @@
 package org.openmcptools.common.server.toolgroup.impl.spring;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -47,12 +46,6 @@ public class AsyncToolGroupServerImpl extends
 	}
 
 	@Override
-	protected void addTools(List<AsyncToolSpecification> toolSpecs) {
-		super.addTools(toolSpecs);
-		this.server.endToolsUpdate();
-	}
-
-	@Override
 	protected void addTool(McpAsyncToolGroupServer server, AsyncToolSpecification toolSpec) {
 		server.addTool(toolSpec).block();
 	}
@@ -91,16 +84,6 @@ public class AsyncToolGroupServerImpl extends
 		AsyncToolSpecification.Builder specBuilder = AsyncToolSpecification.builder().tool(convertTool(tool))
 				.callHandler(callHandler);
 		return new ToolSpecification<AsyncToolSpecification>(tool, specBuilder.build());
-	}
-
-	@Override
-	protected void startToolsUpdate() {
-		this.server.startToolsUpdate();
-	}
-
-	@Override
-	protected void endToolsUpdate() {
-		this.server.endToolsUpdate();
 	}
 
 }

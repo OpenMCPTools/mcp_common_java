@@ -36,10 +36,11 @@ public class SyncToolGroupClientConfig extends ToolGroupClientConfig<McpClientTr
 	public static final String CLIENT_FACTORY_NAME = "SyncToolGroupClientFactory";
 	public static final String CLIENT_CF_TARGET = "(component.factory=" + CLIENT_FACTORY_NAME + ")";
 
-	public static final Long DEFAULT_INITIALIZATION_TIMEOUT = (Long) Long.parseLong(System
-			.getProperty(SyncToolGroupClientConfig.class.getName() + ".defaultInitializationTimeout", "30"));
+	public static final Long DEFAULT_INITIALIZATION_TIMEOUT = (Long) Long.parseLong(
+			System.getProperty(SyncToolGroupClientConfig.class.getName() + ".defaultInitializationTimeout", "30"));
 
-	public SyncToolGroupClientConfig(String serverName, String serverVersion, McpClientTransport transport, Long requestTimeout) {
+	public SyncToolGroupClientConfig(String serverName, String serverVersion, McpClientTransport transport,
+			Long requestTimeout) {
 		super(serverName, serverVersion, transport, requestTimeout);
 	}
 

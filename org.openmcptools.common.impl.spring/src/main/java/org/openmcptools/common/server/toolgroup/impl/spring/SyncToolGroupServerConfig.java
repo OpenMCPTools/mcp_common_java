@@ -1,6 +1,7 @@
 package org.openmcptools.common.server.toolgroup.impl.spring;
 
 import java.time.Duration;
+import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -32,7 +33,8 @@ public class SyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTr
 		return this;
 	}
 
-	public SyncToolGroupServerConfig setPromptSpecifications(Map<String, SyncPromptSpecification> promptSpecifications) {
+	public SyncToolGroupServerConfig setPromptSpecifications(
+			Map<String, SyncPromptSpecification> promptSpecifications) {
 		this.promptSpecifications = promptSpecifications;
 		return this;
 	}
@@ -53,7 +55,8 @@ public class SyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTr
 		return this;
 	}
 
-	public SyncToolGroupServerConfig setUriTemplateManagerFactory(McpUriTemplateManagerFactory uriTemplateManagerFactory) {
+	public SyncToolGroupServerConfig setUriTemplateManagerFactory(
+			McpUriTemplateManagerFactory uriTemplateManagerFactory) {
 		this.uriTemplateManagerFactory = uriTemplateManagerFactory;
 		return this;
 	}
@@ -63,7 +66,8 @@ public class SyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTr
 		return this;
 	}
 
-	public SyncToolGroupServerConfig setResourceSpecifications(Map<String, SyncResourceSpecification> resourceSpecifications) {
+	public SyncToolGroupServerConfig setResourceSpecifications(
+			Map<String, SyncResourceSpecification> resourceSpecifications) {
 		this.resourceSpecifications = resourceSpecifications;
 		return this;
 	}
@@ -111,8 +115,7 @@ public class SyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTr
 		super(transport);
 	}
 
-	public SyncToolGroupServerConfig(String serverName, String serverVersion,
-			McpServerTransportProvider transport) {
+	public SyncToolGroupServerConfig(String serverName, String serverVersion, McpServerTransportProvider transport) {
 		super(serverName, serverVersion, transport);
 	}
 
@@ -190,6 +193,45 @@ public class SyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTr
 
 	public McpSyncToolGroupServer buildMcpSyncToolGroupServer() {
 		return new McpSyncToolGroupServer(buildAsyncToolGroupServer(), immediateExecution);
+	}
+
+	@Override
+	public Dictionary<String, Object> asProperties() {
+		Dictionary<String, Object> d = super.asProperties();
+		if (serverCapabilities != null) {
+			d.put(ToolGroupServer.SERVER_CAPABILITIES, serverCapabilities);
+		}
+		if (promptSpecifications != null) {
+			d.put(ToolGroupServer.SERVER_PROMPT_SPECS, promptSpecifications);
+		}
+		if (rootsChangeConsumers != null) {
+			d.put(ToolGroupServer.SERVER_ROOTS_CHANGE_CONSUMERS, rootsChangeConsumers);
+		}
+		if (jsonMapper != null) {
+			d.put(ToolGroupServer.SERVER_JSONMAPPER, jsonMapper);
+		}
+		if (toolSpecifications != null) {
+			d.put(ToolGroupServer.SERVER_TOOLS_SPECS, toolSpecifications);
+		}
+		if (uriTemplateManagerFactory != null) {
+			d.put(ToolGroupServer.SERVER_URI_TEMPLATE_MANAGER_FACTORY, uriTemplateManagerFactory);
+		}
+		if (jsonSchemaValidator != null) {
+			d.put(ToolGroupServer.SERVER_JSONSCHEMAVALIDATOR, jsonSchemaValidator);
+		}
+		if (resourceSpecifications != null) {
+			d.put(ToolGroupServer.SERVER_RESOURCE_SPECS, resourceSpecifications);
+		}
+		if (resourceTemplateSpecifications != null) {
+			d.put(ToolGroupServer.SERVER_RESOURCE_TEMPLATE_SPECS, resourceTemplateSpecifications);
+		}
+		if (serverCompletions != null) {
+			d.put(ToolGroupServer.SERVER_COMPLETIONS, serverCompletions);
+		}
+		if (immediateExecution != null) {
+			d.put(ToolGroupServer.SERVER_IMMEDIATE_EXECUTION, immediateExecution);
+		}
+		return d;
 	}
 
 }

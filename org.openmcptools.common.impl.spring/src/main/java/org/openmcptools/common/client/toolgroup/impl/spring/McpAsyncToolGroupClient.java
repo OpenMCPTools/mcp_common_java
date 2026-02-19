@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openmcptools.common.toolgroup.client.ToolGroupClientListener;
 import org.openmcptools.extensions.update.FieldValueUpdate;
+import org.openmcptools.extensions.update.PrimitiveUpdateConfig;
 import org.openmcptools.extensions.update.PrimitiveUpdateEvent;
 import org.openmcptools.extensions.update.PrimitiveUpdateEvent.EventType;
 
@@ -15,10 +16,10 @@ import io.modelcontextprotocol.client.McpAsyncClient;
 import io.modelcontextprotocol.client.McpClientFeatures.Async;
 import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
 import io.modelcontextprotocol.spec.McpClientSession;
-import io.modelcontextprotocol.spec.McpClientTransport;
-import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpClientSession.NotificationHandler;
 import io.modelcontextprotocol.spec.McpClientSession.RequestHandler;
+import io.modelcontextprotocol.spec.McpClientTransport;
+import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
 import io.modelcontextprotocol.spec.McpSchema.ToolAnnotations;
 import reactor.core.publisher.Mono;
@@ -80,15 +81,24 @@ public class McpAsyncToolGroupClient extends McpAsyncClient {
 			if (params != null) {
 				List<Tool> addedMcpTools = new ArrayList<Tool>();
 				List<String> removedTools = new ArrayList<String>();
-				List<PrimitiveUpdateEvent> events = (List<PrimitiveUpdateEvent>) params;
-				events.forEach(e -> {
-					if (e.eventType == EventType.PUT) {
-						addedMcpTools.add(createTool(e));
-					} else if (e.eventType == EventType.DELETE) {
-						removedTools.add(e.primitiveName);
+				Map<String, Object> notificationMap = (Map<String, Object>) params;
+				List<Map<String, Object>> events = (List<Map<String, Object>>) notificationMap
+						.get(PrimitiveUpdateConfig.NOTIFICATION_TOPIC);
+				try {
+					if (events != null) {
+						events.forEach(m -> {
+							PrimitiveUpdateEvent e = PrimitiveUpdateEvent.fromMap(m);
+							if (e.eventType == EventType.PUT) {
+								addedMcpTools.add(createTool(e));
+							} else if (e.eventType == EventType.DELETE) {
+								removedTools.add(e.primitiveName);
+							}
+						});
+						localToolGroupClient.updateLocal(addedMcpTools, removedTools);
 					}
-				});
-				localToolGroupClient.updateLocal(addedMcpTools, removedTools);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			return Mono.empty();
 		}

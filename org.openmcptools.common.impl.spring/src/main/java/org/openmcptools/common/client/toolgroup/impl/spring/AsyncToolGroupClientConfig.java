@@ -36,10 +36,11 @@ public class AsyncToolGroupClientConfig extends ToolGroupClientConfig<McpClientT
 	public static final String CLIENT_FACTORY_NAME = "AsyncToolGroupClientFactory";
 	public static final String CLIENT_CF_TARGET = "(component.factory=" + CLIENT_FACTORY_NAME + ")";
 
-	public static final Long DEFAULT_INITIALIZATION_TIMEOUT = (Long) Long.parseLong(System
-			.getProperty(AsyncToolGroupClientConfig.class.getName() + ".defaultInitializationTimeout", "30"));
+	public static final Long DEFAULT_INITIALIZATION_TIMEOUT = (Long) Long.parseLong(
+			System.getProperty(AsyncToolGroupClientConfig.class.getName() + ".defaultInitializationTimeout", "30"));
 
-	public AsyncToolGroupClientConfig(String clientName, String clientVersion, McpClientTransport transport, Long requestTimeout) {
+	public AsyncToolGroupClientConfig(String clientName, String clientVersion, McpClientTransport transport,
+			Long requestTimeout) {
 		super(clientName, DEFAULT_CLIENT_TITLE, clientVersion, transport, requestTimeout);
 	}
 
