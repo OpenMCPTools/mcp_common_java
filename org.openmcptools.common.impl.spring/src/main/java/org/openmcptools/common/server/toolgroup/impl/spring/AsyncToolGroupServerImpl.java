@@ -6,13 +6,11 @@ import java.util.function.BiFunction;
 
 import org.openmcptools.common.model.Tool;
 import org.openmcptools.common.model.ToolConverter;
-import org.openmcptools.common.server.InputSchemaGenerator;
 import org.openmcptools.common.server.OutputSchemaGenerator;
 import org.openmcptools.common.server.impl.spring.InputSchemaGeneratorImpl;
 import org.openmcptools.common.server.impl.spring.OutputSchemaGeneratorImpl;
 import org.openmcptools.common.server.toolgroup.AsyncToolGroupServer;
 import org.openmcptools.common.server.toolgroup.ToolGroupProvider;
-import org.openmcptools.common.server.toolgroup.ToolGroupServerConfig;
 import org.openmcptools.common.server.toolgroup.ToolProviderImpl;
 import org.openmcptools.common.server.toolgroup.ToolSpecification;
 import org.osgi.service.component.annotations.Activate;
@@ -26,7 +24,7 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import reactor.core.publisher.Mono;
 
-@Component(factory = "SpringAsyncToolGroupServer", service = AsyncToolGroupServer.class)
+@Component(factory = AsyncToolGroupServerConfig.SERVER_FACTORY_NAME, service = AsyncToolGroupServer.class)
 public class AsyncToolGroupServerImpl extends
 		AbstractToolGroupServerImpl<McpAsyncToolGroupServer, AsyncToolSpecification, McpAsyncServerExchange, Mono<CallToolResult>>
 		implements AsyncToolGroupServer<McpAsyncToolGroupServer> {
@@ -67,25 +65,16 @@ public class AsyncToolGroupServerImpl extends
 	@SuppressWarnings("unchecked")
 	@Activate
 	protected void activate(Map<String, Object> properties) {
-		Object po = properties.get(SERVER_TOOL_GROUP_PROVIDER);
-		if (po instanceof ToolGroupProvider) {
-			this.toolGroupProvider = (ToolGroupProvider<AsyncToolSpecification, McpAsyncServerExchange, CallToolRequest, Mono<CallToolResult>>) po;
-		} else {
-			po = properties.get(SERVER_GENERATE_OUTPUT_SCHEMA);
-			InputSchemaGenerator isg = new InputSchemaGeneratorImpl();
-			OutputSchemaGenerator osg = null;
-			if (po instanceof Boolean && ((Boolean) po).booleanValue()) {
-				osg = new OutputSchemaGeneratorImpl.Async();
-			}
-			ToolProviderImpl toolProvider = new ToolProviderImpl(isg, osg);
-			this.toolGroupProvider = new AsyncToolGroupProviderImpl(toolProvider, toolConverter, osg != null);
+		this.toolGroupProvider = (ToolGroupProvider<AsyncToolSpecification, McpAsyncServerExchange, CallToolRequest, Mono<CallToolResult>>) properties
+				.get(SERVER_TOOL_GROUP_PROVIDER);
+		if (toolGroupProvider == null) {
+			Boolean po = (Boolean) properties.get(SERVER_GENERATE_OUTPUT_SCHEMA);
+			OutputSchemaGenerator osg = (po != null && po.booleanValue()) ? new OutputSchemaGeneratorImpl.Async()
+					: null;
+			this.toolGroupProvider = new AsyncToolGroupProviderImpl(
+					new ToolProviderImpl(new InputSchemaGeneratorImpl(), osg), toolConverter, osg != null);
 		}
-		SpringAsyncToolGroupServerConfig tgServerConfig = (SpringAsyncToolGroupServerConfig) properties
-				.get(ToolGroupServerConfig.TOOL_GROUP_SERVER_CONFIG);
-		if (tgServerConfig == null) {
-			tgServerConfig = new SpringAsyncToolGroupServerConfig(properties);
-		}
-		this.server = tgServerConfig.buildMcpAsyncToolGroupServer();
+		this.server = new AsyncToolGroupServerConfig(properties).buildMcpAsyncToolGroupServer();
 	}
 
 	@Deactivate

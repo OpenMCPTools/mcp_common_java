@@ -11,21 +11,79 @@ import org.openmcptools.common.server.toolgroup.ToolGroupServerConfig;
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
 import io.modelcontextprotocol.server.McpServerFeatures;
-import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncCompletionSpecification;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncPromptSpecification;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncResourceSpecification;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncResourceTemplateSpecification;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
+import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpServerTransportProvider;
 import io.modelcontextprotocol.spec.McpSchema.ServerCapabilities;
+import io.modelcontextprotocol.spec.McpServerTransportProvider;
 import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
 
-public class SpringSyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTransportProvider> {
+public class SyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTransportProvider> {
 
-	public static final String SERVER_FACTORY_NAME = "SpringSyncToolGroupServer";
+	public static final String SERVER_FACTORY_NAME = "SyncToolGroupServerFactory";
 	public static final String SERVER_CF_TARGET = "(component.factory=" + SERVER_FACTORY_NAME + ")";
+
+	public SyncToolGroupServerConfig setServerCapabilities(ServerCapabilities serverCapabilities) {
+		this.serverCapabilities = serverCapabilities;
+		return this;
+	}
+
+	public SyncToolGroupServerConfig setPromptSpecifications(Map<String, SyncPromptSpecification> promptSpecifications) {
+		this.promptSpecifications = promptSpecifications;
+		return this;
+	}
+
+	public SyncToolGroupServerConfig setRootsChangeConsumers(
+			List<BiConsumer<McpSyncServerExchange, List<McpSchema.Root>>> rootsChangeConsumers) {
+		this.rootsChangeConsumers = rootsChangeConsumers;
+		return this;
+	}
+
+	public SyncToolGroupServerConfig setJsonMapper(McpJsonMapper jsonMapper) {
+		this.jsonMapper = jsonMapper;
+		return this;
+	}
+
+	public SyncToolGroupServerConfig setToolSpecifications(List<SyncToolSpecification> toolSpecifications) {
+		this.toolSpecifications = toolSpecifications;
+		return this;
+	}
+
+	public SyncToolGroupServerConfig setUriTemplateManagerFactory(McpUriTemplateManagerFactory uriTemplateManagerFactory) {
+		this.uriTemplateManagerFactory = uriTemplateManagerFactory;
+		return this;
+	}
+
+	public SyncToolGroupServerConfig setJsonSchemaValidator(JsonSchemaValidator jsonSchemaValidator) {
+		this.jsonSchemaValidator = jsonSchemaValidator;
+		return this;
+	}
+
+	public SyncToolGroupServerConfig setResourceSpecifications(Map<String, SyncResourceSpecification> resourceSpecifications) {
+		this.resourceSpecifications = resourceSpecifications;
+		return this;
+	}
+
+	public SyncToolGroupServerConfig setResourceTemplateSpecifications(
+			Map<String, McpServerFeatures.SyncResourceTemplateSpecification> resourceTemplateSpecifications) {
+		this.resourceTemplateSpecifications = resourceTemplateSpecifications;
+		return this;
+	}
+
+	public SyncToolGroupServerConfig setServerCompletions(
+			Map<McpSchema.CompleteReference, McpServerFeatures.SyncCompletionSpecification> serverCompletions) {
+		this.serverCompletions = serverCompletions;
+		return this;
+	}
+
+	public SyncToolGroupServerConfig setImmediateExecution(Boolean immediateExecution) {
+		this.immediateExecution = immediateExecution;
+		return this;
+	}
 
 	private ServerCapabilities serverCapabilities;
 	private Map<String, SyncPromptSpecification> promptSpecifications;
@@ -39,23 +97,27 @@ public class SpringSyncToolGroupServerConfig extends ToolGroupServerConfig<McpSe
 	private Map<McpSchema.CompleteReference, McpServerFeatures.SyncCompletionSpecification> serverCompletions;
 	private Boolean immediateExecution = false;
 
-	public SpringSyncToolGroupServerConfig(String serverName, String serverVersion,
+	public SyncToolGroupServerConfig(String serverName, String serverTitle, String serverVersion,
 			McpServerTransportProvider transport, Long requestTimeout, String serverInstructions) {
-		super(serverName, serverVersion, transport, requestTimeout, serverInstructions);
+		super(serverName, serverTitle, serverVersion, transport, requestTimeout, serverInstructions);
 	}
 
-	public SpringSyncToolGroupServerConfig(McpServerTransportProvider transport) {
+	public SyncToolGroupServerConfig(String serverName, String serverTitle, String serverVersion,
+			McpServerTransportProvider transport) {
+		super(serverName, serverTitle, serverVersion, transport);
+	}
+
+	public SyncToolGroupServerConfig(McpServerTransportProvider transport) {
 		super(transport);
 	}
 
-	public SpringSyncToolGroupServerConfig(String serverName, String serverVersion,
+	public SyncToolGroupServerConfig(String serverName, String serverVersion,
 			McpServerTransportProvider transport) {
 		super(serverName, serverVersion, transport);
 	}
 
-
 	@SuppressWarnings("unchecked")
-	public SpringSyncToolGroupServerConfig(Map<String, Object> properties) {
+	public SyncToolGroupServerConfig(Map<String, Object> properties) {
 		super(properties);
 		this.serverCapabilities = (ServerCapabilities) properties.get(AbstractToolGroupServerImpl.SERVER_CAPABILITIES);
 		if (serverCapabilities == null) {
@@ -76,8 +138,7 @@ public class SpringSyncToolGroupServerConfig extends ToolGroupServerConfig<McpSe
 		if (rtSpecsList != null) {
 			serverCapabilities = serverCapabilities.mutate().resources(true, true).build();
 			for (var resourceTemplate : rtSpecsList) {
-				resourceTemplateSpecifications.put(resourceTemplate.resourceTemplate().uriTemplate(),
-						resourceTemplate);
+				resourceTemplateSpecifications.put(resourceTemplate.resourceTemplate().uriTemplate(), resourceTemplate);
 			}
 		}
 		this.promptSpecifications = (Map<String, SyncPromptSpecification>) properties
@@ -106,7 +167,8 @@ public class SpringSyncToolGroupServerConfig extends ToolGroupServerConfig<McpSe
 		toolSpecifications = (toolSpecifications == null) ? List.of() : toolSpecifications;
 		uriTemplateManagerFactory = (McpUriTemplateManagerFactory) properties
 				.get(ToolGroupServer.SERVER_URI_TEMPLATE_MANAGER_FACTORY);
-		jsonSchemaValidator = (JsonSchemaValidator) properties.get(AbstractToolGroupServerImpl.SERVER_JSONSCHEMAVALIDATOR);
+		jsonSchemaValidator = (JsonSchemaValidator) properties
+				.get(AbstractToolGroupServerImpl.SERVER_JSONSCHEMAVALIDATOR);
 		Boolean im = (Boolean) properties.get(AbstractToolGroupServerImpl.SERVER_IMMEDIATE_EXECUTION);
 		if (im != null) {
 			this.immediateExecution = im;
@@ -114,10 +176,9 @@ public class SpringSyncToolGroupServerConfig extends ToolGroupServerConfig<McpSe
 	}
 
 	protected McpServerFeatures.Sync buildServerFeatures() {
-		return new McpServerFeatures.Sync(
-				new McpSchema.Implementation(serverName, serverVersion),
-				serverCapabilities, toolSpecifications, resourceSpecifications, resourceTemplateSpecifications,
-				promptSpecifications, serverCompletions, rootsChangeConsumers, serverInstructions);
+		return new McpServerFeatures.Sync(new McpSchema.Implementation(serverName, serverVersion), serverCapabilities,
+				toolSpecifications, resourceSpecifications, resourceTemplateSpecifications, promptSpecifications,
+				serverCompletions, rootsChangeConsumers, serverInstructions);
 	}
 
 	protected McpAsyncToolGroupServer buildAsyncToolGroupServer() {

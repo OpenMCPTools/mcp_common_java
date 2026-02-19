@@ -101,26 +101,27 @@ public abstract class AbstractToolGroupServer<ServerType, ToolSpecType, ToolType
 			BiFunction<ExchangeType, CallToolRequestType, CallToolResultType> callHandler);
 
 	@Override
-    public void removeTools(List<String> toolNames) {
+	public void removeTools(List<String> toolNames) {
 		removeToolsByName(toolNames);
-    }
+	}
 
 	protected abstract List<Tool> addSpecifications(List<ToolSpecification<ToolSpecType>> specs);
-	
+
 	@Override
-	public List<Tool> addToolGroups(Map<Object,Class<?>[]> implementerToTypes) {
-		
+	public List<Tool> addToolGroups(Map<Object, Class<?>[]> implementerToTypes) {
+
 		List<ToolSpecification<ToolSpecType>> specs = implementerToTypes.entrySet().stream().map((e) -> {
 			return this.toolGroupProvider.getToolGroupSpecifications(e.getKey(), e.getValue());
 		}).flatMap(List::stream).collect(Collectors.toList());
-				
+
 		return addSpecifications(specs);
 	}
 
 	@Override
 	public List<Tool> addToolInvokers(List<ToolImplementation> toolInvokers) {
 		List<ToolSpecification<ToolSpecType>> specs = toolInvokers.stream().map(ti -> {
-			return this.toolGroupProvider.getToolSpecification(ti.getTool(), ti.getMethod(), ti.getInstance(), ti.getOutputSchema());
+			return this.toolGroupProvider.getToolSpecification(ti.getTool(), ti.getMethod(), ti.getInstance(),
+					ti.getOutputSchema());
 		}).collect(Collectors.toList());
 
 		return addSpecifications(specs);

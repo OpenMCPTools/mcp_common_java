@@ -1,8 +1,6 @@
-package org.openmcptools.common.server.toolgroup;
+package org.openmcptools.common.server;
 
 import java.lang.reflect.Method;
-
-import org.openmcptools.common.server.OutputSchemaGenerator;
 
 public abstract class AbstractOutputSchemaGenerator<TypeType> implements OutputSchemaGenerator {
 

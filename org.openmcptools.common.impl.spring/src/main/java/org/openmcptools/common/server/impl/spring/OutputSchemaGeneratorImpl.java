@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Optional;
 
-import org.openmcptools.common.server.toolgroup.AbstractOutputSchemaGenerator;
+import org.openmcptools.common.server.AbstractOutputSchemaGenerator;
 import org.springaicommunity.mcp.method.tool.ReactiveUtils;
 import org.springaicommunity.mcp.method.tool.utils.ClassUtils;
 import org.springaicommunity.mcp.method.tool.utils.JsonSchemaGenerator;

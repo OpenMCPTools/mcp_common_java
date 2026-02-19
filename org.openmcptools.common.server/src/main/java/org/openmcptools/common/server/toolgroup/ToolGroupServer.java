@@ -8,8 +8,9 @@ import org.openmcptools.common.model.Tool;
 
 public interface ToolGroupServer<ServerType> extends Closeable {
 
-	static final String SERVER_PREFIX = ToolGroupServer.class.getName();
+	public static final String SERVER_PREFIX = ToolGroupServer.class.getName();
 	public static final String SERVER_NAME = SERVER_PREFIX + ".serverName";
+	public static final String SERVER_TITLE = SERVER_PREFIX + ".serverTitle";
 	public static final String SERVER_VERSION = SERVER_PREFIX + ".serverVersion";
 	public static final String SERVER_TRANSPORT = SERVER_PREFIX + ".serverTransport";
 	public static final String SERVER_CAPABILITIES = SERVER_PREFIX + ".serverCapabilities";
@@ -22,8 +23,7 @@ public interface ToolGroupServer<ServerType> extends Closeable {
 	public static final String SERVER_PROMPT_SPECS = SERVER_PREFIX + ".promptSpecifications";
 	public static final String SERVER_REQUEST_DURATION = SERVER_PREFIX + ".requestDuration";
 	public static final String SERVER_RESOURCE_SPECS = SERVER_PREFIX + ".resourceSpecifications";
-	public static final String SERVER_RESOURCE_TEMPLATE_SPECS = SERVER_PREFIX
-			+ ".resourceTemplateSpecifications";
+	public static final String SERVER_RESOURCE_TEMPLATE_SPECS = SERVER_PREFIX + ".resourceTemplateSpecifications";
 	public static final String SERVER_TOOLS_SPECS = SERVER_PREFIX + ".toolSpecifications";
 	public static final String SERVER_ROOTS_CHANGE_CONSUMERS = SERVER_PREFIX + "rootsChangeConsumers";
 
@@ -34,14 +34,14 @@ public interface ToolGroupServer<ServerType> extends Closeable {
 
 	void removeTools(List<String> toolNames);
 
-	List<Tool> addToolGroups(Map<Object,Class<?>[]> implementerToTypes);
-	
-	default List<Tool> addToolGroup(Object instance, Class<?>...classes) {
-		return addToolGroups(Map.of(instance,classes));
+	List<Tool> addToolGroups(Map<Object, Class<?>[]> implementerToTypes);
+
+	default List<Tool> addToolGroup(Object instance, Class<?>... classes) {
+		return addToolGroups(Map.of(instance, classes));
 	}
-	
+
 	List<Tool> addToolInvokers(List<ToolImplementation> toolInvokers);
-	
+
 	ServerType getServer();
-	
+
 }

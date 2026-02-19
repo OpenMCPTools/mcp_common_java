@@ -19,16 +19,69 @@ import io.modelcontextprotocol.server.McpServerFeatures.AsyncResourceSpecificati
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncResourceTemplateSpecification;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncToolSpecification;
 import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpServerTransportProvider;
 import io.modelcontextprotocol.spec.McpSchema.Root;
 import io.modelcontextprotocol.spec.McpSchema.ServerCapabilities;
+import io.modelcontextprotocol.spec.McpServerTransportProvider;
 import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
 import reactor.core.publisher.Mono;
 
-public class SpringAsyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTransportProvider> {
+public class AsyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTransportProvider> {
 
-	public static final String SERVER_FACTORY_NAME = "SpringAsyncToolGroupServer";
+	public static final String SERVER_FACTORY_NAME = "AsyncToolGroupServerFactory";
 	public static final String SERVER_CF_TARGET = "(component.factory=" + SERVER_FACTORY_NAME + ")";
+
+	public AsyncToolGroupServerConfig setServerCapabilities(ServerCapabilities serverCapabilities) {
+		this.serverCapabilities = serverCapabilities;
+		return this;
+	}
+
+	public AsyncToolGroupServerConfig setPromptSpecifications(Map<String, AsyncPromptSpecification> promptSpecifications) {
+		this.promptSpecifications = promptSpecifications;
+		return this;
+	}
+
+	public AsyncToolGroupServerConfig setRootsChangeConsumers(
+			List<BiFunction<McpAsyncServerExchange, List<Root>, Mono<Void>>> rootsChangeConsumers) {
+		this.rootsChangeConsumers = rootsChangeConsumers;
+		return this;
+	}
+
+	public AsyncToolGroupServerConfig setJsonMapper(McpJsonMapper jsonMapper) {
+		this.jsonMapper = jsonMapper;
+		return this;
+	}
+
+	public AsyncToolGroupServerConfig setToolSpecifications(List<AsyncToolSpecification> toolSpecifications) {
+		this.toolSpecifications = toolSpecifications;
+		return this;
+	}
+
+	public AsyncToolGroupServerConfig setUriTemplateManagerFactory(McpUriTemplateManagerFactory uriTemplateManagerFactory) {
+		this.uriTemplateManagerFactory = uriTemplateManagerFactory;
+		return this;
+	}
+
+	public AsyncToolGroupServerConfig setJsonSchemaValidator(JsonSchemaValidator jsonSchemaValidator) {
+		this.jsonSchemaValidator = jsonSchemaValidator;
+		return this;
+	}
+
+	public AsyncToolGroupServerConfig setResourceSpecifications(Map<String, AsyncResourceSpecification> resourceSpecifications) {
+		this.resourceSpecifications = resourceSpecifications;
+		return this;
+	}
+
+	public AsyncToolGroupServerConfig setResourceTemplateSpecifications(
+			Map<String, McpServerFeatures.AsyncResourceTemplateSpecification> resourceTemplateSpecifications) {
+		this.resourceTemplateSpecifications = resourceTemplateSpecifications;
+		return this;
+	}
+
+	public AsyncToolGroupServerConfig setServerCompletions(
+			Map<McpSchema.CompleteReference, McpServerFeatures.AsyncCompletionSpecification> serverCompletions) {
+		this.serverCompletions = serverCompletions;
+		return this;
+	}
 
 	private ServerCapabilities serverCapabilities;
 	private Map<String, AsyncPromptSpecification> promptSpecifications;
@@ -41,22 +94,27 @@ public class SpringAsyncToolGroupServerConfig extends ToolGroupServerConfig<McpS
 	private Map<String, McpServerFeatures.AsyncResourceTemplateSpecification> resourceTemplateSpecifications;
 	private Map<McpSchema.CompleteReference, McpServerFeatures.AsyncCompletionSpecification> serverCompletions;
 
-	public SpringAsyncToolGroupServerConfig(String serverName, String serverVersion,
+	public AsyncToolGroupServerConfig(String serverName, String serverTitle, String serverVersion,
 			McpServerTransportProvider transport, Long requestTimeout, String serverInstructions) {
-		super(serverName, serverVersion, transport, requestTimeout, serverInstructions);
+		super(serverName, serverTitle, serverVersion, transport, requestTimeout, serverInstructions);
 	}
 
-	public SpringAsyncToolGroupServerConfig(McpServerTransportProvider transport) {
+	public AsyncToolGroupServerConfig(McpServerTransportProvider transport) {
 		super(transport);
 	}
 
-	public SpringAsyncToolGroupServerConfig(String serverName, String serverVersion,
+	public AsyncToolGroupServerConfig(String serverName, String serverTitle, String serverVersion,
+			McpServerTransportProvider transport) {
+		super(serverName, serverTitle, serverVersion, transport);
+	}
+
+	public AsyncToolGroupServerConfig(String serverName, String serverVersion,
 			McpServerTransportProvider transport) {
 		super(serverName, serverVersion, transport);
 	}
 
 	@SuppressWarnings("unchecked")
-	public SpringAsyncToolGroupServerConfig(Map<String, Object> properties) {
+	public AsyncToolGroupServerConfig(Map<String, Object> properties) {
 		super(properties);
 		this.serverCapabilities = (ServerCapabilities) properties.get(ToolGroupServer.SERVER_CAPABILITIES);
 		if (serverCapabilities == null) {
@@ -77,8 +135,7 @@ public class SpringAsyncToolGroupServerConfig extends ToolGroupServerConfig<McpS
 		if (rtSpecsList != null) {
 			serverCapabilities = serverCapabilities.mutate().resources(true, true).build();
 			for (var resourceTemplate : rtSpecsList) {
-				resourceTemplateSpecifications.put(resourceTemplate.resourceTemplate().uriTemplate(),
-						resourceTemplate);
+				resourceTemplateSpecifications.put(resourceTemplate.resourceTemplate().uriTemplate(), resourceTemplate);
 			}
 		}
 		this.promptSpecifications = (Map<String, AsyncPromptSpecification>) properties
@@ -109,12 +166,12 @@ public class SpringAsyncToolGroupServerConfig extends ToolGroupServerConfig<McpS
 		toolSpecifications = (toolSpecifications == null) ? List.of() : toolSpecifications;
 		uriTemplateManagerFactory = (McpUriTemplateManagerFactory) properties
 				.get(ToolGroupServer.SERVER_URI_TEMPLATE_MANAGER_FACTORY);
-		jsonSchemaValidator = (JsonSchemaValidator) properties.get(AbstractToolGroupServerImpl.SERVER_JSONSCHEMAVALIDATOR);
+		jsonSchemaValidator = (JsonSchemaValidator) properties
+				.get(AbstractToolGroupServerImpl.SERVER_JSONSCHEMAVALIDATOR);
 	}
 
 	public McpServerFeatures.Async buildAsyncServerFeatures() {
-		return new McpServerFeatures.Async(
-				new McpSchema.Implementation(serverName, serverVersion),
+		return new McpServerFeatures.Async(new McpSchema.Implementation(serverName, serverTitle, serverVersion),
 				this.serverCapabilities, toolSpecifications, resourceSpecifications, resourceTemplateSpecifications,
 				promptSpecifications, serverCompletions, rootsChangeConsumers, serverInstructions);
 	}
