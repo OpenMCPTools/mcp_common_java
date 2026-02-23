@@ -4,8 +4,8 @@ import java.lang.reflect.Method;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
+import org.openmcptools.common.impl.spring.ToolConverter;
 import org.openmcptools.common.model.Tool;
-import org.openmcptools.common.model.ToolConverter;
 import org.openmcptools.common.toolgroup.server.ToolProvider;
 import org.openmcptools.common.toolgroup.server.ToolSpecification;
 import org.springaicommunity.mcp.McpPredicates;
@@ -23,7 +23,7 @@ public class AsyncToolGroupProviderImpl
 		extends AbstractToolGroupProviderImpl<AsyncToolSpecification, McpAsyncServerExchange, Mono<CallToolResult>> {
 
 	public AsyncToolGroupProviderImpl(ToolProvider toolProvider,
-			ToolConverter<io.modelcontextprotocol.spec.McpSchema.Tool> toolConverter, boolean generateOutputSchema) {
+			ToolConverter toolConverter, boolean generateOutputSchema) {
 		super(toolProvider, toolConverter, generateOutputSchema);
 	}
 

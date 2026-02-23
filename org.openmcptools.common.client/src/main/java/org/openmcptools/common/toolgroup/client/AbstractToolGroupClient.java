@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
+import org.openmcptools.common.model.Converter;
 import org.openmcptools.common.model.Group;
 import org.openmcptools.common.model.Tool;
-import org.openmcptools.common.model.ToolConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ public abstract class AbstractToolGroupClient<ClientType, ToolType> implements T
 	protected static Logger logger = LoggerFactory.getLogger(AbstractToolGroupClient.class);
 
 	protected final List<Tool> tools;
-	protected ToolConverter<ToolType> toolConverter;
+	protected Converter<Tool, ToolType> toolConverter;
 	protected ClientType client;
 
 	public AbstractToolGroupClient() {
@@ -39,7 +39,7 @@ public abstract class AbstractToolGroupClient<ClientType, ToolType> implements T
 		return removableTools;
 	}
 
-	public ToolConverter<ToolType> getToolConverter() {
+	public Converter<Tool, ToolType> getToolConverter() {
 		return toolConverter;
 	}
 

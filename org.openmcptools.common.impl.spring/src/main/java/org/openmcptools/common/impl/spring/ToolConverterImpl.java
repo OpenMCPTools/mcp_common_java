@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.openmcptools.common.model.Group;
 import org.openmcptools.common.model.Tool;
 import org.openmcptools.common.model.ToolAnnotations;
-import org.openmcptools.common.model.ToolConverter;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -20,7 +19,7 @@ import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.JsonSchema;
 
 @Component(immediate = true, service = ToolConverter.class)
-public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.spec.McpSchema.Tool> {
+public class ToolConverterImpl implements ToolConverter {
 
 	private final McpJsonMapper jsonMapper;
 
@@ -38,7 +37,7 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 	}
 
 	@Override
-	public io.modelcontextprotocol.spec.McpSchema.Tool convertFromTool(Tool tool) {
+	public io.modelcontextprotocol.spec.McpSchema.Tool convertFrom(Tool tool) {
 		McpSchema.Tool.Builder builder = new McpSchema.Tool.Builder();
 		builder.name(tool.getName());
 		builder.title(tool.getTitle());
@@ -104,7 +103,7 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 	}
 
 	@Override
-	public Tool convertToTool(io.modelcontextprotocol.spec.McpSchema.Tool tool) {
+	public Tool convertTo(io.modelcontextprotocol.spec.McpSchema.Tool tool) {
 		Tool tn = new Tool(tool.name());
 		tn.setTitle(tool.title());
 		tn.setDescription(tool.description());

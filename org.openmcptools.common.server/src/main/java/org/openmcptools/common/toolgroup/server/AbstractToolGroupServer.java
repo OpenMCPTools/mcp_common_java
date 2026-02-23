@@ -10,7 +10,6 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.openmcptools.common.model.Tool;
-import org.openmcptools.common.model.ToolConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +21,6 @@ public abstract class AbstractToolGroupServer<ServerType, ToolSpecType, ToolType
 	protected final Map<Tool, BiFunction<ExchangeType, CallToolRequestType, CallToolResultType>> toolToBiFunctionMap;
 	protected final CopyOnWriteArrayList<ToolSpecType> toolSpecs;
 
-	protected ToolConverter<ToolType> toolConverter;
 	protected ToolGroupProvider<ToolSpecType, ExchangeType, CallToolRequestType, CallToolResultType> toolGroupProvider;
 	protected ServerType server;
 

@@ -8,6 +8,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import org.openmcptools.common.impl.spring.ToolConverter;
 import org.openmcptools.common.toolgroup.server.AbstractToolGroupServer;
 import org.openmcptools.common.toolgroup.server.ToolGroupServer;
 import org.openmcptools.common.toolgroup.server.ToolSpecification;
@@ -32,6 +33,12 @@ public abstract class AbstractToolGroupServerImpl<ServerType, SpecificationType,
 		extends
 		AbstractToolGroupServer<ServerType, SpecificationType, Tool, ExchangeType, CallToolRequest, CallToolResultType> {
 
+	protected ToolConverter toolConverter;
+
+	protected void setToolConverter(ToolConverter toolConverter) {
+		this.toolConverter = toolConverter;
+	}
+	
 	protected Tool convertTool(org.openmcptools.common.model.Tool tool) {
 		return this.convertTool(tool);
 	}

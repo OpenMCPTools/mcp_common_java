@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openmcptools.common.client.InitializeResult;
-import org.openmcptools.common.model.ToolConverter;
+import org.openmcptools.common.impl.spring.ToolConverter;
 import org.openmcptools.common.toolgroup.client.AsyncToolGroupClient;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -23,7 +23,7 @@ public class AsyncToolGroupClientImpl extends
 	}
 
 	@Reference
-	void setToolConverter(ToolConverter<io.modelcontextprotocol.spec.McpSchema.Tool> toolConverter) {
+	void setToolConverter(ToolConverter toolConverter) {
 		this.toolConverter = toolConverter;
 	}
 
@@ -56,7 +56,7 @@ public class AsyncToolGroupClientImpl extends
 		InitializeResult result = new InitializeResult(ir.protocolVersion(), i.name(), i.version(), ir.instructions(),
 				ir.meta(), new SpringServerCapabilities(ir.capabilities()));
 		List<org.openmcptools.common.model.Tool> aTools = toolConverter
-				.convertToTools(this.client.listTools().block().tools());
+				.convertTo(this.client.listTools().block().tools());
 		addToolsLocal(aTools);
 		this.localClient.fireToolGroupClientAddEvent(aTools);
 		return result;

@@ -58,7 +58,7 @@ public abstract class AbstractToolGroupClientImpl<ClientType> extends AbstractTo
 
 		@Override
 		public List<org.openmcptools.common.model.Tool> updateLocal(List<Tool> addedTools, List<String> removedTools) {
-			List<org.openmcptools.common.model.Tool> aTools = toolConverter.convertToTools(addedTools);
+			List<org.openmcptools.common.model.Tool> aTools = toolConverter.convertTo(addedTools);
 			addToolsLocal(aTools);
 			fireToolGroupClientAddEvent(aTools);
 			List<org.openmcptools.common.model.Tool> rTools = removeToolsLocal(removedTools);

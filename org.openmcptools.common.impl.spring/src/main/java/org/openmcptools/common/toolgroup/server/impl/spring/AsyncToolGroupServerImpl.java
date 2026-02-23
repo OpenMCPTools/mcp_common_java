@@ -3,8 +3,8 @@ package org.openmcptools.common.toolgroup.server.impl.spring;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import org.openmcptools.common.impl.spring.ToolConverter;
 import org.openmcptools.common.model.Tool;
-import org.openmcptools.common.model.ToolConverter;
 import org.openmcptools.common.server.OutputSchemaGenerator;
 import org.openmcptools.common.server.impl.spring.InputSchemaGeneratorImpl;
 import org.openmcptools.common.server.impl.spring.OutputSchemaGeneratorImpl;
@@ -33,8 +33,8 @@ public class AsyncToolGroupServerImpl extends
 	}
 
 	@Reference
-	void setToolConverter(ToolConverter<io.modelcontextprotocol.spec.McpSchema.Tool> toolConverter) {
-		this.toolConverter = toolConverter;
+	protected void setToolConverter(ToolConverter toolConverter) {
+		super.setToolConverter(toolConverter);
 	}
 
 	@Override
