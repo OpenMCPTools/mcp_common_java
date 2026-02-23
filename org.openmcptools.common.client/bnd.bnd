@@ -3,3 +3,6 @@
 	slf4j.api;version='2.0',\
 	org.osgi.annotation.bundle,\
 	org.osgi.annotation.versioning
+
+Bundle-Version:             1.0.1.${tstamp}
+	

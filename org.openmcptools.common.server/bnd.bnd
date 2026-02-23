@@ -4,3 +4,6 @@
 	org.openmcptools.common;version=snapshot,\
 	org.openmcptools.annotation,\
 	slf4j.api
+	
+Bundle-Version:             1.0.1.${tstamp}
+	

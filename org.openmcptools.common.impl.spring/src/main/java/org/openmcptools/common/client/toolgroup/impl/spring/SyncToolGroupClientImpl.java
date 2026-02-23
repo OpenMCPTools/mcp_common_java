@@ -6,14 +6,12 @@ import java.util.Map;
 import org.openmcptools.common.client.InitializeResult;
 import org.openmcptools.common.model.ToolConverter;
 import org.openmcptools.common.toolgroup.client.SyncToolGroupClient;
-import org.openmcptools.common.toolgroup.client.ToolGroupClientListener;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 import io.modelcontextprotocol.spec.McpSchema.Implementation;
-import io.modelcontextprotocol.spec.McpSchema.ListToolsResult;
 
 @Component(factory = "SyncToolGroupClientFactory", service = SyncToolGroupClient.class)
 public class SyncToolGroupClientImpl extends AbstractToolGroupClientImpl<McpSyncToolGroupClient>
@@ -36,16 +34,10 @@ public class SyncToolGroupClientImpl extends AbstractToolGroupClientImpl<McpSync
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Activate
 	protected void activate(Map<String, Object> properties) {
-		List<ToolGroupClientListener> clientListeners = (List<ToolGroupClientListener>) properties
-				.get(CLIENT_LISTENERS);
-		if (clientListeners != null) {
-			this.clientListeners.addAll(clientListeners);
-		}
-		this.client = new SyncToolGroupClientConfig(properties).buildMcpSyncToolGroupClient(this.clientListeners,
-				new SpringLocalToolGroupClient());
+		this.localClient = new SpringLocalToolGroupClient();
+		this.client = new SyncToolGroupClientConfig(properties).buildMcpSyncToolGroupClient(this.localClient);
 	}
 
 	@Deactivate
@@ -62,8 +54,9 @@ public class SyncToolGroupClientImpl extends AbstractToolGroupClientImpl<McpSync
 		Implementation i = ir.serverInfo();
 		InitializeResult result = new InitializeResult(ir.protocolVersion(), i.name(), i.version(), ir.instructions(),
 				ir.meta(), new SpringServerCapabilities(ir.capabilities()));
-		ListToolsResult r = this.client.listTools();
-		addToolsLocal(toolConverter.convertToTools(r.tools()));
+		List<org.openmcptools.common.model.Tool> aTools = toolConverter.convertToTools(this.client.listTools().tools());
+		addToolsLocal(aTools);
+		this.localClient.fireToolGroupClientAddEvent(aTools);
 		return result;
 	}
 

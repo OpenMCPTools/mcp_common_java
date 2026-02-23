@@ -82,11 +82,11 @@ public class McpAsyncToolGroupClient extends McpAsyncClient {
 				List<Tool> addedMcpTools = new ArrayList<Tool>();
 				List<String> removedTools = new ArrayList<String>();
 				Map<String, Object> notificationMap = (Map<String, Object>) params;
-				List<Map<String, Object>> events = (List<Map<String, Object>>) notificationMap
-						.get(PrimitiveUpdateConfig.NOTIFICATION_TOPIC);
+				List<Map<String, Object>> eventMaps = (List<Map<String, Object>>) notificationMap
+						.get(PrimitiveUpdateConfig.PRIMITIVE_UPDATE_EVENTS_KEY);
 				try {
-					if (events != null) {
-						events.forEach(m -> {
+					if (eventMaps != null) {
+						eventMaps.forEach(m -> {
 							PrimitiveUpdateEvent e = PrimitiveUpdateEvent.fromMap(m);
 							if (e.eventType == EventType.PUT) {
 								addedMcpTools.add(createTool(e));

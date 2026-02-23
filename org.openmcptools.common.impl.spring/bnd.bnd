@@ -12,3 +12,6 @@
 	reactive-streams,\
 	org.openmcptools.extensions.update,\
 	org.openmcptools.common.client;version=snapshot
+	
+Bundle-Version:             1.0.1.${tstamp}
+	

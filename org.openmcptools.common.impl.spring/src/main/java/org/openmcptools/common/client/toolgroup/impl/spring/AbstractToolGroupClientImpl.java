@@ -6,12 +6,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.openmcptools.common.client.ServerCapabilities;
 import org.openmcptools.common.toolgroup.client.AbstractToolGroupClient;
 import org.openmcptools.common.toolgroup.client.ToolGroupClientListener;
+import org.openmcptools.common.toolgroup.client.ToolGroupClientListener.EventType;
 
 import io.modelcontextprotocol.spec.McpSchema.Tool;
 
 public abstract class AbstractToolGroupClientImpl<ClientType> extends AbstractToolGroupClient<ClientType, Tool> {
 
-	protected List<ToolGroupClientListener> clientListeners = new CopyOnWriteArrayList<ToolGroupClientListener>();
+	protected SpringLocalToolGroupClient localClient;
 
 	protected class SpringServerCapabilities extends ServerCapabilities {
 
@@ -28,11 +29,41 @@ public abstract class AbstractToolGroupClientImpl<ClientType> extends AbstractTo
 
 	protected class SpringLocalToolGroupClient implements LocalToolGroupClient<Tool> {
 
+		protected final List<ToolGroupClientListener> clientListeners;
+
+		public SpringLocalToolGroupClient() {
+			this.clientListeners = new CopyOnWriteArrayList<ToolGroupClientListener>();
+		}
+
+		@Override
+		public void setToolGroupClientListeners(List<ToolGroupClientListener> clientListeners) {
+			this.clientListeners.addAll(clientListeners);
+		}
+
+		protected void fireToolGroupClientAddEvent(List<org.openmcptools.common.model.Tool> tools) {
+			List.copyOf(clientListeners).forEach(tgcl -> {
+				if (tools.size() > 0) {
+					tgcl.handleClientUpdateEvent(getClient(), EventType.ADD_TOOLS, tools);
+				}
+			});
+		}
+
+		protected void fireToolGroupClientRemoveEvent(List<org.openmcptools.common.model.Tool> tools) {
+			List.copyOf(clientListeners).forEach(tgcl -> {
+				if (tools.size() > 0) {
+					tgcl.handleClientUpdateEvent(getClient(), EventType.REMOVE_TOOLS, tools);
+				}
+			});
+		}
+
 		@Override
 		public List<org.openmcptools.common.model.Tool> updateLocal(List<Tool> addedTools, List<String> removedTools) {
-			toolConverter.convertToTools(addedTools);
-			addToolsLocal(toolConverter.convertToTools(addedTools));
-			return removeToolsLocal(removedTools);
+			List<org.openmcptools.common.model.Tool> aTools = toolConverter.convertToTools(addedTools);
+			addToolsLocal(aTools);
+			fireToolGroupClientAddEvent(aTools);
+			List<org.openmcptools.common.model.Tool> rTools = removeToolsLocal(removedTools);
+			fireToolGroupClientRemoveEvent(rTools);
+			return rTools;
 		}
 
 	}

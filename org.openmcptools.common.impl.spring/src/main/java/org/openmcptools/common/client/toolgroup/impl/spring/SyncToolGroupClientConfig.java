@@ -8,17 +8,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.openmcptools.common.toolgroup.client.ToolGroupClient;
-import org.openmcptools.common.toolgroup.client.ToolGroupClientConfig;
-import org.openmcptools.common.toolgroup.client.ToolGroupClientListener;
-
 import io.modelcontextprotocol.client.McpClientFeatures;
 import io.modelcontextprotocol.common.McpTransportContext;
-import io.modelcontextprotocol.json.McpJsonMapper;
-import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
 import io.modelcontextprotocol.spec.McpClientTransport;
 import io.modelcontextprotocol.spec.McpSchema;
-import io.modelcontextprotocol.spec.McpSchema.ClientCapabilities;
 import io.modelcontextprotocol.spec.McpSchema.ElicitRequest;
 import io.modelcontextprotocol.spec.McpSchema.ElicitResult;
 import io.modelcontextprotocol.spec.McpSchema.Implementation;
@@ -27,17 +20,12 @@ import io.modelcontextprotocol.spec.McpSchema.ProgressNotification;
 import io.modelcontextprotocol.spec.McpSchema.Prompt;
 import io.modelcontextprotocol.spec.McpSchema.Resource;
 import io.modelcontextprotocol.spec.McpSchema.ResourceContents;
-import io.modelcontextprotocol.spec.McpSchema.Root;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
-import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
 
-public class SyncToolGroupClientConfig extends ToolGroupClientConfig<McpClientTransport> {
+public class SyncToolGroupClientConfig extends AbstractToolGroupClientConfig {
 
 	public static final String CLIENT_FACTORY_NAME = "SyncToolGroupClientFactory";
 	public static final String CLIENT_CF_TARGET = "(component.factory=" + CLIENT_FACTORY_NAME + ")";
-
-	public static final Long DEFAULT_INITIALIZATION_TIMEOUT = (Long) Long.parseLong(
-			System.getProperty(SyncToolGroupClientConfig.class.getName() + ".defaultInitializationTimeout", "30"));
 
 	public SyncToolGroupClientConfig(String serverName, String serverVersion, McpClientTransport transport,
 			Long requestTimeout) {
@@ -55,16 +43,6 @@ public class SyncToolGroupClientConfig extends ToolGroupClientConfig<McpClientTr
 
 	public SyncToolGroupClientConfig(McpClientTransport transport) {
 		super(transport, DEFAULT_CLIENT_REQUEST_TIMEOUT);
-	}
-
-	public SyncToolGroupClientConfig setClientCapabilities(McpSchema.ClientCapabilities clientCapabilities) {
-		this.clientCapabilities = clientCapabilities;
-		return this;
-	}
-
-	public SyncToolGroupClientConfig setRootsChangeConsumers(Map<String, McpSchema.Root> rootsChangeConsumers) {
-		this.rootsChangeConsumers = rootsChangeConsumers;
-		return this;
 	}
 
 	public SyncToolGroupClientConfig setToolsChangeConsumers(
@@ -115,39 +93,11 @@ public class SyncToolGroupClientConfig extends ToolGroupClientConfig<McpClientTr
 		return this;
 	}
 
-	public SyncToolGroupClientConfig setEnableCallToolSchemaCaching(Boolean enableCallToolSchemaCaching) {
-		this.enableCallToolSchemaCaching = enableCallToolSchemaCaching;
-		return this;
-	}
-
-	public SyncToolGroupClientConfig setJsonMapper(McpJsonMapper jsonMapper) {
-		this.jsonMapper = jsonMapper;
-		return this;
-	}
-
-	public SyncToolGroupClientConfig setUriTemplateManagerFactory(
-			McpUriTemplateManagerFactory uriTemplateManagerFactory) {
-		this.uriTemplateManagerFactory = uriTemplateManagerFactory;
-		return this;
-	}
-
-	public SyncToolGroupClientConfig setJsonSchemaValidator(JsonSchemaValidator jsonSchemaValidator) {
-		this.jsonSchemaValidator = jsonSchemaValidator;
-		return this;
-	}
-
-	public SyncToolGroupClientConfig setInitializationTimeout(long initializationTimeout) {
-		this.initializationTimeout = initializationTimeout;
-		return this;
-	}
-
 	public SyncToolGroupClientConfig setContextProvider(Supplier<McpTransportContext> contextProvider) {
 		this.contextProvider = contextProvider;
 		return this;
 	}
 
-	private McpSchema.ClientCapabilities clientCapabilities;
-	private Map<String, McpSchema.Root> rootsChangeConsumers;
 	private List<Consumer<List<McpSchema.Tool>>> toolsChangeConsumers;
 	private List<Consumer<List<McpSchema.Resource>>> resourcesChangeConsumers;
 	private List<Consumer<List<McpSchema.ResourceContents>>> resourcesUpdateConsumers;
@@ -156,50 +106,23 @@ public class SyncToolGroupClientConfig extends ToolGroupClientConfig<McpClientTr
 	private List<Consumer<McpSchema.ProgressNotification>> progressConsumers;
 	private Function<McpSchema.CreateMessageRequest, McpSchema.CreateMessageResult> samplingHandler;
 	private Function<McpSchema.ElicitRequest, McpSchema.ElicitResult> elicitationHandler;
-	private Boolean enableCallToolSchemaCaching = false;
-	private McpJsonMapper jsonMapper;
-	private McpUriTemplateManagerFactory uriTemplateManagerFactory;
-	private JsonSchemaValidator jsonSchemaValidator;
-	private long initializationTimeout = DEFAULT_INITIALIZATION_TIMEOUT;
 	private Supplier<McpTransportContext> contextProvider;
 
 	@SuppressWarnings("unchecked")
 	public SyncToolGroupClientConfig(Map<String, Object> properties) {
 		super(properties);
-		this.clientCapabilities = (ClientCapabilities) properties.get(ToolGroupClient.CLIENT_CAPABILITIES);
-		if (clientCapabilities == null) {
-			clientCapabilities = ClientCapabilities.builder().build();
-		}
-		this.rootsChangeConsumers = (Map<String, Root>) properties.get(ToolGroupClient.CLIENT_ROOTS_CHANGE_CONSUMERS);
-		this.toolsChangeConsumers = (List<Consumer<List<Tool>>>) properties
-				.get(ToolGroupClient.CLIENT_TOOLS_CHANGE_CONSUMERS);
+		this.toolsChangeConsumers = (List<Consumer<List<Tool>>>) properties.get(CLIENT_TOOLS_CHANGE_CONSUMERS);
 		this.resourcesChangeConsumers = (List<Consumer<List<Resource>>>) properties
-				.get(ToolGroupClient.CLIENT_RESOURCES_CHANGE_CONSUMERS);
+				.get(CLIENT_RESOURCES_CHANGE_CONSUMERS);
 		this.resourcesUpdateConsumers = (List<Consumer<List<ResourceContents>>>) properties
-				.get(ToolGroupClient.CLIENT_RESOURCES_UPDATE_CONSUMERS);
-		this.promptsChangeConsumers = (List<Consumer<List<Prompt>>>) properties
-				.get(ToolGroupClient.CLIENT_PROMPT_CHANGE_CONSUMERS);
-		this.loggingConsumers = (List<Consumer<LoggingMessageNotification>>) properties
-				.get(ToolGroupClient.CLIENT_LOGGING_CONSUMERS);
-		this.progressConsumers = (List<Consumer<ProgressNotification>>) properties
-				.get(ToolGroupClient.CLIENT_PROGRESS_CONSUMERS);
+				.get(CLIENT_RESOURCES_UPDATE_CONSUMERS);
+		this.promptsChangeConsumers = (List<Consumer<List<Prompt>>>) properties.get(CLIENT_PROMPT_CHANGE_CONSUMERS);
+		this.loggingConsumers = (List<Consumer<LoggingMessageNotification>>) properties.get(CLIENT_LOGGING_CONSUMERS);
+		this.progressConsumers = (List<Consumer<ProgressNotification>>) properties.get(CLIENT_PROGRESS_CONSUMERS);
 		this.samplingHandler = (Function<McpSchema.CreateMessageRequest, McpSchema.CreateMessageResult>) properties
-				.get(ToolGroupClient.CLIENT_SAMPLING_HANDLER);
-		this.elicitationHandler = (Function<ElicitRequest, ElicitResult>) properties
-				.get(ToolGroupClient.CLIENT_ELICITATION_HANDLER);
-		Boolean sc = (Boolean) properties.get(ToolGroupClient.CLIENT_ENABLE_CALL_TOOL_SCHEMA_CACHING);
-		if (sc != null) {
-			this.enableCallToolSchemaCaching = sc;
-		}
-		jsonMapper = (McpJsonMapper) properties.get(ToolGroupClient.CLIENT_JSONMAPPER);
-		uriTemplateManagerFactory = (McpUriTemplateManagerFactory) properties
-				.get(ToolGroupClient.CLIENT_URI_TEMPLATE_MANAGER_FACTORY);
-		jsonSchemaValidator = (JsonSchemaValidator) properties.get(ToolGroupClient.CLIENT_JSONSCHEMAVALIDATOR);
-		Long initializationTimeout = (Long) properties.get(ToolGroupClient.CLIENT_INITIALIZATION_TIMEOUT);
-		if (initializationTimeout != null) {
-			this.initializationTimeout = initializationTimeout;
-		}
-		contextProvider = (Supplier<McpTransportContext>) properties.get(ToolGroupClient.CLIENT_CONTEXTPROVIDER);
+				.get(CLIENT_SAMPLING_HANDLER);
+		this.elicitationHandler = (Function<ElicitRequest, ElicitResult>) properties.get(CLIENT_ELICITATION_HANDLER);
+		contextProvider = (Supplier<McpTransportContext>) properties.get(CLIENT_CONTEXTPROVIDER);
 		if (contextProvider == null) {
 			contextProvider = () -> {
 				return McpTransportContext.EMPTY;
@@ -214,67 +137,50 @@ public class SyncToolGroupClientConfig extends ToolGroupClientConfig<McpClientTr
 				elicitationHandler, enableCallToolSchemaCaching);
 	}
 
-	protected McpAsyncToolGroupClient buildMcpAsyncToolGroupClient(List<ToolGroupClientListener> listeners,
-			LocalToolGroupClient<Tool> localToolGroupClient) {
+	protected McpAsyncToolGroupClient buildMcpAsyncToolGroupClient(LocalToolGroupClient<Tool> localToolGroupClient) {
 		return new McpAsyncToolGroupClient(transport, Duration.ofSeconds(requestTimeout),
 				Duration.ofSeconds(initializationTimeout), jsonSchemaValidator,
-				McpClientFeatures.Async.fromSync(buildAsyncClientFeatures()), listeners, localToolGroupClient);
+				McpClientFeatures.Async.fromSync(buildAsyncClientFeatures()), this.clientListeners,
+				localToolGroupClient);
 	}
 
-	public McpSyncToolGroupClient buildMcpSyncToolGroupClient(List<ToolGroupClientListener> listeners,
-			LocalToolGroupClient<Tool> localToolGroupClient) {
-		return new McpSyncToolGroupClient(buildMcpAsyncToolGroupClient(listeners, localToolGroupClient),
-				contextProvider);
+	public McpSyncToolGroupClient buildMcpSyncToolGroupClient(LocalToolGroupClient<Tool> localToolGroupClient) {
+		localToolGroupClient.setToolGroupClientListeners(clientListeners);
+		return new McpSyncToolGroupClient(buildMcpAsyncToolGroupClient(localToolGroupClient), contextProvider);
 	}
 
 	@Override
 	public Dictionary<String, Object> asProperties() {
 		Dictionary<String, Object> d = super.asProperties();
-		if (clientCapabilities == null) {
-			clientCapabilities = ClientCapabilities.builder().build();
-		}
-		d.put(ToolGroupClient.CLIENT_CAPABILITIES, clientCapabilities);
-		if (rootsChangeConsumers != null) {
-			d.put(ToolGroupClient.CLIENT_ROOTS_CHANGE_CONSUMERS, rootsChangeConsumers);
-		}
 		if (promptsChangeConsumers != null) {
-			d.put(ToolGroupClient.CLIENT_PROMPT_CHANGE_CONSUMERS, promptsChangeConsumers);
+			d.put(CLIENT_PROMPT_CHANGE_CONSUMERS, promptsChangeConsumers);
 		}
 		if (toolsChangeConsumers != null) {
-			d.put(ToolGroupClient.CLIENT_TOOLS_CHANGE_CONSUMERS, toolsChangeConsumers);
+			d.put(CLIENT_TOOLS_CHANGE_CONSUMERS, toolsChangeConsumers);
 		}
 		if (resourcesChangeConsumers != null) {
-			d.put(ToolGroupClient.CLIENT_RESOURCES_CHANGE_CONSUMERS, resourcesChangeConsumers);
+			d.put(CLIENT_RESOURCES_CHANGE_CONSUMERS, resourcesChangeConsumers);
 		}
 		if (this.resourcesUpdateConsumers != null) {
-			d.put(ToolGroupClient.CLIENT_RESOURCES_UPDATE_CONSUMERS, resourcesUpdateConsumers);
+			d.put(CLIENT_RESOURCES_UPDATE_CONSUMERS, resourcesUpdateConsumers);
 		}
 		if (promptsChangeConsumers != null) {
-			d.put(ToolGroupClient.CLIENT_PROMPT_CHANGE_CONSUMERS, promptsChangeConsumers);
+			d.put(CLIENT_PROMPT_CHANGE_CONSUMERS, promptsChangeConsumers);
 		}
 		if (loggingConsumers != null) {
-			d.put(ToolGroupClient.CLIENT_LOGGING_CONSUMERS, loggingConsumers);
+			d.put(CLIENT_LOGGING_CONSUMERS, loggingConsumers);
 		}
 		if (progressConsumers != null) {
-			d.put(ToolGroupClient.CLIENT_PROGRESS_CONSUMERS, progressConsumers);
+			d.put(CLIENT_PROGRESS_CONSUMERS, progressConsumers);
 		}
 		if (samplingHandler != null) {
-			d.put(ToolGroupClient.CLIENT_SAMPLING_HANDLER, samplingHandler);
+			d.put(CLIENT_SAMPLING_HANDLER, samplingHandler);
 		}
 		if (elicitationHandler != null) {
-			d.put(ToolGroupClient.CLIENT_ELICITATION_HANDLER, elicitationHandler);
-		}
-		if (jsonMapper != null) {
-			d.put(ToolGroupClient.CLIENT_JSONMAPPER, jsonMapper);
-		}
-		if (uriTemplateManagerFactory != null) {
-			d.put(ToolGroupClient.CLIENT_URI_TEMPLATE_MANAGER_FACTORY, uriTemplateManagerFactory);
-		}
-		if (jsonSchemaValidator != null) {
-			d.put(ToolGroupClient.CLIENT_JSONSCHEMAVALIDATOR, jsonSchemaValidator);
+			d.put(CLIENT_ELICITATION_HANDLER, elicitationHandler);
 		}
 		if (contextProvider != null) {
-			d.put(ToolGroupClient.CLIENT_CONTEXTPROVIDER, contextProvider);
+			d.put(CLIENT_CONTEXTPROVIDER, contextProvider);
 		}
 		return d;
 	}

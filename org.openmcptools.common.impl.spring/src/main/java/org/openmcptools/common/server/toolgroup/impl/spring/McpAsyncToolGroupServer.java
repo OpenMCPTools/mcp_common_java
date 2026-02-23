@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openmcptools.extensions.update.FieldValueUpdate;
+import org.openmcptools.extensions.update.PrimitiveUpdateConfig;
 import org.openmcptools.extensions.update.PrimitiveUpdateEvent;
 import org.openmcptools.extensions.update.PrimitiveUpdateEvent.EventType;
 
@@ -44,8 +45,8 @@ public class McpAsyncToolGroupServer extends McpAsyncServer {
 		List<PrimitiveUpdateEvent> toolUpdateEventsCopy = List.copyOf(toolUpdateEvents);
 		toolUpdateEvents.clear();
 		if (toolUpdateEventsCopy.size() > 0) {
-			return this.mcpTransportProvider.notifyClients("notification/tools/updated",
-					Map.of("notification/tools/updated", toolUpdateEventsCopy));
+			return this.mcpTransportProvider.notifyClients(PrimitiveUpdateConfig.NOTIFICATION_TOPIC,
+					Map.of(PrimitiveUpdateConfig.PRIMITIVE_UPDATE_EVENTS_KEY, toolUpdateEventsCopy));
 		} else {
 			return super.notifyToolsListChanged();
 		}

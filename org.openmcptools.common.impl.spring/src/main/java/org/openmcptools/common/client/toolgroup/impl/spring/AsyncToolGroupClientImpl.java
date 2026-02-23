@@ -1,5 +1,6 @@
 package org.openmcptools.common.client.toolgroup.impl.spring;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openmcptools.common.client.InitializeResult;
@@ -11,7 +12,6 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 import io.modelcontextprotocol.spec.McpSchema.Implementation;
-import io.modelcontextprotocol.spec.McpSchema.ListToolsResult;
 
 @Component(factory = "AsyncToolGroupClientFactory", service = AsyncToolGroupClient.class)
 public class AsyncToolGroupClientImpl extends
@@ -37,8 +37,8 @@ public class AsyncToolGroupClientImpl extends
 
 	@Activate
 	protected void activate(Map<String, Object> properties) {
-		this.client = new AsyncToolGroupClientConfig(properties).buildMcpAsyncToolGroupClient(clientListeners,
-				new SpringLocalToolGroupClient());
+		this.localClient = new SpringLocalToolGroupClient();
+		this.client = new AsyncToolGroupClientConfig(properties).buildMcpAsyncToolGroupClient(this.localClient);
 	}
 
 	@Deactivate
@@ -55,8 +55,10 @@ public class AsyncToolGroupClientImpl extends
 		Implementation i = ir.serverInfo();
 		InitializeResult result = new InitializeResult(ir.protocolVersion(), i.name(), i.version(), ir.instructions(),
 				ir.meta(), new SpringServerCapabilities(ir.capabilities()));
-		ListToolsResult r = this.client.listTools().block();
-		addToolsLocal(toolConverter.convertToTools(r.tools()));
+		List<org.openmcptools.common.model.Tool> aTools = toolConverter
+				.convertToTools(this.client.listTools().block().tools());
+		addToolsLocal(aTools);
+		this.localClient.fireToolGroupClientAddEvent(aTools);
 		return result;
 	}
 
