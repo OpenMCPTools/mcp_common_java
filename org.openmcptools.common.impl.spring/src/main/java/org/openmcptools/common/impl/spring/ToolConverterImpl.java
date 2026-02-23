@@ -7,10 +7,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.openmcptools.common.model.Group;
-import org.openmcptools.common.model.GroupConverter;
 import org.openmcptools.common.model.Tool;
 import org.openmcptools.common.model.ToolAnnotations;
-import org.openmcptools.common.model.ToolAnnotationsConverter;
 import org.openmcptools.common.model.ToolConverter;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -26,14 +24,14 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 
 	private final McpJsonMapper jsonMapper;
 
-	private final ToolAnnotationsConverter<io.modelcontextprotocol.spec.McpSchema.ToolAnnotations> toolAnnotationsConverter;
-	private GroupConverter<org.openmcptools.extensions.groups.protocol.Group> groupConverter;
+	private final ToolAnnotationsConverter toolAnnotationsConverter;
+	private GroupConverter groupConverter;
 
 	@SuppressWarnings("static-access")
 	@Activate
 	public ToolConverterImpl(@Reference McpJsonDefaults jsonDefaults,
-			@Reference ToolAnnotationsConverter<io.modelcontextprotocol.spec.McpSchema.ToolAnnotations> toolAnnotationsConverter,
-			@Reference GroupConverter<org.openmcptools.extensions.groups.protocol.Group> groupConverter) {
+			@Reference ToolAnnotationsConverter toolAnnotationsConverter,
+			@Reference GroupConverter groupConverter) {
 		this.jsonMapper = jsonDefaults.getMapper();
 		this.toolAnnotationsConverter = toolAnnotationsConverter;
 		this.groupConverter = groupConverter;
@@ -57,7 +55,7 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 		Map<String, Object> meta = tool.getMeta();
 		if (parentGroups != null) {
 			List<org.openmcptools.extensions.groups.protocol.Group> groups = parentGroups.stream().map(pgn -> {
-				return this.groupConverter.convertFromGroup(pgn);
+				return this.groupConverter.convertFrom(pgn);
 			}).collect(Collectors.toList());
 			if (meta == null) {
 				meta = new HashMap<String, Object>();
@@ -67,7 +65,7 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 		}
 		builder.meta(meta);
 		ToolAnnotations tan = tool.getToolAnnotations();
-		builder.annotations((tan != null) ? this.toolAnnotationsConverter.convertFromToolAnnotations(tan) : null);
+		builder.annotations((tan != null) ? this.toolAnnotationsConverter.convertFrom(tan) : null);
 		return builder.build();
 	}
 
@@ -114,12 +112,12 @@ public class ToolConverterImpl implements ToolConverter<io.modelcontextprotocol.
 		tn.setOutputSchema(generateOutputSchema(tool.outputSchema()));
 		McpSchema.ToolAnnotations a = tool.annotations();
 		if (a != null) {
-			tn.setToolAnnotations(toolAnnotationsConverter.convertToToolAnnotations(a));
+			tn.setToolAnnotations(toolAnnotationsConverter.convertTo(a));
 		}
 		List<org.openmcptools.extensions.groups.protocol.Group> groups = convertGroupsFromTool(tool.meta());
 		if (groups != null) {
 			groups.forEach(pg -> {
-				groupConverter.convertToGroup(pg).addChildTool(tn);
+				groupConverter.convertTo(pg).addChildTool(tn);
 			});
 		}
 		tn.setMeta(tool.meta());

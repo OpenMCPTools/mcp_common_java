@@ -13,5 +13,5 @@
 	org.openmcptools.extensions.update,\
 	org.openmcptools.common.client;version=snapshot
 	
-Bundle-Version:             1.0.1.${tstamp}
+Bundle-Version:             2.0.0.${tstamp}
 	

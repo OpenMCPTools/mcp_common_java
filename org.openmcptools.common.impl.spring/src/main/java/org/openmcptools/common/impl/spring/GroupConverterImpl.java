@@ -4,16 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openmcptools.common.model.Group;
-import org.openmcptools.common.model.GroupConverter;
 import org.osgi.service.component.annotations.Component;
 
-@Component(immediate = true, service = org.openmcptools.common.model.GroupConverter.class)
-public class GroupConverterImpl implements GroupConverter<org.openmcptools.extensions.groups.protocol.Group> {
+@Component(immediate = true, service = GroupConverter.class)
+public class GroupConverterImpl implements GroupConverter {
 
 	private static final Map<String, Group> groupCache = new HashMap<String, Group>();
 
 	@Override
-	public org.openmcptools.extensions.groups.protocol.Group convertFromGroup(Group group) {
+	public org.openmcptools.extensions.groups.protocol.Group convertFrom(Group group) {
 		org.openmcptools.extensions.groups.protocol.Group g = new org.openmcptools.extensions.groups.protocol.Group(
 				group.getName());
 		g.title = group.getTitle();
@@ -21,13 +20,13 @@ public class GroupConverterImpl implements GroupConverter<org.openmcptools.exten
 		g.meta = group.getMeta();
 		Group parent = group.getParent();
 		if (parent != null) {
-			g.parent = convertFromGroup(parent);
+			g.parent = convertFrom(parent);
 		}
 		return g;
 	}
 
 	@Override
-	public Group convertToGroup(org.openmcptools.extensions.groups.protocol.Group group) {
+	public Group convertTo(org.openmcptools.extensions.groups.protocol.Group group) {
 		String groupName = group.name;
 		Group gtn = groupCache.get(groupName);
 		if (gtn == null) {
@@ -40,7 +39,7 @@ public class GroupConverterImpl implements GroupConverter<org.openmcptools.exten
 		org.openmcptools.extensions.groups.protocol.Group parent = group.parent;
 		Group convertedParent = null;
 		if (parent != null) {
-			convertedParent = convertToGroup(parent);
+			convertedParent = convertTo(parent);
 			convertedParent.addChildGroup(gtn);
 		}
 		return gtn;
