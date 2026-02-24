@@ -30,13 +30,17 @@ public class AbstractLeaf extends AbstractBase {
 	}
 
 	public List<Group> getParentGroupRoots() {
-		List<Group> parentGroups = this.parentGroups;
-		return parentGroups.stream().map(Group::getRoot).toList();
+		return this.parentGroups.stream().map(Group::getRoot).toList();
+	}
+
+	protected String getFirstParentName() {
+		return this.parentGroups.size() > 0 ? this.parentGroups.get(0).getFullyQualifiedName() : null;
 	}
 
 	@Override
 	public String getFullyQualifiedName() {
-		return name;
+		String firstParentName = getFirstParentName();
+		return firstParentName == null ? getName() : firstParentName + this.nameSeparator + this.name;
 	}
 
 }

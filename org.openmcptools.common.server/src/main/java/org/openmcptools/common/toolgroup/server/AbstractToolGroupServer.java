@@ -116,8 +116,8 @@ public abstract class AbstractToolGroupServer<ServerType, ToolSpecType, ToolType
 	}
 
 	@Override
-	public List<Tool> addToolInvokers(List<ToolImplementation> toolInvokers) {
-		List<ToolSpecification<ToolSpecType>> specs = toolInvokers.stream().map(ti -> {
+	public List<Tool> addToolImpls(List<ToolImpl> toolImpls) {
+		List<ToolSpecification<ToolSpecType>> specs = toolImpls.stream().map(ti -> {
 			return this.toolGroupProvider.getToolSpecification(ti.getTool(), ti.getMethod(), ti.getInstance(),
 					ti.getOutputSchema());
 		}).collect(Collectors.toList());

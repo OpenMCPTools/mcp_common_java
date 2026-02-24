@@ -134,9 +134,7 @@ public class ToolProviderImpl implements ToolProvider {
 		if (name == null) {
 			name = mcpToolMethod.getName();
 		}
-		String fqName = qualifyToolName(name, group);
-
-		Tool result = new Tool(fqName);
+		Tool result = new Tool(name);
 		if (group != null) {
 			result.addParentGroup(group);
 		}

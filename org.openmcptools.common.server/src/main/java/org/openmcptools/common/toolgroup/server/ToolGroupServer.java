@@ -40,7 +40,7 @@ public interface ToolGroupServer<ServerType> extends Closeable {
 		return addToolGroups(Map.of(instance, classes));
 	}
 
-	List<Tool> addToolInvokers(List<ToolImplementation> toolInvokers);
+	List<Tool> addToolImpls(List<ToolImpl> toolInvokers);
 
 	ServerType getServer();
 

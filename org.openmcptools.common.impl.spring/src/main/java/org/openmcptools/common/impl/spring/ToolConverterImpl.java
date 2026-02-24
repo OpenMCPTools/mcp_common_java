@@ -39,7 +39,7 @@ public class ToolConverterImpl implements ToolConverter {
 	@Override
 	public io.modelcontextprotocol.spec.McpSchema.Tool convertFrom(Tool tool) {
 		McpSchema.Tool.Builder builder = new McpSchema.Tool.Builder();
-		builder.name(tool.getName());
+		builder.name(tool.getFullyQualifiedName());
 		builder.title(tool.getTitle());
 		builder.description(tool.getDescription());
 		String inputSchema = tool.getInputSchema();
