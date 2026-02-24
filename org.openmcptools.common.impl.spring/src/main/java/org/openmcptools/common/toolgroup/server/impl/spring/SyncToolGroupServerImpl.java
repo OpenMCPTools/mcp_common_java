@@ -1,6 +1,7 @@
 package org.openmcptools.common.toolgroup.server.impl.spring;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 import org.openmcptools.common.impl.spring.ToolConverter;
@@ -50,11 +51,6 @@ public class SyncToolGroupServerImpl extends
 	}
 
 	@Override
-	protected void removeTool(SDKSyncToolGroupServer server, String toolName) {
-		server.removeTool(toolName);
-	}
-
-	@Override
 	protected ToolSpecification<SyncToolSpecification> getToolSpecification(Tool tool,
 			BiFunction<McpSyncServerExchange, CallToolRequest, CallToolResult> callHandler) {
 		SyncToolSpecification.Builder specBuilder = SyncToolSpecification.builder().tool(convertTool(tool))
@@ -83,6 +79,13 @@ public class SyncToolGroupServerImpl extends
 		if (this.server != null) {
 			this.server.close();
 		}
+	}
+
+	@Override
+	protected io.modelcontextprotocol.spec.McpSchema.Tool findTool(SDKSyncToolGroupServer server, String toolName) {
+		Optional<io.modelcontextprotocol.spec.McpSchema.Tool> optTool = server.listTools().stream()
+				.filter(t -> toolName.equals(t.name())).findFirst();
+		return optTool.isPresent() ? optTool.get() : null;
 	}
 
 }

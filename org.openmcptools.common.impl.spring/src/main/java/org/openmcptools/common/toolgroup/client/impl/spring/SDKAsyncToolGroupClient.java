@@ -48,6 +48,19 @@ public class SDKAsyncToolGroupClient extends McpAsyncClient {
 		return super.buildClientSession(requestTimeout, transport, requestHandlers, notificationHandlers, ctx);
 	}
 
+	ToolAnnotations createToolAnnotations(Map<String, Object> properties) {
+		return new McpSchema.ToolAnnotations((String) properties.get("title"), (Boolean) properties.get("readOnlyHint"),
+				(Boolean) properties.get("destructiveHint"), (Boolean) properties.get("idempotentHint"),
+				(Boolean) properties.get("openWorldHint"), (Boolean) properties.get("returnDirect"));
+	}
+
+	@SuppressWarnings("unchecked")
+	McpSchema.JsonSchema createJsonSchema(Map<String, Object> m) {
+		return new McpSchema.JsonSchema((String) m.get("type"), (Map<String, Object>) m.get("properties"),
+				(List<String>) m.get("required"), (Boolean) m.get("additionalProperties"),
+				(Map<String, Object>) m.get("defs"), (Map<String, Object>) m.get("definitions"));
+	}
+
 	@SuppressWarnings("unchecked")
 	Tool createTool(PrimitiveUpdateEvent event) {
 		Tool.Builder toolBuilder = Tool.builder();
@@ -55,17 +68,17 @@ public class SDKAsyncToolGroupClient extends McpAsyncClient {
 		List<FieldValueUpdate> fieldValueUpdates = event.fieldValueUpdates;
 		if (fieldValueUpdates != null) {
 			fieldValueUpdates.forEach(fvu -> {
-				if (fvu.fieldName == "title") {
+				if (fvu.fieldName.equals("title")) {
 					toolBuilder.title((String) fvu.fieldValue);
-				} else if (fvu.fieldName == "description") {
+				} else if (fvu.fieldName.equals("description")) {
 					toolBuilder.description((String) fvu.fieldValue);
-				} else if (fvu.fieldName == "annotations") {
-					toolBuilder.annotations((ToolAnnotations) fvu.fieldValue);
-				} else if (fvu.fieldName == "inputSchema") {
-					toolBuilder.inputSchema((McpSchema.JsonSchema) fvu.fieldValue);
-				} else if (fvu.fieldName == "outputSchema") {
+				} else if (fvu.fieldName.equals("annotations")) {
+					toolBuilder.annotations(createToolAnnotations((Map<String, Object>) fvu.fieldValue));
+				} else if (fvu.fieldName.equals("inputSchema")) {
+					toolBuilder.inputSchema(createJsonSchema((Map<String, Object>) fvu.fieldValue));
+				} else if (fvu.fieldName.equals("outputSchema")) {
 					toolBuilder.outputSchema((Map<String, Object>) fvu.fieldValue);
-				} else if (fvu.fieldName == "meta") {
+				} else if (fvu.fieldName.equals("meta")) {
 					toolBuilder.meta((Map<String, Object>) fvu.fieldValue);
 				}
 			});

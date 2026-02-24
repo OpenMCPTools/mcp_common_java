@@ -40,14 +40,10 @@ public abstract class AbstractToolGroupServer<ServerType, ToolSpecType, ToolType
 
 	abstract protected void addTool(ServerType server, ToolSpecType toolSpec);
 
-	abstract protected void removeTool(ServerType server, String toolName);
+	abstract protected Tool removeTool(ServerType server, String toolName);
 
 	protected void addTools(List<ToolSpecType> toolSpecs) {
 		toolSpecs.forEach(s -> addTool(s));
-	}
-
-	protected void removeToolsByName(List<String> toolNames) {
-		toolNames.forEach(tn -> removeTool(tn));
 	}
 
 	protected void addTool(ToolSpecType toolSpec) {
@@ -77,10 +73,10 @@ public abstract class AbstractToolGroupServer<ServerType, ToolSpecType, ToolType
 		}
 	}
 
-	protected void removeTool(String toolName) {
+	protected Tool removeTool(String toolName) {
 		Objects.requireNonNull(toolName, "toolName must not be null");
 		try {
-			removeTool(this.server, toolName);
+			return removeTool(this.server, toolName);
 		} catch (Exception e) {
 			handleRemoveError(toolName, e);
 			throw e;
@@ -99,8 +95,8 @@ public abstract class AbstractToolGroupServer<ServerType, ToolSpecType, ToolType
 			BiFunction<ExchangeType, CallToolRequestType, CallToolResultType> callHandler);
 
 	@Override
-	public void removeTools(List<String> toolNames) {
-		removeToolsByName(toolNames);
+	public List<Tool> removeTools(List<String> toolNames) {
+		return toolNames.stream().map(tn -> removeTool(tn)).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	protected abstract List<Tool> addSpecifications(List<ToolSpecification<ToolSpecType>> specs);

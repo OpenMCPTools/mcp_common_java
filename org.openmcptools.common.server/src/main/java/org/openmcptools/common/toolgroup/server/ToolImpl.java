@@ -13,7 +13,6 @@ public class ToolImpl {
 	private final Method method;
 	private final boolean outputSchema;
 
-	
 	public ToolImpl(Tool tool, Object instance, Method method, boolean outputSchema) {
 		Objects.requireNonNull(tool, "tool must not be null");
 		this.tool = tool;
@@ -28,10 +27,12 @@ public class ToolImpl {
 		this(tool, instance, method, true);
 	}
 
-	public ToolImpl(Tool tool, Object instance, Class<?> clazz, String methodName, Class<?>[] methodArgTypes) throws NoSuchMethodException, SecurityException {
-		this(tool, instance, clazz.getDeclaredMethod(methodName, methodArgTypes == null ? new Class<?>[] {} : methodArgTypes));
+	public ToolImpl(Tool tool, Object instance, Class<?> clazz, String methodName, Class<?>[] methodArgTypes)
+			throws NoSuchMethodException, SecurityException {
+		this(tool, instance,
+				clazz.getDeclaredMethod(methodName, methodArgTypes == null ? new Class<?>[] {} : methodArgTypes));
 	}
-	
+
 	public Object invoke(Object... args)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		return this.method.invoke(instance, args);

@@ -15,13 +15,27 @@ public class AbstractLeaf extends AbstractBase {
 	}
 
 	protected List<Group> parentGroups = new CopyOnWriteArrayList<Group>();
+	protected int primaryParentGroupIndex = -1;
 
 	public boolean addParentGroup(Group parentGroup) {
 		Objects.requireNonNull(parentGroup, "parentGroup must not be null");
-		return parentGroups.add(parentGroup);
+		if (parentGroups.contains(parentGroup)) {
+			return false;
+		}
+		boolean addResult = parentGroups.add(parentGroup);
+		if (addResult && primaryParentGroupIndex == -1) {
+			primaryParentGroupIndex = 0;
+		}
+		return addResult;
 	}
 
 	public boolean removeParentGroup(Group parentGroup) {
+		int currentIndex = parentGroups.indexOf(parentGroup);
+		if (currentIndex == this.primaryParentGroupIndex) {
+			boolean result = parentGroups.remove(currentIndex) != null;
+			this.primaryParentGroupIndex = -1;
+			return result;
+		}
 		return parentGroups.remove(parentGroup);
 	}
 
@@ -34,7 +48,9 @@ public class AbstractLeaf extends AbstractBase {
 	}
 
 	protected String getFirstParentName() {
-		return this.parentGroups.size() > 0 ? this.parentGroups.get(0).getFullyQualifiedName() : null;
+		return this.primaryParentGroupIndex > -1
+				? this.parentGroups.get(primaryParentGroupIndex).getFullyQualifiedName()
+				: null;
 	}
 
 	@Override

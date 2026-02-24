@@ -22,8 +22,8 @@ import reactor.core.publisher.Mono;
 public class AsyncToolGroupProviderImpl
 		extends AbstractToolGroupProviderImpl<AsyncToolSpecification, McpAsyncServerExchange, Mono<CallToolResult>> {
 
-	public AsyncToolGroupProviderImpl(ToolProvider toolProvider,
-			ToolConverter toolConverter, boolean generateOutputSchema) {
+	public AsyncToolGroupProviderImpl(ToolProvider toolProvider, ToolConverter toolConverter,
+			boolean generateOutputSchema) {
 		super(toolProvider, toolConverter, generateOutputSchema);
 	}
 

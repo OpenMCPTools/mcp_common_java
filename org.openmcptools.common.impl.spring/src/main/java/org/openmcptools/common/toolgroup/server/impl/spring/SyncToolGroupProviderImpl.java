@@ -20,8 +20,8 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 public class SyncToolGroupProviderImpl
 		extends AbstractToolGroupProviderImpl<SyncToolSpecification, McpSyncServerExchange, CallToolResult> {
 
-	public SyncToolGroupProviderImpl(ToolProvider toolProvider,
-			ToolConverter toolConverter, boolean generateOutputSchema) {
+	public SyncToolGroupProviderImpl(ToolProvider toolProvider, ToolConverter toolConverter,
+			boolean generateOutputSchema) {
 		super(toolProvider, toolConverter, generateOutputSchema);
 	}
 

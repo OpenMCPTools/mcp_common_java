@@ -1,6 +1,7 @@
 package org.openmcptools.common.toolgroup.server.impl.spring;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 import org.openmcptools.common.impl.spring.ToolConverter;
@@ -50,11 +51,6 @@ public class AsyncToolGroupServerImpl extends
 		server.addTool(toolSpec).block();
 	}
 
-	@Override
-	protected void removeTool(SDKAsyncToolGroupServer server, String toolName) {
-		server.removeTool(toolName).block();
-	}
-
 	@SuppressWarnings("unchecked")
 	@Activate
 	protected void activate(Map<String, Object> properties) {
@@ -84,6 +80,13 @@ public class AsyncToolGroupServerImpl extends
 		AsyncToolSpecification.Builder specBuilder = AsyncToolSpecification.builder().tool(convertTool(tool))
 				.callHandler(callHandler);
 		return new ToolSpecification<AsyncToolSpecification>(tool, specBuilder.build());
+	}
+
+	@Override
+	protected io.modelcontextprotocol.spec.McpSchema.Tool findTool(SDKAsyncToolGroupServer server, String toolName) {
+		Optional<io.modelcontextprotocol.spec.McpSchema.Tool> optTool = server.listTools().toStream()
+				.filter(t -> toolName.equals(t.name())).findFirst();
+		return optTool.isPresent() ? optTool.get() : null;
 	}
 
 }

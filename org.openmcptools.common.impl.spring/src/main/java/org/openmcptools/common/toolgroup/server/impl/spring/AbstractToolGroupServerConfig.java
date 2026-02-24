@@ -36,7 +36,7 @@ public class AbstractToolGroupServerConfig extends ToolGroupServerConfig<McpServ
 			McpServerTransportProvider transport) {
 		super(serverName, serverTitle, serverVersion, transport);
 	}
-	
+
 	public AbstractToolGroupServerConfig(Map<String, Object> properties) {
 		super(properties);
 		this.serverCapabilities = (ServerCapabilities) properties.get(ToolGroupServer.SERVER_CAPABILITIES);
@@ -51,7 +51,7 @@ public class AbstractToolGroupServerConfig extends ToolGroupServerConfig<McpServ
 		this.serverCapabilities = serverCapabilities;
 		return this;
 	}
-	
+
 	public AbstractToolGroupServerConfig setJsonMapper(McpJsonMapper jsonMapper) {
 		this.jsonMapper = jsonMapper;
 		return this;
@@ -86,7 +86,5 @@ public class AbstractToolGroupServerConfig extends ToolGroupServerConfig<McpServ
 		}
 		return d;
 	}
-
-
 
 }

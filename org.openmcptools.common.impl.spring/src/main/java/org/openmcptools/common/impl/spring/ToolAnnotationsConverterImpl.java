@@ -5,8 +5,7 @@ import org.osgi.service.component.annotations.Component;
 import io.modelcontextprotocol.spec.McpSchema.ToolAnnotations;
 
 @Component(immediate = true, service = ToolAnnotationsConverter.class)
-public class ToolAnnotationsConverterImpl
-		implements ToolAnnotationsConverter {
+public class ToolAnnotationsConverterImpl implements ToolAnnotationsConverter {
 
 	@Override
 	public ToolAnnotations convertFrom(org.openmcptools.common.model.ToolAnnotations tool) {

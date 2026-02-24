@@ -32,7 +32,7 @@ public interface ToolGroupServer<ServerType> extends Closeable {
 	public static final String SERVER_URI_TEMPLATE_MANAGER_FACTORY = SERVER_PREFIX + ".uriTemplateManagerFactory";
 	public static final String SERVER_IMMEDIATE_EXECUTION = SERVER_PREFIX + ".immediateExecution";
 
-	void removeTools(List<String> toolNames);
+	List<Tool> removeTools(List<String> toolNames);
 
 	List<Tool> addToolGroups(Map<Object, Class<?>[]> implementerToTypes);
 

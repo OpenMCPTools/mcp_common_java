@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.openmcptools.common.model.Group;
 import org.openmcptools.common.model.Tool;
@@ -29,11 +28,19 @@ public class ToolConverterImpl implements ToolConverter {
 	@SuppressWarnings("static-access")
 	@Activate
 	public ToolConverterImpl(@Reference McpJsonDefaults jsonDefaults,
-			@Reference ToolAnnotationsConverter toolAnnotationsConverter,
-			@Reference GroupConverter groupConverter) {
+			@Reference ToolAnnotationsConverter toolAnnotationsConverter, @Reference GroupConverter groupConverter) {
 		this.jsonMapper = jsonDefaults.getMapper();
 		this.toolAnnotationsConverter = toolAnnotationsConverter;
 		this.groupConverter = groupConverter;
+	}
+
+	protected Map<String, Object> convertCommonGroupsToMeta(List<Group> commonGroups) {
+		List<org.openmcptools.extensions.groups.protocol.Group> groups = this.groupConverter.convertFrom(commonGroups);
+		Map<String, Object> result = new HashMap<String, Object>();
+		if (groups.size() > 0) {
+			result.put(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID, groups);
+		}
+		return result;
 	}
 
 	@Override
@@ -50,19 +57,13 @@ public class ToolConverterImpl implements ToolConverter {
 		if (outputSchema != null) {
 			builder.outputSchema(jsonMapper, outputSchema);
 		}
-		List<Group> parentGroups = tool.getParentGroups();
-		Map<String, Object> meta = tool.getMeta();
-		if (parentGroups != null) {
-			List<org.openmcptools.extensions.groups.protocol.Group> groups = parentGroups.stream().map(pgn -> {
-				return this.groupConverter.convertFrom(pgn);
-			}).collect(Collectors.toList());
-			if (meta == null) {
-				meta = new HashMap<String, Object>();
-			}
-			// Now add to meta using extension id
-			meta.put(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID, groups);
+		Map<String, Object> groups = convertCommonGroupsToMeta(tool.getParentGroups());
+		Map<String, Object> toolMeta = tool.getMeta();
+		if (groups.size() > 0) {
+			toolMeta = toolMeta == null ? new HashMap<String, Object>(groups) : Map.copyOf(toolMeta);
+			toolMeta.putAll(groups);
 		}
-		builder.meta(meta);
+		builder.meta(toolMeta);
 		ToolAnnotations tan = tool.getToolAnnotations();
 		builder.annotations((tan != null) ? this.toolAnnotationsConverter.convertFrom(tan) : null);
 		return builder.build();
@@ -88,23 +89,36 @@ public class ToolConverterImpl implements ToolConverter {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	protected List<org.openmcptools.extensions.groups.protocol.Group> convertGroupsFromTool(Map<String, Object> meta) {
-		if (meta != null) {
-			List<Map<String, Object>> groupMaps = (List<Map<String, Object>>) meta
-					.remove(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID);
-			if (groupMaps != null) {
-				return groupMaps.stream().map(gm -> {
-					return org.openmcptools.extensions.groups.protocol.Group.convertMapToGroup(gm);
-				}).collect(Collectors.toList());
-			}
+	protected List<Group> convertMetaToCommonGroups(Map<String, Object> toolMeta) {
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> groupMaps = (List<Map<String, Object>>) toolMeta
+				.remove(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID);
+		if (groupMaps != null) {
+			return groupMaps.stream().map(m -> {
+				return this.groupConverter
+						.convertTo(org.openmcptools.extensions.groups.protocol.Group.convertMapToGroup(m));
+			}).toList();
 		}
 		return null;
 	}
 
 	@Override
 	public Tool convertTo(io.modelcontextprotocol.spec.McpSchema.Tool tool) {
-		Tool tn = new Tool(tool.name());
+		Map<String, Object> toolMeta = tool.meta();
+		List<Group> parentGroups = null;
+		if (toolMeta != null) {
+			toolMeta = new HashMap<String, Object>(toolMeta);
+			parentGroups = convertMetaToCommonGroups(toolMeta);
+		}
+		String toolName = tool.name();
+		if (parentGroups != null && parentGroups.size() > 0) {
+			// Get first and use as primary
+			Group primaryParentGroup = parentGroups.get(0);
+			if (toolName.startsWith(primaryParentGroup.getFullyQualifiedName())) {
+				toolName = toolName.substring(toolName.lastIndexOf(".") + 1);
+			}
+		}
+		Tool tn = new Tool(toolName);
 		tn.setTitle(tool.title());
 		tn.setDescription(tool.description());
 		tn.setInputSchema(generateInputSchema(tool.inputSchema()));
@@ -113,13 +127,13 @@ public class ToolConverterImpl implements ToolConverter {
 		if (a != null) {
 			tn.setToolAnnotations(toolAnnotationsConverter.convertTo(a));
 		}
-		List<org.openmcptools.extensions.groups.protocol.Group> groups = convertGroupsFromTool(tool.meta());
-		if (groups != null) {
-			groups.forEach(pg -> {
-				groupConverter.convertTo(pg).addChildTool(tn);
+		// add as parents
+		if (parentGroups != null) {
+			parentGroups.forEach(pg -> {
+				pg.addChildTool(tn);
 			});
 		}
-		tn.setMeta(tool.meta());
+		tn.setMeta(toolMeta);
 		return tn;
 	}
 

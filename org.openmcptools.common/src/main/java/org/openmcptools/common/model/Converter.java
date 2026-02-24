@@ -12,9 +12,9 @@ public interface Converter<ToType, FromType> {
 			return convertTo(s);
 		}).collect(Collectors.toList());
 	}
-	
+
 	ToType convertTo(FromType source);
-	
+
 	default List<FromType> convertFrom(List<ToType> targets) {
 		Objects.requireNonNull(targets, "targets must not be null");
 		return targets.stream().map(s -> {
@@ -22,7 +22,7 @@ public interface Converter<ToType, FromType> {
 		}).collect(Collectors.toList());
 
 	}
-	
+
 	FromType convertFrom(ToType target);
-	
+
 }

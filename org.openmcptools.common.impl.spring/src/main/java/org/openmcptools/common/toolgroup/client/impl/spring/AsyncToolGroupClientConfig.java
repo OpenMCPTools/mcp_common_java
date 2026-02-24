@@ -127,6 +127,7 @@ public class AsyncToolGroupClientConfig extends AbstractToolGroupClientConfig {
 	private List<Function<McpSchema.ProgressNotification, Mono<Void>>> progressConsumers;
 	private Function<McpSchema.CreateMessageRequest, Mono<McpSchema.CreateMessageResult>> samplingHandler;
 	private Function<McpSchema.ElicitRequest, Mono<McpSchema.ElicitResult>> elicitationHandler;
+
 	@SuppressWarnings("unchecked")
 	public AsyncToolGroupClientConfig(Map<String, Object> properties) {
 		super(properties);

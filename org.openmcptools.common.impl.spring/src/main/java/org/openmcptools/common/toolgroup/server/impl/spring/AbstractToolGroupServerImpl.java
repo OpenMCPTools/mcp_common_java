@@ -38,7 +38,7 @@ public abstract class AbstractToolGroupServerImpl<ServerType, SpecificationType,
 	protected void setToolConverter(ToolConverter toolConverter) {
 		this.toolConverter = toolConverter;
 	}
-	
+
 	protected Tool convertTool(org.openmcptools.common.model.Tool tool) {
 		return this.convertTool(tool);
 	}
@@ -116,6 +116,18 @@ public abstract class AbstractToolGroupServerImpl<ServerType, SpecificationType,
 			return spec.getTool();
 		}).collect(Collectors.toList());
 		return result;
+	}
+
+	protected abstract McpSchema.Tool findTool(ServerType server, String toolName);
+
+	@Override
+	protected org.openmcptools.common.model.Tool removeTool(ServerType server, String toolName) {
+		Tool sdkTool = findTool(server, toolName);
+		if (sdkTool != null) {
+			return this.toolConverter.convertTo(sdkTool);
+		} else {
+			return null;
+		}
 	}
 
 }
