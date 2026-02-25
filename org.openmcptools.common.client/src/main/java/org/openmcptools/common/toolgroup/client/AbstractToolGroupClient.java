@@ -1,7 +1,6 @@
 package org.openmcptools.common.toolgroup.client;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -33,8 +32,7 @@ public abstract class AbstractToolGroupClient<ClientType, ToolType> implements T
 	}
 
 	protected List<Tool> removeToolsLocal(List<String> toolNames) {
-		List<Tool> removableTools = new ArrayList<Tool>();
-		this.tools.stream().filter(t -> t.getName().equals(t)).forEach(t -> removableTools.add(t));
+		List<Tool> removableTools = this.tools.stream().filter(t -> toolNames.contains(t.getFullyQualifiedName())).toList();
 		this.tools.removeAll(removableTools);
 		return removableTools;
 	}

@@ -20,6 +20,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncToolSpecification;
+import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import reactor.core.publisher.Mono;
@@ -87,6 +88,17 @@ public class AsyncToolGroupServerImpl extends
 		Optional<io.modelcontextprotocol.spec.McpSchema.Tool> optTool = server.listTools().toStream()
 				.filter(t -> toolName.equals(t.name())).findFirst();
 		return optTool.isPresent() ? optTool.get() : null;
+	}
+
+	@Override
+	protected Tool removeTool(SDKAsyncToolGroupServer server, String toolName) {
+		McpSchema.Tool sdkTool = findTool(server, toolName);
+		if (sdkTool != null) {
+			Tool tool = this.toolConverter.convertTo(sdkTool);
+			this.server.removeTool(tool.getFullyQualifiedName()).block();
+			return tool;
+		}
+		return null;
 	}
 
 }

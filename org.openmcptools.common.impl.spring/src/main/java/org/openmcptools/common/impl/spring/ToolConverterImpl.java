@@ -1,6 +1,7 @@
 package org.openmcptools.common.impl.spring;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,15 +35,6 @@ public class ToolConverterImpl implements ToolConverter {
 		this.groupConverter = groupConverter;
 	}
 
-	protected Map<String, Object> convertCommonGroupsToMeta(List<Group> commonGroups) {
-		List<org.openmcptools.extensions.groups.protocol.Group> groups = this.groupConverter.convertFrom(commonGroups);
-		Map<String, Object> result = new HashMap<String, Object>();
-		if (groups.size() > 0) {
-			result.put(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID, groups);
-		}
-		return result;
-	}
-
 	@Override
 	public io.modelcontextprotocol.spec.McpSchema.Tool convertFrom(Tool tool) {
 		McpSchema.Tool.Builder builder = new McpSchema.Tool.Builder();
@@ -57,13 +49,13 @@ public class ToolConverterImpl implements ToolConverter {
 		if (outputSchema != null) {
 			builder.outputSchema(jsonMapper, outputSchema);
 		}
-		Map<String, Object> groups = convertCommonGroupsToMeta(tool.getParentGroups());
-		Map<String, Object> toolMeta = tool.getMeta();
-		if (groups.size() > 0) {
-			toolMeta = toolMeta == null ? new HashMap<String, Object>(groups) : Map.copyOf(toolMeta);
-			toolMeta.putAll(groups);
+		Map<String, Object> outputMeta = tool.getMeta();
+		List<org.openmcptools.extensions.groups.protocol.Group> groups1 = this.groupConverter.convertFrom(tool.getParentGroups());
+		if (groups1.size() > 0) {
+			outputMeta = outputMeta == null ? new HashMap<String, Object>() : outputMeta;
+			outputMeta.put(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID, groups1);
 		}
-		builder.meta(toolMeta);
+		builder.meta(outputMeta);
 		ToolAnnotations tan = tool.getToolAnnotations();
 		builder.annotations((tan != null) ? this.toolAnnotationsConverter.convertFrom(tan) : null);
 		return builder.build();
@@ -89,26 +81,26 @@ public class ToolConverterImpl implements ToolConverter {
 		}
 	}
 
-	protected List<Group> convertMetaToCommonGroups(Map<String, Object> toolMeta) {
-		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> groupMaps = (List<Map<String, Object>>) toolMeta
-				.remove(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID);
-		if (groupMaps != null) {
-			return groupMaps.stream().map(m -> {
-				return this.groupConverter
-						.convertTo(org.openmcptools.extensions.groups.protocol.Group.convertMapToGroup(m));
-			}).toList();
-		}
-		return null;
-	}
-
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Tool convertTo(io.modelcontextprotocol.spec.McpSchema.Tool tool) {
-		Map<String, Object> toolMeta = tool.meta();
-		List<Group> parentGroups = null;
-		if (toolMeta != null) {
-			toolMeta = new HashMap<String, Object>(toolMeta);
-			parentGroups = convertMetaToCommonGroups(toolMeta);
+		Map<String, Object> toolMeta = tool.meta() == null ? new HashMap<String, Object>() : new HashMap<String, Object>(tool.meta());
+		// Get the untyped list for the group extension ID
+		List gs = (List) toolMeta
+				.remove(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID);
+		List<Group> parentGroups = new ArrayList<Group>();
+		if (gs != null) {
+			// Iterate through items.  They will either be of type Group (by converter)
+			// or of type Map (by deserialization)
+			for (Object g : gs) {
+				if (g instanceof Map) {
+					parentGroups.add(this.groupConverter.convertTo(org.openmcptools.extensions.groups.protocol.Group
+							.convertMapToGroup((Map<String, Object>) g)));
+				} else if (g instanceof org.openmcptools.extensions.groups.protocol.Group) {
+					parentGroups
+							.add(this.groupConverter.convertTo((org.openmcptools.extensions.groups.protocol.Group) g));
+				}
+			}
 		}
 		String toolName = tool.name();
 		if (parentGroups != null && parentGroups.size() > 0) {
@@ -133,7 +125,9 @@ public class ToolConverterImpl implements ToolConverter {
 				pg.addChildTool(tn);
 			});
 		}
-		tn.setMeta(toolMeta);
+		if (toolMeta != null && toolMeta.size() > 0) {
+			tn.setMeta(toolMeta);
+		}
 		return tn;
 	}
 

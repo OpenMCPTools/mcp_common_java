@@ -2,6 +2,7 @@ package org.openmcptools.common.toolgroup.client.impl.spring;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -49,6 +50,9 @@ public class SDKAsyncToolGroupClient extends McpAsyncClient {
 	}
 
 	ToolAnnotations createToolAnnotations(Map<String, Object> properties) {
+		if (properties == null) {
+			return null;
+		}
 		return new McpSchema.ToolAnnotations((String) properties.get("title"), (Boolean) properties.get("readOnlyHint"),
 				(Boolean) properties.get("destructiveHint"), (Boolean) properties.get("idempotentHint"),
 				(Boolean) properties.get("openWorldHint"), (Boolean) properties.get("returnDirect"));
@@ -56,11 +60,29 @@ public class SDKAsyncToolGroupClient extends McpAsyncClient {
 
 	@SuppressWarnings("unchecked")
 	McpSchema.JsonSchema createJsonSchema(Map<String, Object> m) {
+		if (m == null) {
+			return null;
+		}
 		return new McpSchema.JsonSchema((String) m.get("type"), (Map<String, Object>) m.get("properties"),
 				(List<String>) m.get("required"), (Boolean) m.get("additionalProperties"),
 				(Map<String, Object>) m.get("defs"), (Map<String, Object>) m.get("definitions"));
 	}
 
+	@SuppressWarnings("unchecked")
+	Map<String, Object> createGroupsMap(Map<String, Object> props) {
+		if (props == null) {
+			return null;
+		} else {
+			props = new HashMap<String, Object>(props);
+		}
+		List<Map<String, Object>> groupMaps = (List<Map<String, Object>>) props.remove(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID);
+		List<org.openmcptools.extensions.groups.protocol.Group> groups = groupMaps.stream().map(m -> {
+			return org.openmcptools.extensions.groups.protocol.Group.convertMapToGroup(m);
+		}).toList();
+		props.put(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID, groups);
+		return props;
+	}
+	
 	@SuppressWarnings("unchecked")
 	Tool createTool(PrimitiveUpdateEvent event) {
 		Tool.Builder toolBuilder = Tool.builder();
@@ -79,7 +101,7 @@ public class SDKAsyncToolGroupClient extends McpAsyncClient {
 				} else if (fvu.fieldName.equals("outputSchema")) {
 					toolBuilder.outputSchema((Map<String, Object>) fvu.fieldValue);
 				} else if (fvu.fieldName.equals("meta")) {
-					toolBuilder.meta((Map<String, Object>) fvu.fieldValue);
+					toolBuilder.meta(createGroupsMap((Map<String, Object>) fvu.fieldValue));
 				}
 			});
 		}

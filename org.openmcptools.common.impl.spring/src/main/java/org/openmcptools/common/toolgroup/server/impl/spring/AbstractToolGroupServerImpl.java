@@ -121,13 +121,6 @@ public abstract class AbstractToolGroupServerImpl<ServerType, SpecificationType,
 	protected abstract McpSchema.Tool findTool(ServerType server, String toolName);
 
 	@Override
-	protected org.openmcptools.common.model.Tool removeTool(ServerType server, String toolName) {
-		Tool sdkTool = findTool(server, toolName);
-		if (sdkTool != null) {
-			return this.toolConverter.convertTo(sdkTool);
-		} else {
-			return null;
-		}
-	}
+	protected abstract org.openmcptools.common.model.Tool removeTool(ServerType server, String toolName);
 
 }
