@@ -1,12 +1,19 @@
 # MCP Common Java API
 
+### What's in here
+
+The project defines a tree-based data model to organize **tools**, **prompts**, and **resources** into **hierarchical groups** — like folders inside folders.
+
+#### Core model
+
+The [org.openmcptools.common project](https://github.com/OpenMCPTools/mcp_common_java/tree/main/org.openmcptools.common) defines the core MCP model
+
+- **Group** — a tree node. Can contain other groups, tools, prompts, and resources. Each group knows its parent and computes its fully qualified name (e.g. `com.example.api`).
+- **Tool** — an MCP tool. Can belong to multiple groups at once.
+- **Prompt** — an MCP prompt with typed arguments.
+- **Resource** — an MCP resource (URI, size, MIME type).
+- **Converter** — generic interface to convert between the internal model and any external format.
 This repo exposes a dynamic server (or client) model.  This model exposes MCP type-specific meta-data (e.g. title, description, meta, etc) and accessors as specified by the MCP 11-25-2025 schema.
-
-Also included are the enhancements to support hierarchical grouping as a server extension:  Group type that allows members of the other primitives (Tools, Resources, Prompts, etc) into server-defined sets.  These Groups of primitives may optionally be hierarchically organized, with meta-data (title, description, etc) that can be associated with each Group instance for consumption and use by (human or machine) clients.
-
-Each type in the model (e.g. Tool, Resource, Prompt) provides methods for getting meta-data about the instance (e.g. for client access), as well as updating/setting the model meta-data (for server updates).
-
-The common model is in the [org.openmcptools.common project](https://github.com/OpenMCPTools/mcp_common_java/tree/main/org.openmcptools.common).  This project has no dependencies except for Java 17+ API.
 
 ## MCP Common Server Java API
 
