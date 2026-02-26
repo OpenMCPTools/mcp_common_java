@@ -3,6 +3,7 @@ package org.openmcptools.common.toolgroup.client.impl.spring;
 import java.util.List;
 import java.util.Map;
 
+import org.openmcptools.common.client.CallToolRequest;
 import org.openmcptools.common.client.InitializeResult;
 import org.openmcptools.common.impl.spring.ToolConverter;
 import org.openmcptools.common.toolgroup.client.AsyncToolGroupClient;
@@ -11,12 +12,16 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 import io.modelcontextprotocol.spec.McpSchema.Implementation;
+import reactor.core.publisher.Mono;
 
 @Component(factory = "AsyncToolGroupClientFactory", service = AsyncToolGroupClient.class)
 public class AsyncToolGroupClientImpl extends
 		AbstractToolGroupClientImpl<org.openmcptools.common.toolgroup.client.impl.spring.SDKAsyncToolGroupClient>
-		implements AsyncToolGroupClient<SDKAsyncToolGroupClient> {
+		implements AsyncToolGroupClient<Mono<CallToolResult>> {
+
+	private SDKAsyncToolGroupClient client;
 
 	public AsyncToolGroupClientImpl() {
 		super();
@@ -60,6 +65,12 @@ public class AsyncToolGroupClientImpl extends
 		addToolsLocal(aTools);
 		this.localClient.fireToolGroupClientAddEvent(aTools);
 		return result;
+	}
+
+	@Override
+	public Mono<CallToolResult> callTool(CallToolRequest request) {
+		// XXX TODO
+		return null;
 	}
 
 }

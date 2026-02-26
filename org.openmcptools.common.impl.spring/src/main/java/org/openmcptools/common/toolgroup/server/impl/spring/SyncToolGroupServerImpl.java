@@ -1,8 +1,8 @@
 package org.openmcptools.common.toolgroup.server.impl.spring;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
 
 import org.openmcptools.common.impl.spring.ToolConverter;
 import org.openmcptools.common.model.Tool;
@@ -25,9 +25,11 @@ import io.modelcontextprotocol.spec.McpSchema.CallToolRequest;
 import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
 
 @Component(factory = SyncToolGroupServerConfig.SERVER_FACTORY_NAME, service = SyncToolGroupServer.class)
-public class SyncToolGroupServerImpl extends
-		AbstractToolGroupServerImpl<SDKSyncToolGroupServer, SyncToolSpecification, McpSyncServerExchange, CallToolResult>
-		implements SyncToolGroupServer<SDKSyncToolGroupServer> {
+public class SyncToolGroupServerImpl
+		extends AbstractToolGroupServerImpl<SyncToolSpecification, McpSyncServerExchange, CallToolResult>
+		implements SyncToolGroupServer<SyncToolSpecification> {
+
+	private SDKSyncToolGroupServer server;
 
 	public SyncToolGroupServerImpl() {
 		super();
@@ -38,31 +40,9 @@ public class SyncToolGroupServerImpl extends
 		super.setToolConverter(toolConverter);
 	}
 
-	@Override
-	protected void closeServer() {
-		if (this.server != null) {
-			this.server.closeGracefully();
-			this.server = null;
-		}
-	}
-
-	@Override
-	protected void addTool(SDKSyncToolGroupServer server, SyncToolSpecification toolSpec) {
-		server.addTool(toolSpec);
-	}
-
-	@Override
-	protected ToolSpecification<SyncToolSpecification> getToolSpecification(Tool tool,
-			BiFunction<McpSyncServerExchange, CallToolRequest, CallToolResult> callHandler) {
-		SyncToolSpecification.Builder specBuilder = SyncToolSpecification.builder().tool(convertTool(tool))
-				.callHandler(callHandler);
-		return new ToolSpecification<SyncToolSpecification>(tool, specBuilder.build());
-	}
-
 	@SuppressWarnings("unchecked")
 	@Activate
 	protected void activate(Map<String, Object> properties) {
-
 		this.toolGroupProvider = (ToolGroupProvider<SyncToolSpecification, McpSyncServerExchange, CallToolRequest, CallToolResult>) properties
 				.get(SERVER_TOOL_GROUP_PROVIDER);
 		if (toolGroupProvider == null) {
@@ -83,21 +63,34 @@ public class SyncToolGroupServerImpl extends
 	}
 
 	@Override
-	protected io.modelcontextprotocol.spec.McpSchema.Tool findTool(SDKSyncToolGroupServer server, String toolName) {
-		Optional<io.modelcontextprotocol.spec.McpSchema.Tool> optTool = server.listTools().stream()
-				.filter(t -> toolName.equals(t.name())).findFirst();
-		return optTool.isPresent() ? optTool.get() : null;
+	public Tool removeTool(String toolName) {
+		McpSchema.Tool t = findTool(toolName);
+		if (t != null) {
+			this.server.removeTool(toolName);
+			return this.toolConverter.convertTo(t);
+		}
+		return null;
 	}
 
 	@Override
-	protected Tool removeTool(SDKSyncToolGroupServer server, String toolName) {
-		McpSchema.Tool sdkTool = findTool(server, toolName);
-		if (sdkTool != null) {
-			Tool tool = this.toolConverter.convertTo(sdkTool);
-			this.server.removeTool(tool.getFullyQualifiedName());
-			return tool;
-		}
-		return null;
+	public Tool addToolSpecification(ToolSpecification<SyncToolSpecification> toolSpec) {
+		SyncToolSpecification ts = toolSpec.getSpecification();
+		Tool tool = toolSpec.getTool();
+		SyncToolSpecification.Builder specBuilder = SyncToolSpecification.builder().tool(convertTool(tool))
+				.callHandler(ts.callHandler());
+		this.server.addTool(specBuilder.build());
+		return tool;
+	}
+
+	@Override
+	public void close() throws IOException {
+		this.server.closeGracefully();
+	}
+
+	@Override
+	protected McpSchema.Tool findTool(String toolName) {
+		Optional<McpSchema.Tool> opt = server.listTools().stream().filter(t -> t.name().equals(toolName)).findAny();
+		return opt.isPresent() ? opt.get() : null;
 	}
 
 }

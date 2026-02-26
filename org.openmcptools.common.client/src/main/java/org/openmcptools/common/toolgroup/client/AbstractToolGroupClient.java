@@ -11,13 +11,12 @@ import org.openmcptools.common.model.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractToolGroupClient<ClientType, ToolType> implements ToolGroupClient<ClientType> {
+public abstract class AbstractToolGroupClient<ToolType> implements ToolGroupClient {
 
 	protected static Logger logger = LoggerFactory.getLogger(AbstractToolGroupClient.class);
 
 	protected final List<Tool> tools;
 	protected Converter<Tool, ToolType> toolConverter;
-	protected ClientType client;
 
 	public AbstractToolGroupClient() {
 		this.tools = new CopyOnWriteArrayList<Tool>();
@@ -32,7 +31,8 @@ public abstract class AbstractToolGroupClient<ClientType, ToolType> implements T
 	}
 
 	protected List<Tool> removeToolsLocal(List<String> toolNames) {
-		List<Tool> removableTools = this.tools.stream().filter(t -> toolNames.contains(t.getFullyQualifiedName())).toList();
+		List<Tool> removableTools = this.tools.stream().filter(t -> toolNames.contains(t.getFullyQualifiedName()))
+				.toList();
 		this.tools.removeAll(removableTools);
 		return removableTools;
 	}
@@ -45,10 +45,6 @@ public abstract class AbstractToolGroupClient<ClientType, ToolType> implements T
 		return this.tools.stream().map(t -> {
 			return t.getParentGroupRoots();
 		}).flatMap(List::stream).distinct().collect(Collectors.toList());
-	}
-
-	public ClientType getClient() {
-		return client;
 	}
 
 	protected abstract void closeClient();

@@ -50,7 +50,8 @@ public class ToolConverterImpl implements ToolConverter {
 			builder.outputSchema(jsonMapper, outputSchema);
 		}
 		Map<String, Object> outputMeta = tool.getMeta();
-		List<org.openmcptools.extensions.groups.protocol.Group> groups1 = this.groupConverter.convertFrom(tool.getParentGroups());
+		List<org.openmcptools.extensions.groups.protocol.Group> groups1 = this.groupConverter
+				.convertFrom(tool.getParentGroups());
 		if (groups1.size() > 0) {
 			outputMeta = outputMeta == null ? new HashMap<String, Object>() : outputMeta;
 			outputMeta.put(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID, groups1);
@@ -84,13 +85,14 @@ public class ToolConverterImpl implements ToolConverter {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Tool convertTo(io.modelcontextprotocol.spec.McpSchema.Tool tool) {
-		Map<String, Object> toolMeta = tool.meta() == null ? new HashMap<String, Object>() : new HashMap<String, Object>(tool.meta());
+		Map<String, Object> toolMeta = tool.meta() == null ? new HashMap<String, Object>()
+				: new HashMap<String, Object>(tool.meta());
 		// Get the untyped list for the group extension ID
 		List gs = (List) toolMeta
 				.remove(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID);
 		List<Group> parentGroups = new ArrayList<Group>();
 		if (gs != null) {
-			// Iterate through items.  They will either be of type Group (by converter)
+			// Iterate through items. They will either be of type Group (by converter)
 			// or of type Map (by deserialization)
 			for (Object g : gs) {
 				if (g instanceof Map) {

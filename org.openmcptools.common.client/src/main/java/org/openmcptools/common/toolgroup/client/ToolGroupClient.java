@@ -7,7 +7,7 @@ import org.openmcptools.common.client.InitializeResult;
 import org.openmcptools.common.model.Group;
 import org.openmcptools.common.model.Tool;
 
-public interface ToolGroupClient<ClientType> extends Closeable {
+public interface ToolGroupClient extends Closeable {
 
 	InitializeResult initialize();
 
@@ -15,5 +15,4 @@ public interface ToolGroupClient<ClientType> extends Closeable {
 
 	List<Group> getGroupRoots();
 
-	ClientType getClient();
 }

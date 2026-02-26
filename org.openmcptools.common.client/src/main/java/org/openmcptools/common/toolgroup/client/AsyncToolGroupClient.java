@@ -1,5 +1,9 @@
 package org.openmcptools.common.toolgroup.client;
 
-public interface AsyncToolGroupClient<ClientType> extends ToolGroupClient<ClientType> {
+import org.openmcptools.common.client.CallToolRequest;
+
+public interface AsyncToolGroupClient<AsyncType> extends ToolGroupClient {
+
+	AsyncType callTool(CallToolRequest request);
 
 }

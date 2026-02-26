@@ -6,12 +6,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 import org.openmcptools.common.impl.spring.ToolConverter;
 import org.openmcptools.common.toolgroup.server.AbstractToolGroupServer;
 import org.openmcptools.common.toolgroup.server.ToolGroupServer;
-import org.openmcptools.common.toolgroup.server.ToolSpecification;
 
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
@@ -29,9 +27,8 @@ import io.modelcontextprotocol.spec.McpServerTransportProvider;
 import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
 import reactor.core.publisher.Mono;
 
-public abstract class AbstractToolGroupServerImpl<ServerType, SpecificationType, ExchangeType, CallToolResultType>
-		extends
-		AbstractToolGroupServer<ServerType, SpecificationType, Tool, ExchangeType, CallToolRequest, CallToolResultType> {
+public abstract class AbstractToolGroupServerImpl<SpecificationType, ExchangeType, CallToolResultType>
+		extends AbstractToolGroupServer<SpecificationType, Tool, ExchangeType, CallToolRequest, CallToolResultType> {
 
 	protected ToolConverter toolConverter;
 
@@ -40,7 +37,7 @@ public abstract class AbstractToolGroupServerImpl<ServerType, SpecificationType,
 	}
 
 	protected Tool convertTool(org.openmcptools.common.model.Tool tool) {
-		return this.convertTool(tool);
+		return this.toolConverter.convertFrom(tool);
 	}
 
 	protected McpServerFeatures.Async buildAsyncServerFeatures(McpSchema.Implementation serverInfo,
@@ -107,20 +104,6 @@ public abstract class AbstractToolGroupServerImpl<ServerType, SpecificationType,
 		return new SDKSyncToolGroupServer(asyncServer, immediateExecution);
 	}
 
-	@Override
-	protected List<org.openmcptools.common.model.Tool> addSpecifications(
-			List<ToolSpecification<SpecificationType>> specs) {
-		List<org.openmcptools.common.model.Tool> result = specs.stream().map(spec -> {
-			// Add the specification to the local server
-			addTool(this.server, spec.getSpecification());
-			return spec.getTool();
-		}).collect(Collectors.toList());
-		return result;
-	}
-
-	protected abstract McpSchema.Tool findTool(ServerType server, String toolName);
-
-	@Override
-	protected abstract org.openmcptools.common.model.Tool removeTool(ServerType server, String toolName);
+	protected abstract McpSchema.Tool findTool(String toolName);
 
 }

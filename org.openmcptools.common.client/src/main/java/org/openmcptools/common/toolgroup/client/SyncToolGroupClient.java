@@ -1,5 +1,10 @@
 package org.openmcptools.common.toolgroup.client;
 
-public interface SyncToolGroupClient<ClientType> extends ToolGroupClient<ClientType> {
+import org.openmcptools.common.client.CallToolRequest;
+import org.openmcptools.common.client.CallToolResult;
+
+public interface SyncToolGroupClient extends ToolGroupClient {
+
+	CallToolResult callTool(CallToolRequest request);
 
 }

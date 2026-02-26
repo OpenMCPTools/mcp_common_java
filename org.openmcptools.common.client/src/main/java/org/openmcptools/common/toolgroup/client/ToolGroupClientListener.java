@@ -10,5 +10,5 @@ public interface ToolGroupClientListener {
 		ADD_TOOLS, UPDATE_TOOLS, REMOVE_TOOLS
 	}
 
-	<ClientType> void handleClientUpdateEvent(ClientType client, EventType eventType, List<Tool> tools);
+	void handleClientUpdateEvent(EventType eventType, List<Tool> tools);
 }

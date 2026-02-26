@@ -3,10 +3,11 @@ package org.openmcptools.common.toolgroup.server;
 import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.openmcptools.common.model.Tool;
 
-public interface ToolGroupServer<ServerType> extends Closeable {
+public interface ToolGroupServer<SpecificationType> extends Closeable {
 
 	public static final String SERVER_PREFIX = ToolGroupServer.class.getName();
 	public static final String SERVER_NAME = SERVER_PREFIX + ".serverName";
@@ -32,7 +33,11 @@ public interface ToolGroupServer<ServerType> extends Closeable {
 	public static final String SERVER_URI_TEMPLATE_MANAGER_FACTORY = SERVER_PREFIX + ".uriTemplateManagerFactory";
 	public static final String SERVER_IMMEDIATE_EXECUTION = SERVER_PREFIX + ".immediateExecution";
 
-	List<Tool> removeTools(List<String> toolNames);
+	Tool removeTool(String toolName);
+
+	default List<Tool> removeTools(List<String> toolNames) {
+		return toolNames.stream().map(tn -> removeTool(tn)).filter(Objects::nonNull).toList();
+	}
 
 	List<Tool> addToolGroups(Map<Object, Class<?>[]> implementerToTypes);
 
@@ -40,8 +45,16 @@ public interface ToolGroupServer<ServerType> extends Closeable {
 		return addToolGroups(Map.of(instance, classes));
 	}
 
-	List<Tool> addToolImpls(List<ToolImpl> toolInvokers);
+	Tool addToolImpl(ToolImpl toolImpl);
 
-	ServerType getServer();
+	default List<Tool> addToolImpls(List<ToolImpl> toolInvokers) {
+		return toolInvokers.stream().map(ti -> addToolImpl(ti)).filter(Objects::isNull).toList();
+	}
+
+	Tool addToolSpecification(ToolSpecification<SpecificationType> toolSpec);
+
+	default List<Tool> addToolSpecifications(List<ToolSpecification<SpecificationType>> toolSpecs) {
+		return toolSpecs.stream().map(ts -> addToolSpecification(ts)).filter(Objects::isNull).toList();
+	}
 
 }

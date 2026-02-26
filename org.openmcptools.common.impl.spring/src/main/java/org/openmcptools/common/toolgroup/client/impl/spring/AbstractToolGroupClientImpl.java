@@ -10,7 +10,7 @@ import org.openmcptools.common.toolgroup.client.ToolGroupClientListener.EventTyp
 
 import io.modelcontextprotocol.spec.McpSchema.Tool;
 
-public abstract class AbstractToolGroupClientImpl<ClientType> extends AbstractToolGroupClient<ClientType, Tool> {
+public abstract class AbstractToolGroupClientImpl<ClientType> extends AbstractToolGroupClient<Tool> {
 
 	protected SpringLocalToolGroupClient localClient;
 
@@ -43,7 +43,7 @@ public abstract class AbstractToolGroupClientImpl<ClientType> extends AbstractTo
 		protected void fireToolGroupClientAddEvent(List<org.openmcptools.common.model.Tool> tools) {
 			List.copyOf(clientListeners).forEach(tgcl -> {
 				if (tools.size() > 0) {
-					tgcl.handleClientUpdateEvent(getClient(), EventType.ADD_TOOLS, tools);
+					tgcl.handleClientUpdateEvent(EventType.ADD_TOOLS, tools);
 				}
 			});
 		}
@@ -51,7 +51,7 @@ public abstract class AbstractToolGroupClientImpl<ClientType> extends AbstractTo
 		protected void fireToolGroupClientRemoveEvent(List<org.openmcptools.common.model.Tool> tools) {
 			List.copyOf(clientListeners).forEach(tgcl -> {
 				if (tools.size() > 0) {
-					tgcl.handleClientUpdateEvent(getClient(), EventType.REMOVE_TOOLS, tools);
+					tgcl.handleClientUpdateEvent(EventType.REMOVE_TOOLS, tools);
 				}
 			});
 		}

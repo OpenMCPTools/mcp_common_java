@@ -75,14 +75,15 @@ public class SDKAsyncToolGroupClient extends McpAsyncClient {
 		} else {
 			props = new HashMap<String, Object>(props);
 		}
-		List<Map<String, Object>> groupMaps = (List<Map<String, Object>>) props.remove(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID);
+		List<Map<String, Object>> groupMaps = (List<Map<String, Object>>) props
+				.remove(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID);
 		List<org.openmcptools.extensions.groups.protocol.Group> groups = groupMaps.stream().map(m -> {
 			return org.openmcptools.extensions.groups.protocol.Group.convertMapToGroup(m);
 		}).toList();
 		props.put(org.openmcptools.extensions.groups.protocol.GroupsExtensionConfig.EXTENSION_ID, groups);
 		return props;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	Tool createTool(PrimitiveUpdateEvent event) {
 		Tool.Builder toolBuilder = Tool.builder();
