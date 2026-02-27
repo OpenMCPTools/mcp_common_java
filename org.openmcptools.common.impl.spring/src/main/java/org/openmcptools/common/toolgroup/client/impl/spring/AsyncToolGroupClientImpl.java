@@ -1,5 +1,6 @@
 package org.openmcptools.common.toolgroup.client.impl.spring;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openmcptools.common.client.CallToolRequest;
@@ -57,8 +58,12 @@ public class AsyncToolGroupClientImpl extends
 	public InitializeResult initialize() {
 		io.modelcontextprotocol.spec.McpSchema.InitializeResult ir = this.client.initialize().block();
 		Implementation i = ir.serverInfo();
-		return new InitializeResult(ir.protocolVersion(), i.name(), i.version(), ir.instructions(),
+		InitializeResult result = new InitializeResult(ir.protocolVersion(), i.name(), i.version(), ir.instructions(),
 				ir.meta(), new SpringServerCapabilities(ir.capabilities()));
+		if (this.tools.size() == 0) {
+			localClient.updateLocal(this.client.listTools().block().tools(), List.of());
+		}
+		return result;
 	}
 
 	@Override
