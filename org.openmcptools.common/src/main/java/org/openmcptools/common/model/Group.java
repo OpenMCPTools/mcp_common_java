@@ -1,6 +1,7 @@
 package org.openmcptools.common.model;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Group extends AbstractBase {
@@ -27,6 +28,57 @@ public class Group extends AbstractBase {
 		this.childResources = new CopyOnWriteArrayList<Resource>();
 	}
 
+	public static Builder builder(String name) {
+		return new Builder(name);
+	}
+
+	public static class Builder {
+
+		private String name;
+
+		private String title;
+
+		private String description;
+
+		private Group parent;
+
+		private Map<String, Object> meta;
+
+		public Builder(String name) {
+			this.name = name;
+		}
+
+		public Builder title(String title) {
+			this.title = title;
+			return this;
+		}
+
+		public Builder description(String description) {
+			this.description = description;
+			return this;
+		}
+		
+		public Builder parent(Group parent) {
+			this.parent = parent;
+			return this;
+		}
+
+		public Builder meta(Map<String, Object> meta) {
+			this.meta = meta;
+			return this;
+		}
+
+		public Group build() {
+			Group result = new Group(name);
+			result.setTitle(title);
+			result.setDescription(description);
+			result.setMeta(meta);	
+			result.setParent(parent);
+			return result;
+		}
+
+	}
+	
 	public Group getParent() {
 		return this.parent;
 	}
