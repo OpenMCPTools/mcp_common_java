@@ -75,12 +75,11 @@ public class AsyncToolGroupServerImpl
 	}
 
 	public Tool addToolSpecification(ToolSpecification<AsyncToolSpecification> toolSpec) {
-		AsyncToolSpecification ts = toolSpec.getSpecification();
-		Tool tool = toolSpec.getTool();
-		AsyncToolSpecification.Builder specBuilder = AsyncToolSpecification.builder().tool(convertTool(tool))
-				.callHandler(ts.callHandler());
+		Tool t = toolSpec.getTool();
+		AsyncToolSpecification.Builder specBuilder = AsyncToolSpecification.builder().tool(convertTool(t))
+				.callHandler(toolSpec.getSpecification().callHandler());
 		this.server.addTool(specBuilder.build()).block();
-		return tool;
+		return t;
 	}
 
 	@Override

@@ -42,9 +42,9 @@ public class SDKAsyncToolGroupServer extends McpAsyncServer {
 
 	@Override
 	public Mono<Void> notifyToolsListChanged() {
-		List<PrimitiveUpdateEvent> toolUpdateEventsCopy = List.copyOf(toolUpdateEvents);
-		toolUpdateEvents.clear();
-		if (toolUpdateEventsCopy.size() > 0) {
+		if (toolUpdateEvents.size() > 0) {
+			List<PrimitiveUpdateEvent> toolUpdateEventsCopy = List.copyOf(toolUpdateEvents);
+			toolUpdateEvents.clear();
 			return this.mcpTransportProvider.notifyClients(PrimitiveUpdateConfig.NOTIFICATION_TOPIC,
 					Map.of(PrimitiveUpdateConfig.PRIMITIVE_UPDATE_EVENTS_KEY, toolUpdateEventsCopy));
 		} else {
