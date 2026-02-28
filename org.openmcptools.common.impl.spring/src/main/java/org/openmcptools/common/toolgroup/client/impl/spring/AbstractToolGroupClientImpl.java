@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openmcptools.common.client.ServerCapabilities;
+import org.openmcptools.common.impl.spring.CallToolRequestConverter;
+import org.openmcptools.common.impl.spring.CallToolResultConverter;
+import org.openmcptools.common.impl.spring.ToolConverter;
 import org.openmcptools.common.toolgroup.client.AbstractToolGroupClient;
 import org.openmcptools.common.toolgroup.client.ToolGroupClientListener;
 import org.openmcptools.common.toolgroup.client.ToolGroupClientListener.EventType;
@@ -13,6 +16,8 @@ import io.modelcontextprotocol.spec.McpSchema.Tool;
 public abstract class AbstractToolGroupClientImpl<ClientType> extends AbstractToolGroupClient<Tool> {
 
 	protected SpringLocalToolGroupClient localClient;
+	protected CallToolRequestConverter requestConverter;
+	protected CallToolResultConverter resultConverter;
 
 	protected class SpringServerCapabilities extends ServerCapabilities {
 
@@ -68,5 +73,16 @@ public abstract class AbstractToolGroupClientImpl<ClientType> extends AbstractTo
 
 	}
 
-	
+	void setToolConverter(ToolConverter toolConverter) {
+		this.toolConverter = toolConverter;
+	}
+
+	void setCallToolRequestConverter(CallToolRequestConverter requestConverter) {
+		this.requestConverter = requestConverter;
+	}
+
+	void setCallToolResultConverter(CallToolResultConverter resultConverter) {
+		this.resultConverter = resultConverter;
+	}
+
 }

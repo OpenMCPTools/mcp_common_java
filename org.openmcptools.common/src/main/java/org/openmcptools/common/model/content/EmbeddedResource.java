@@ -1,27 +1,33 @@
-package org.openmcptools.common.model;
+package org.openmcptools.common.model.content;
 
 import java.util.Map;
+
+import org.openmcptools.common.model.Annotations;
 
 public class EmbeddedResource implements Content {
 
 	private final ContentType type = ContentType.RESOURCE;
 
-	private final ResourceContent resource;
+	private final ResourceContents resource;
 	private final Annotations annotations;
 	private final Map<String, Object> meta;
 
-	public EmbeddedResource(ResourceContent resource, Annotations annotations, Map<String, Object> meta) {
+	public EmbeddedResource(ResourceContents resource, Annotations annotations, Map<String, Object> meta) {
 		this.annotations = annotations;
 		this.resource = resource;
 		this.meta = meta;
 	}
 
-	public EmbeddedResource(ResourceContent resource, Annotations annotations) {
+	public EmbeddedResource(ResourceContents resource, Annotations annotations) {
 		this(resource, annotations, null);
 	}
 
-	public EmbeddedResource(ResourceContent resource) {
+	public EmbeddedResource(ResourceContents resource) {
 		this(resource, null, null);
+	}
+
+	public ResourceContents getResource() {
+		return resource;
 	}
 
 	public ContentType getType() {

@@ -1,29 +1,32 @@
 package org.openmcptools.common.client;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import org.openmcptools.common.model.Content;
+import org.openmcptools.common.model.content.Content;
 
 public class CallToolResult {
 
-	private final Content content;
+	private final List<Content> content;
 	private final Boolean isError;
 	private final Object structuredContent;
 	private final Map<String, Object> meta;
 
-	public CallToolResult(Content content, Boolean isError, Object structuredContent, Map<String, Object> meta) {
+	public CallToolResult(List<Content> content, Boolean isError, Object structuredContent, Map<String, Object> meta) {
 		super();
+		Objects.requireNonNull(content, "content must not be null");
 		this.content = content;
 		this.isError = isError;
 		this.structuredContent = structuredContent;
 		this.meta = meta;
 	}
 
-	public CallToolResult(Content content, Boolean isError, Object structuredContent) {
+	public CallToolResult(List<Content> content, Boolean isError, Object structuredContent) {
 		this(content, isError, structuredContent, null);
 	}
 
-	public Content getContent() {
+	public List<Content> getContent() {
 		return content;
 	}
 

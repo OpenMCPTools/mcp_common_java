@@ -19,6 +19,10 @@ public class Resource extends AbstractLeaf {
 		this.uri = uri;
 	}
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
 	public static class Builder {
 
 		private String uri;

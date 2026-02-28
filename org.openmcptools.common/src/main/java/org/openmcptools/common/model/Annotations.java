@@ -2,6 +2,8 @@ package org.openmcptools.common.model;
 
 import java.util.List;
 
+import org.openmcptools.common.model.content.Role;
+
 public class Annotations {
 
 	private List<Role> audience;

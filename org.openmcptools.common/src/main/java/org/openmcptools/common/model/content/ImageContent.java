@@ -1,9 +1,12 @@
-package org.openmcptools.common.model;
+package org.openmcptools.common.model.content;
 
 import java.util.Map;
 
-public class ImageContent {
+import org.openmcptools.common.model.Annotations;
 
+public class ImageContent implements Content {
+
+	private final ContentType type = ContentType.IMAGE;
 	private final String data;
 	private final Annotations annotations;
 	private final String mimeType;
@@ -23,6 +26,10 @@ public class ImageContent {
 
 	public ImageContent(String data, String mimeType) {
 		this(data, null, mimeType, null);
+	}
+
+	public ContentType getType() {
+		return type;
 	}
 
 	public String getData() {

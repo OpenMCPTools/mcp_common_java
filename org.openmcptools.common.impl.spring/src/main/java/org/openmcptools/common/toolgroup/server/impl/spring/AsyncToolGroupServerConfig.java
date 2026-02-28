@@ -8,6 +8,9 @@ import java.util.function.BiFunction;
 
 import org.openmcptools.common.toolgroup.server.ToolGroupServer;
 
+import io.modelcontextprotocol.json.McpJsonDefaults;
+import io.modelcontextprotocol.json.McpJsonMapper;
+import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncCompletionSpecification;
@@ -18,6 +21,7 @@ import io.modelcontextprotocol.server.McpServerFeatures.AsyncToolSpecification;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.Root;
 import io.modelcontextprotocol.spec.McpServerTransportProvider;
+import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
 import reactor.core.publisher.Mono;
 
 public class AsyncToolGroupServerConfig extends AbstractToolGroupServerConfig {
@@ -123,6 +127,20 @@ public class AsyncToolGroupServerConfig extends AbstractToolGroupServerConfig {
 		toolSpecifications = (List<McpServerFeatures.AsyncToolSpecification>) properties
 				.get(ToolGroupServer.SERVER_TOOLS_SPECS);
 		toolSpecifications = (toolSpecifications == null) ? List.of() : toolSpecifications;
+
+		jsonMapper = (McpJsonMapper) properties.get(AbstractToolGroupServerImpl.SERVER_JSONMAPPER);
+		if (jsonMapper == null) {
+			jsonMapper = McpJsonDefaults.getMapper();
+		}
+
+		uriTemplateManagerFactory = (McpUriTemplateManagerFactory) properties
+				.get(ToolGroupServer.SERVER_URI_TEMPLATE_MANAGER_FACTORY);
+		jsonSchemaValidator = (JsonSchemaValidator) properties
+				.get(AbstractToolGroupServerImpl.SERVER_JSONSCHEMAVALIDATOR);
+		if (jsonSchemaValidator == null) {
+			jsonSchemaValidator = McpJsonDefaults.getSchemaValidator();
+		}
+
 	}
 
 	public McpServerFeatures.Async buildAsyncServerFeatures() {

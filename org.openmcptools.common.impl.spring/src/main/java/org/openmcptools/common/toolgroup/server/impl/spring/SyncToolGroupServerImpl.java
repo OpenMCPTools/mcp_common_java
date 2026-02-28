@@ -18,6 +18,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -38,6 +39,11 @@ public class SyncToolGroupServerImpl
 	@Reference
 	protected void setToolConverter(ToolConverter toolConverter) {
 		super.setToolConverter(toolConverter);
+	}
+
+	@Reference
+	protected void setMcpJsonDefaults(McpJsonDefaults jsonDefaults) {
+		super.setMcpJsonDefaults(jsonDefaults);
 	}
 
 	@SuppressWarnings("unchecked")

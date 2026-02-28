@@ -1,11 +1,13 @@
-package org.openmcptools.common.model;
+package org.openmcptools.common.model.content;
 
 import java.util.Map;
 import java.util.Objects;
 
+import org.openmcptools.common.model.Annotations;
+
 public class ResourceLink implements Content {
 
-	private final ContentType type = ContentType.RESOURCE;
+	private final ContentType type = ContentType.RESOURCE_LINK;
 
 	private final String name;
 	private final String title;

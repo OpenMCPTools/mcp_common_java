@@ -36,7 +36,7 @@ public class Tool extends AbstractLeaf {
 		private ToolAnnotations annotations;
 
 		private Map<String, Object> meta;
-		
+
 		private List<Group> parents;
 
 		public Builder(String name) {
@@ -60,7 +60,7 @@ public class Tool extends AbstractLeaf {
 			return this;
 		}
 
-		public Builder outputSchema(String outputSchema) {			
+		public Builder outputSchema(String outputSchema) {
 			this.outputSchema = outputSchema;
 			return this;
 		}
@@ -74,7 +74,7 @@ public class Tool extends AbstractLeaf {
 			this.meta = meta;
 			return this;
 		}
-		
+
 		public Builder addParent(Group g) {
 			if (g != null) {
 				this.parents.add(g);

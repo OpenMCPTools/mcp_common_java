@@ -6,6 +6,8 @@ import java.util.Map;
 import org.openmcptools.common.client.CallToolRequest;
 import org.openmcptools.common.client.CallToolResult;
 import org.openmcptools.common.client.InitializeResult;
+import org.openmcptools.common.impl.spring.CallToolRequestConverter;
+import org.openmcptools.common.impl.spring.CallToolResultConverter;
 import org.openmcptools.common.impl.spring.ToolConverter;
 import org.openmcptools.common.toolgroup.client.SyncToolGroupClient;
 import org.osgi.service.component.annotations.Activate;
@@ -27,7 +29,18 @@ public class SyncToolGroupClientImpl extends AbstractToolGroupClientImpl<SDKSync
 
 	@Reference
 	void setToolConverter(ToolConverter toolConverter) {
-		this.toolConverter = toolConverter;
+		super.setToolConverter(toolConverter);
+	}
+
+	@Reference
+	void setCallToolRequestConverter(CallToolRequestConverter requestConverter) {
+		super.setCallToolRequestConverter(requestConverter);
+		;
+	}
+
+	@Reference
+	void setCallToolResultConverter(CallToolResultConverter resultConverter) {
+		super.setCallToolResultConverter(resultConverter);
 	}
 
 	@Override
@@ -64,11 +77,9 @@ public class SyncToolGroupClientImpl extends AbstractToolGroupClientImpl<SDKSync
 		return result;
 	}
 
-
 	@Override
 	public CallToolResult callTool(CallToolRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.resultConverter.convertTo(this.client.callTool(this.requestConverter.convertFrom(request)));
 	}
 
 }

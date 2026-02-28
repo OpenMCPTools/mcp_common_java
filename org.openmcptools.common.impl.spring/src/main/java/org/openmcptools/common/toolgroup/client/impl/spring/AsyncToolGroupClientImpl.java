@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openmcptools.common.client.CallToolRequest;
+import org.openmcptools.common.client.CallToolResult;
 import org.openmcptools.common.client.InitializeResult;
 import org.openmcptools.common.impl.spring.ToolConverter;
 import org.openmcptools.common.toolgroup.client.AsyncToolGroupClient;
@@ -12,7 +13,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
-import io.modelcontextprotocol.spec.McpSchema.CallToolResult;
+import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.Implementation;
 import reactor.core.publisher.Mono;
 
@@ -68,8 +69,10 @@ public class AsyncToolGroupClientImpl extends
 
 	@Override
 	public Mono<CallToolResult> callTool(CallToolRequest request) {
-		// XXX TODO
-		return null;
+		return Mono.defer(() -> {
+			McpSchema.CallToolResult r = this.client.callTool(this.requestConverter.convertFrom(request)).block();
+			return Mono.just(resultConverter.convertTo(r));
+		});
 	}
 
 }

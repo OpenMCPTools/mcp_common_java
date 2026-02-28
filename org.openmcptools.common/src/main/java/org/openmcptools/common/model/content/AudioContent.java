@@ -1,6 +1,8 @@
-package org.openmcptools.common.model;
+package org.openmcptools.common.model.content;
 
 import java.util.Map;
+
+import org.openmcptools.common.model.Annotations;
 
 public class AudioContent implements Content {
 

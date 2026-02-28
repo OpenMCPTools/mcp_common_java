@@ -57,7 +57,7 @@ public class Group extends AbstractBase {
 			this.description = description;
 			return this;
 		}
-		
+
 		public Builder parent(Group parent) {
 			this.parent = parent;
 			return this;
@@ -72,13 +72,13 @@ public class Group extends AbstractBase {
 			Group result = new Group(name);
 			result.setTitle(title);
 			result.setDescription(description);
-			result.setMeta(meta);	
+			result.setMeta(meta);
 			result.setParent(parent);
 			return result;
 		}
 
 	}
-	
+
 	public Group getParent() {
 		return this.parent;
 	}

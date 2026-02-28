@@ -9,6 +9,7 @@ import java.util.function.BiConsumer;
 import org.openmcptools.common.toolgroup.server.ToolGroupServer;
 import org.openmcptools.common.toolgroup.server.ToolGroupServerConfig;
 
+import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
 import io.modelcontextprotocol.server.McpServerFeatures;
@@ -165,6 +166,9 @@ public class SyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTr
 			rootsChangeConsumers = List.of();
 		}
 		jsonMapper = (McpJsonMapper) properties.get(AbstractToolGroupServerImpl.SERVER_JSONMAPPER);
+		if (jsonMapper == null) {
+			jsonMapper = McpJsonDefaults.getMapper();
+		}
 		toolSpecifications = (List<McpServerFeatures.SyncToolSpecification>) properties
 				.get(ToolGroupServer.SERVER_TOOLS_SPECS);
 		toolSpecifications = (toolSpecifications == null) ? List.of() : toolSpecifications;
@@ -172,6 +176,9 @@ public class SyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTr
 				.get(ToolGroupServer.SERVER_URI_TEMPLATE_MANAGER_FACTORY);
 		jsonSchemaValidator = (JsonSchemaValidator) properties
 				.get(AbstractToolGroupServerImpl.SERVER_JSONSCHEMAVALIDATOR);
+		if (jsonSchemaValidator == null) {
+			jsonSchemaValidator = McpJsonDefaults.getSchemaValidator();
+		}
 		Boolean im = (Boolean) properties.get(AbstractToolGroupServerImpl.SERVER_IMMEDIATE_EXECUTION);
 		if (im != null) {
 			this.immediateExecution = im;

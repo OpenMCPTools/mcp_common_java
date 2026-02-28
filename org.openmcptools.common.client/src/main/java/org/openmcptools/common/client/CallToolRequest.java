@@ -3,28 +3,26 @@ package org.openmcptools.common.client;
 import java.util.Map;
 import java.util.Objects;
 
-import org.openmcptools.common.model.Tool;
-
 public class CallToolRequest {
 
-	private final Tool tool;
+	private final String toolName;
 	private final Map<String, Object> arguments;
 	private final Map<String, Object> meta;
 
-	public CallToolRequest(Tool tool, Map<String, Object> arguments, Map<String, Object> meta) {
+	public CallToolRequest(String toolName, Map<String, Object> arguments, Map<String, Object> meta) {
 		super();
-		Objects.requireNonNull(tool, "tool must not be null");
-		this.tool = tool;
+		Objects.requireNonNull(toolName, "toolName must not be null");
+		this.toolName = toolName;
 		this.arguments = arguments;
 		this.meta = meta;
 	}
 
-	public CallToolRequest(Tool tool, Map<String, Object> arguments) {
-		this(tool, arguments, null);
+	public CallToolRequest(String toolName, Map<String, Object> arguments) {
+		this(toolName, arguments, null);
 	}
 
-	public Tool getTool() {
-		return tool;
+	public String getToolName() {
+		return toolName;
 	}
 
 	public Map<String, Object> getArguments() {
@@ -37,7 +35,7 @@ public class CallToolRequest {
 
 	@Override
 	public String toString() {
-		return "CallToolRequest [tool=" + tool + ", arguments=" + arguments + ", meta=" + meta + "]";
+		return "CallToolRequest [toolName=" + toolName + ", arguments=" + arguments + ", meta=" + meta + "]";
 	}
 
 }

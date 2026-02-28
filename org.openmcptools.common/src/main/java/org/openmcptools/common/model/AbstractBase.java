@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.openmcptools.common.model.content.Icon;
+
 public abstract class AbstractBase {
 
 	public static final String DEFAULT_SEPARATOR = ".";

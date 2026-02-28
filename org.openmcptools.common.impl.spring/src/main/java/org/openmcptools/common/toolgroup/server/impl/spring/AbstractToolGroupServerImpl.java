@@ -11,6 +11,7 @@ import org.openmcptools.common.impl.spring.ToolConverter;
 import org.openmcptools.common.toolgroup.server.AbstractToolGroupServer;
 import org.openmcptools.common.toolgroup.server.ToolGroupServer;
 
+import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
 import io.modelcontextprotocol.server.McpAsyncServerExchange;
@@ -31,6 +32,11 @@ public abstract class AbstractToolGroupServerImpl<SpecificationType, ExchangeTyp
 		extends AbstractToolGroupServer<SpecificationType, Tool, ExchangeType, CallToolRequest, CallToolResultType> {
 
 	protected ToolConverter toolConverter;
+	protected McpJsonDefaults jsonDefaults;
+
+	protected void setMcpJsonDefaults(McpJsonDefaults jsonDefaults) {
+		this.jsonDefaults = jsonDefaults;
+	}
 
 	protected void setToolConverter(ToolConverter toolConverter) {
 		this.toolConverter = toolConverter;
@@ -52,10 +58,11 @@ public abstract class AbstractToolGroupServerImpl<SpecificationType, ExchangeTyp
 				completions, rootsChangeConsumers, instructions);
 	}
 
+	@SuppressWarnings("static-access")
 	protected SDKAsyncToolGroupServer buildMcpAsyncToolGroupServer(McpServerTransportProvider mcpTransportProvider,
 			Async mcpServerFeatures, Duration requestTimeout, McpUriTemplateManagerFactory uriTemplateManagerFactory) {
-		return buildMcpAsyncToolGroupServer(mcpTransportProvider, null, mcpServerFeatures, requestTimeout,
-				uriTemplateManagerFactory, null);
+		return buildMcpAsyncToolGroupServer(mcpTransportProvider, this.jsonDefaults.getMapper(), mcpServerFeatures,
+				requestTimeout, uriTemplateManagerFactory, this.jsonDefaults.getSchemaValidator());
 	}
 
 	protected SDKAsyncToolGroupServer buildMcpAsyncToolGroupServer(McpServerTransportProvider mcpTransportProvider,
@@ -79,11 +86,12 @@ public abstract class AbstractToolGroupServerImpl<SpecificationType, ExchangeTyp
 				completions, rootsChangeConsumers, instructions);
 	}
 
+	@SuppressWarnings("static-access")
 	protected SDKSyncToolGroupServer buildMcpSyncToolGroupServer(McpServerTransportProvider mcpTransportProvider,
 			Sync mcpServerFeatures, Duration requestTimeout, McpUriTemplateManagerFactory uriTemplateManagerFactory,
 			boolean immediateExecution) {
-		return buildMcpSyncToolGroupServer(mcpTransportProvider, null, mcpServerFeatures, requestTimeout,
-				uriTemplateManagerFactory, null, immediateExecution);
+		return buildMcpSyncToolGroupServer(mcpTransportProvider, this.jsonDefaults.getMapper(), mcpServerFeatures,
+				requestTimeout, uriTemplateManagerFactory, this.jsonDefaults.getSchemaValidator(), immediateExecution);
 	}
 
 	protected SDKSyncToolGroupServer buildMcpSyncToolGroupServer(McpServerTransportProvider mcpTransportProvider,
