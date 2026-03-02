@@ -120,20 +120,16 @@ public class SDKAsyncToolGroupClient extends McpAsyncClient {
 				Map<String, Object> notificationMap = (Map<String, Object>) params;
 				List<Map<String, Object>> eventMaps = (List<Map<String, Object>>) notificationMap
 						.get(PrimitiveUpdateConfig.PRIMITIVE_UPDATE_EVENTS_KEY);
-				try {
-					if (eventMaps != null) {
-						eventMaps.forEach(m -> {
-							PrimitiveUpdateEvent e = PrimitiveUpdateEvent.fromMap(m);
-							if (e.eventType == EventType.PUT) {
-								addedMcpTools.add(createTool(e));
-							} else if (e.eventType == EventType.DELETE) {
-								removedTools.add(e.primitiveName);
-							}
-						});
-						localToolGroupClient.updateLocal(addedMcpTools, removedTools);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+				if (eventMaps != null) {
+					eventMaps.forEach(m -> {
+						PrimitiveUpdateEvent event = PrimitiveUpdateEvent.fromMap(m);
+						if (event != null && event.eventType == EventType.PUT) {
+							addedMcpTools.add(createTool(event));
+						} else if (event != null && event.eventType == EventType.DELETE) {
+							removedTools.add(event.primitiveName);
+						}
+					});
+					localToolGroupClient.updateLocal(removedTools, addedMcpTools);
 				}
 			}
 			return Mono.empty();

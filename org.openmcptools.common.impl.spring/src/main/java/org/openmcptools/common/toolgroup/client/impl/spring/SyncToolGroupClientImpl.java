@@ -72,7 +72,7 @@ public class SyncToolGroupClientImpl extends AbstractToolGroupClientImpl<SDKSync
 		InitializeResult result = new InitializeResult(ir.protocolVersion(), i.name(), i.version(), ir.instructions(),
 				ir.meta(), new SpringServerCapabilities(ir.capabilities()));
 		if (this.tools.size() == 0) {
-			localClient.updateLocal(this.client.listTools().tools(), List.of());
+			removeAddLocal(List.of(), this.client.listTools().tools());
 		}
 		return result;
 	}
@@ -81,5 +81,12 @@ public class SyncToolGroupClientImpl extends AbstractToolGroupClientImpl<SDKSync
 	public CallToolResult callTool(CallToolRequest request) {
 		return this.resultConverter.convertTo(this.client.callTool(this.requestConverter.convertFrom(request)));
 	}
+
+	@Override
+	public void refresh() {
+		removeAddLocal(this.removeAllToolsLocal().stream().map(t -> t.getFullyQualifiedName()).toList(),
+				this.client.listTools().tools());
+	}
+
 
 }

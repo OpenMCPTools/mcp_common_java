@@ -11,6 +11,7 @@ import org.openmcptools.common.toolgroup.client.AbstractToolGroupClient;
 import org.openmcptools.common.toolgroup.client.ToolGroupClientListener;
 import org.openmcptools.common.toolgroup.client.ToolGroupClientListener.EventType;
 
+import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
 
 public abstract class AbstractToolGroupClientImpl<ClientType> extends AbstractToolGroupClient<Tool> {
@@ -62,13 +63,9 @@ public abstract class AbstractToolGroupClientImpl<ClientType> extends AbstractTo
 		}
 
 		@Override
-		public List<org.openmcptools.common.model.Tool> updateLocal(List<Tool> addedTools, List<String> removedTools) {
-			List<org.openmcptools.common.model.Tool> aTools = toolConverter.convertTo(addedTools);
-			addToolsLocal(aTools);
-			fireToolGroupClientAddEvent(aTools);
-			List<org.openmcptools.common.model.Tool> rTools = removeToolsLocal(removedTools);
-			fireToolGroupClientRemoveEvent(rTools);
-			return rTools;
+		public void updateLocal(List<String> removedTools, List<McpSchema.Tool> addedTools) {
+			fireToolGroupClientRemoveEvent(removeToolsLocal(removedTools));
+			fireToolGroupClientAddEvent(addToolsLocal(toolConverter.convertTo(addedTools)));
 		}
 
 	}
@@ -84,5 +81,10 @@ public abstract class AbstractToolGroupClientImpl<ClientType> extends AbstractTo
 	void setCallToolResultConverter(CallToolResultConverter resultConverter) {
 		this.resultConverter = resultConverter;
 	}
+
+	protected void removeAddLocal(List<String> removed, List<Tool> added) {
+		this.localClient.updateLocal(removed, added);
+	}
+	
 
 }

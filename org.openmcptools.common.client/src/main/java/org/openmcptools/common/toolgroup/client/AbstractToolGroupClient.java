@@ -26,8 +26,10 @@ public abstract class AbstractToolGroupClient<ToolType> implements ToolGroupClie
 		return List.copyOf(this.tools);
 	}
 
-	protected void addToolsLocal(List<Tool> tools) {
-		this.tools.addAll(tools);
+	protected List<Tool> addToolsLocal(List<Tool> tools) {
+		return tools.stream().filter(t -> {
+			return this.tools.add(t);
+		}).toList();
 	}
 
 	protected List<Tool> removeToolsLocal(List<String> toolNames) {
@@ -37,11 +39,17 @@ public abstract class AbstractToolGroupClient<ToolType> implements ToolGroupClie
 		return removableTools;
 	}
 
+	protected List<Tool> removeAllToolsLocal() {
+		List<Tool> removableTools = this.tools.stream().map(t -> t).toList();
+		tools.removeAll(removableTools);
+		return removableTools;
+	}
+	
 	public Converter<Tool, ToolType> getToolConverter() {
 		return toolConverter;
 	}
 
-	public List<Group> getGroupRoots() {
+	public List<Group> getToolGroupRoots() {
 		return this.tools.stream().map(t -> {
 			return t.getParentGroupRoots();
 		}).flatMap(List::stream).distinct().collect(Collectors.toList());

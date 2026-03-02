@@ -62,7 +62,7 @@ public class AsyncToolGroupClientImpl extends
 		InitializeResult result = new InitializeResult(ir.protocolVersion(), i.name(), i.version(), ir.instructions(),
 				ir.meta(), new SpringServerCapabilities(ir.capabilities()));
 		if (this.tools.size() == 0) {
-			localClient.updateLocal(this.client.listTools().block().tools(), List.of());
+			removeAddLocal(List.of(), this.client.listTools().block().tools());
 		}
 		return result;
 	}
@@ -73,6 +73,12 @@ public class AsyncToolGroupClientImpl extends
 			McpSchema.CallToolResult r = this.client.callTool(this.requestConverter.convertFrom(request)).block();
 			return Mono.just(resultConverter.convertTo(r));
 		});
+	}
+
+	@Override
+	public void refresh() {
+		removeAddLocal(this.removeAllToolsLocal().stream().map(t -> t.getFullyQualifiedName()).toList(),
+				this.client.listTools().block().tools());
 	}
 
 }
