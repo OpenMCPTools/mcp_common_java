@@ -19,8 +19,8 @@ public class Resource extends AbstractLeaf {
 		this.uri = uri;
 	}
 
-	public static Builder builder() {
-		return new Builder();
+	public static Builder builder(String name, String uri) {
+		return new Builder(name, uri);
 	}
 
 	public static class Builder {
@@ -41,14 +41,9 @@ public class Resource extends AbstractLeaf {
 
 		private Map<String, Object> meta;
 
-		public Builder uri(String uri) {
-			this.uri = uri;
-			return this;
-		}
-
-		public Builder name(String name) {
+		public Builder(String name, String uri) {
 			this.name = name;
-			return this;
+			this.uri = uri;
 		}
 
 		public Builder title(String title) {

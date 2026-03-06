@@ -2,7 +2,7 @@ package org.openmcptools.common.model;
 
 public class PromptArgument extends AbstractBase {
 
-	protected boolean required;
+	protected boolean required = false;
 
 	public PromptArgument(String name) {
 		super(name);

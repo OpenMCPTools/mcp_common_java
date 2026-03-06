@@ -21,7 +21,7 @@ public class Annotations {
 	public Annotations(List<Role> audience, Double priority) {
 		this(audience, priority, null);
 	}
-	
+
 	public List<Role> getAudience() {
 		return audience;
 	}

@@ -18,10 +18,13 @@ public class Prompt extends AbstractLeaf {
 
 	public boolean addPromptArgument(PromptArgument promptArgument) {
 		Objects.requireNonNull(promptArgument, "promptArgument must not be null");
+		if (this.promptArguments.contains(promptArgument)) {
+			return false;
+		}
 		return promptArguments.add(promptArgument);
 	}
 
-	public boolean removeParentGroup(PromptArgument promptArgument) {
+	public boolean removePromptArgument(PromptArgument promptArgument) {
 		return promptArguments.remove(promptArgument);
 	}
 

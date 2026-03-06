@@ -23,15 +23,22 @@ public abstract class AbstractBase {
 	protected List<Icon> icons;
 
 	protected AbstractBase(String name) {
-		Objects.requireNonNull(name, "name must not be null");
-		this.name = name;
-		this.nameSeparator = DEFAULT_SEPARATOR;
+		this(name, DEFAULT_SEPARATOR);
 	}
 
 	protected AbstractBase(String name, String nameSeparator) {
-		Objects.requireNonNull(name, "name must not be null");
+		if (name == null || name.isEmpty() || name.isBlank()) {
+			throw new IllegalArgumentException("name must not be null, empty, or blank");
+		}
 		this.name = name;
+		if (name == null || name.isEmpty() || name.isBlank()) {
+			throw new IllegalArgumentException("nameSeparator must not be null, empty, or blank");
+		}
 		this.nameSeparator = nameSeparator;
+	}
+
+	public String getNameSeparator() {
+		return this.nameSeparator;
 	}
 
 	public String getName() {

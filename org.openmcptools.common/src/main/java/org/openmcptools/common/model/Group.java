@@ -101,6 +101,9 @@ public class Group extends AbstractBase {
 	}
 
 	public boolean addChildGroup(Group childGroup) {
+		if (childGroups.contains(childGroup)) {
+			return false;
+		}
 		boolean added = childGroups.add(childGroup);
 		if (added) {
 			childGroup.parent = this;
@@ -122,6 +125,9 @@ public class Group extends AbstractBase {
 	}
 
 	public boolean addChildTool(Tool childTool) {
+		if (this.childTools.contains(childTool)) {
+			return false;
+		}
 		boolean added = childTools.add(childTool);
 		if (added) {
 			childTool.addParentGroup(this);
@@ -144,6 +150,9 @@ public class Group extends AbstractBase {
 	}
 
 	public boolean addChildPrompt(Prompt childPrompt) {
+		if (this.childPrompts.contains(childPrompt)) {
+			return false;
+		}
 		boolean added = childPrompts.add(childPrompt);
 		if (added) {
 			childPrompt.addParentGroup(this);
@@ -161,11 +170,14 @@ public class Group extends AbstractBase {
 		return false;
 	}
 
-	public List<Resource> getChildrenResources() {
+	public List<Resource> getChildResources() {
 		return this.childResources;
 	}
 
 	public boolean addChildResource(Resource childResource) {
+		if (this.childResources.contains(childResource)) {
+			return false;
+		}
 		boolean added = childResources.add(childResource);
 		if (added) {
 			childResource.addParentGroup(this);
@@ -183,7 +195,7 @@ public class Group extends AbstractBase {
 		return false;
 	}
 
-	public List<Prompt> getChildrenPrompts() {
+	public List<Prompt> getChildPrompts() {
 		return this.childPrompts;
 	}
 

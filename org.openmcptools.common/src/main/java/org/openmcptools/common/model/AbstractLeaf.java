@@ -31,6 +31,9 @@ public class AbstractLeaf extends AbstractBase {
 
 	public boolean removeParentGroup(Group parentGroup) {
 		int currentIndex = parentGroups.indexOf(parentGroup);
+		if (currentIndex == -1) {
+			return false;
+		}
 		if (currentIndex == this.primaryParentGroupIndex) {
 			boolean result = parentGroups.remove(currentIndex) != null;
 			this.primaryParentGroupIndex = -1;
@@ -47,7 +50,7 @@ public class AbstractLeaf extends AbstractBase {
 		return this.parentGroups.stream().map(Group::getRoot).toList();
 	}
 
-	protected String getFirstParentName() {
+	protected String getPrimaryParentName() {
 		return this.primaryParentGroupIndex > -1
 				? this.parentGroups.get(primaryParentGroupIndex).getFullyQualifiedName()
 				: null;
@@ -55,7 +58,7 @@ public class AbstractLeaf extends AbstractBase {
 
 	@Override
 	public String getFullyQualifiedName() {
-		String firstParentName = getFirstParentName();
+		String firstParentName = getPrimaryParentName();
 		return firstParentName == null ? getName() : firstParentName + this.nameSeparator + this.name;
 	}
 

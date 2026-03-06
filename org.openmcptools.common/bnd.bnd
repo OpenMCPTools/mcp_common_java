@@ -2,5 +2,13 @@
 	org.osgi.annotation.bundle,\
 	org.osgi.annotation.versioning
 	
-Bundle-Version: 2.2.0.${tstamp}
+Bundle-Version: 2.3.0.${tstamp}
+	
+-testpath: \
+	slf4j.api,\
+	slf4j.simple,\
+	${junit},\
+	${mockito}
+
+-builderignore: testdata, workspace
 	
