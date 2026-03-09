@@ -3,7 +3,8 @@
 	org.osgi.annotation.versioning,\
 	org.openmcptools.common;version=snapshot,\
 	org.openmcptools.annotation,\
-	slf4j.api
+	slf4j.api,\
+	org.openmcptools.transport
 	
-Bundle-Version: 2.2.0.${tstamp}
+Bundle-Version: 3.0.0.${tstamp}
 	

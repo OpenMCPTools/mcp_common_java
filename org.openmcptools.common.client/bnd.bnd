@@ -2,7 +2,8 @@
 	org.openmcptools.common,\
 	slf4j.api;version='2.0',\
 	org.osgi.annotation.bundle,\
-	org.osgi.annotation.versioning
+	org.osgi.annotation.versioning,\
+	org.openmcptools.transport
 
 Bundle-Version: 2.2.0.${tstamp}
 	

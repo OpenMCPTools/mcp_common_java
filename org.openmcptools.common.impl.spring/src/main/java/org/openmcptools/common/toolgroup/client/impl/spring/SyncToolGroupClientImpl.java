@@ -88,5 +88,4 @@ public class SyncToolGroupClientImpl extends AbstractToolGroupClientImpl<SDKSync
 				this.client.listTools().tools());
 	}
 
-
 }

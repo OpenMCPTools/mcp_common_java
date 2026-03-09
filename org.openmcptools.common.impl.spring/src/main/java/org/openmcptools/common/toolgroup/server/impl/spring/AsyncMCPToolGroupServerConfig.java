@@ -22,40 +22,60 @@ import io.modelcontextprotocol.server.McpServerFeatures.AsyncToolSpecification;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpSchema.JSONRPCMessage;
 import io.modelcontextprotocol.spec.McpSchema.Root;
-import io.modelcontextprotocol.spec.McpServerTransportProvider;
 import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
 import reactor.core.publisher.Mono;
 
-public class AsyncToolGroupServerConfig extends AbstractToolGroupServerConfig {
+public class AsyncMCPToolGroupServerConfig extends AbstractMCPToolGroupServerConfig {
 
 	public static final String SERVER_FACTORY_NAME = "AsyncToolGroupServerFactory";
 	public static final String SERVER_CF_TARGET = "(component.factory=" + SERVER_FACTORY_NAME + ")";
 
-	public AsyncToolGroupServerConfig setPromptSpecifications(
+	public AsyncMCPToolGroupServerConfig(
+			MCPServerTransportProvider<Mono<Void>, Mono<?>, JSONRPCMessage> transportProvider) {
+		super(transportProvider);
+	}
+
+	public AsyncMCPToolGroupServerConfig(String serverName, String serverTitle,
+			MCPServerTransportProvider<Mono<Void>, Mono<?>, JSONRPCMessage> transportProvider) {
+		super(serverName, serverTitle, transportProvider);
+	}
+
+	public AsyncMCPToolGroupServerConfig(String serverName, String serverTitle, String serverVersion,
+			MCPServerTransportProvider<Mono<Void>, Mono<?>, JSONRPCMessage> transportProvider, Long requestTimeout,
+			String serverInstructions) {
+		super(serverName, serverTitle, serverVersion, transportProvider, requestTimeout, serverInstructions);
+	}
+
+	public AsyncMCPToolGroupServerConfig(String serverName, String serverTitle, String serverVersion,
+			MCPServerTransportProvider<Mono<Void>, Mono<?>, JSONRPCMessage> transportProvider) {
+		super(serverName, serverTitle, serverVersion, transportProvider);
+	}
+
+	public AsyncMCPToolGroupServerConfig setPromptSpecifications(
 			Map<String, AsyncPromptSpecification> promptSpecifications) {
 		this.promptSpecifications = promptSpecifications;
 		return this;
 	}
 
-	public AsyncToolGroupServerConfig setRootsChangeConsumers(
+	public AsyncMCPToolGroupServerConfig setRootsChangeConsumers(
 			List<BiFunction<McpAsyncServerExchange, List<Root>, Mono<Void>>> rootsChangeConsumers) {
 		this.rootsChangeConsumers = rootsChangeConsumers;
 		return this;
 	}
 
-	public AsyncToolGroupServerConfig setResourceSpecifications(
+	public AsyncMCPToolGroupServerConfig setResourceSpecifications(
 			Map<String, AsyncResourceSpecification> resourceSpecifications) {
 		this.resourceSpecifications = resourceSpecifications;
 		return this;
 	}
 
-	public AsyncToolGroupServerConfig setResourceTemplateSpecifications(
+	public AsyncMCPToolGroupServerConfig setResourceTemplateSpecifications(
 			Map<String, McpServerFeatures.AsyncResourceTemplateSpecification> resourceTemplateSpecifications) {
 		this.resourceTemplateSpecifications = resourceTemplateSpecifications;
 		return this;
 	}
 
-	public AsyncToolGroupServerConfig setServerCompletions(
+	public AsyncMCPToolGroupServerConfig setServerCompletions(
 			Map<McpSchema.CompleteReference, McpServerFeatures.AsyncCompletionSpecification> serverCompletions) {
 		this.serverCompletions = serverCompletions;
 		return this;
@@ -68,26 +88,8 @@ public class AsyncToolGroupServerConfig extends AbstractToolGroupServerConfig {
 	private Map<String, McpServerFeatures.AsyncResourceTemplateSpecification> resourceTemplateSpecifications;
 	private Map<McpSchema.CompleteReference, McpServerFeatures.AsyncCompletionSpecification> serverCompletions;
 
-	public AsyncToolGroupServerConfig(String serverName, String serverTitle, String serverVersion,
-			McpServerTransportProvider transport, Long requestTimeout, String serverInstructions) {
-		super(serverName, serverTitle, serverVersion, transport, requestTimeout, serverInstructions);
-	}
-
-	public AsyncToolGroupServerConfig(McpServerTransportProvider transport) {
-		super(transport);
-	}
-
-	public AsyncToolGroupServerConfig(String serverName, String serverTitle, String serverVersion,
-			McpServerTransportProvider transport) {
-		super(serverName, serverTitle, serverVersion, transport);
-	}
-
-	public AsyncToolGroupServerConfig(String serverName, String serverVersion, McpServerTransportProvider transport) {
-		super(serverName, serverVersion, transport);
-	}
-
 	@SuppressWarnings("unchecked")
-	public AsyncToolGroupServerConfig(Map<String, Object> properties) {
+	public AsyncMCPToolGroupServerConfig(Map<String, Object> properties) {
 		super(properties);
 		resourceSpecifications = (Map<String, AsyncResourceSpecification>) properties
 				.get(ToolGroupServer.SERVER_RESOURCE_SPECS);
@@ -151,17 +153,9 @@ public class AsyncToolGroupServerConfig extends AbstractToolGroupServerConfig {
 				promptSpecifications, serverCompletions, rootsChangeConsumers, serverInstructions);
 	}
 
-	@SuppressWarnings("unchecked")
 	public SDKAsyncToolGroupServer buildMcpAsyncToolGroupServer() {
-		if (transportProvider instanceof MCPServerTransportProvider) {
-			return new SDKAsyncToolGroupServer(
-					(MCPServerTransportProvider<Mono<Void>, Mono<?>, JSONRPCMessage>) transportProvider,
-					Duration.ofSeconds(requestTimeout), jsonMapper, jsonSchemaValidator, buildAsyncServerFeatures(),
-					uriTemplateManagerFactory);
-		} else {
-			return new SDKAsyncToolGroupServer(transportProvider, jsonMapper, buildAsyncServerFeatures(),
-					Duration.ofSeconds(requestTimeout), uriTemplateManagerFactory, jsonSchemaValidator);
-		}
+		return new SDKAsyncToolGroupServer(transportProvider, Duration.ofSeconds(requestTimeout), jsonMapper,
+				jsonSchemaValidator, buildAsyncServerFeatures(), uriTemplateManagerFactory);
 	}
 
 	@Override

@@ -13,7 +13,7 @@ public interface ToolGroupServer<SpecificationType> extends Closeable {
 	public static final String SERVER_NAME = SERVER_PREFIX + ".serverName";
 	public static final String SERVER_TITLE = SERVER_PREFIX + ".serverTitle";
 	public static final String SERVER_VERSION = SERVER_PREFIX + ".serverVersion";
-	public static final String SERVER_TRANSPORT = SERVER_PREFIX + ".serverTransport";
+	public static final String SERVER_TRANSPORT_PROVIDER = SERVER_PREFIX + ".serverTransportProvider";
 	public static final String SERVER_CAPABILITIES = SERVER_PREFIX + ".serverCapabilities";
 	public static final String SERVER_TOOL_GROUP_PROVIDER = SERVER_PREFIX + ".serverToolGroupProvider";
 	public static final String SERVER_GENERATE_OUTPUT_SCHEMA = SERVER_PREFIX + ".outputSchemaGenerator";

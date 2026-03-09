@@ -11,7 +11,8 @@
 	slf4j.api;version='2.0',\
 	reactive-streams,\
 	org.openmcptools.extensions.update,\
-	org.openmcptools.common.client;version=snapshot
+	org.openmcptools.common.client;version=snapshot,\
+	org.openmcptools.transport
 	
 Bundle-Version: 2.2.0.${tstamp}
 	

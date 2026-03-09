@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Objects;
 
-public class ToolGroupServerConfig<TransportType> {
+public class ToolGroupServerConfig<TP> {
 
 	public static final String DEFAULT_SERVER_NAME = System
 			.getProperty(ToolGroupServerConfig.class.getName() + ".defaultServerName", "Default MCP Server Name");
@@ -19,11 +19,11 @@ public class ToolGroupServerConfig<TransportType> {
 	protected final String serverName;
 	protected final String serverTitle;
 	protected final String serverVersion;
-	protected final TransportType transport;
+	protected final TP transportProvider;
 	protected final Long requestTimeout;
 	protected final String serverInstructions;
 
-	public ToolGroupServerConfig(String serverName, String serverTitle, String serverVersion, TransportType transport,
+	public ToolGroupServerConfig(String serverName, String serverTitle, String serverVersion, TP transportProvider,
 			Long requestTimeout, String serverInstructions) {
 		super();
 		Objects.requireNonNull(serverName, "serverName must not be null");
@@ -31,23 +31,23 @@ public class ToolGroupServerConfig<TransportType> {
 		this.serverTitle = serverTitle;
 		Objects.requireNonNull(serverVersion, "serverVersion must not be null");
 		this.serverVersion = serverVersion;
-		Objects.requireNonNull(transport, "transport must not be null");
-		this.transport = transport;
+		Objects.requireNonNull(transportProvider, "transportProvider must not be null");
+		this.transportProvider = transportProvider;
 		Objects.requireNonNull(requestTimeout, "requestTimeout must not be null");
 		this.requestTimeout = requestTimeout;
 		this.serverInstructions = serverInstructions;
 	}
 
-	public ToolGroupServerConfig(String serverName, String serverTitle, String serverVersion, TransportType transport) {
-		this(serverName, serverTitle, serverVersion, transport, DEFAULT_SERVER_REQUEST_TIMEOUT, null);
+	public ToolGroupServerConfig(String serverName, String serverTitle, String serverVersion, TP transportProvider) {
+		this(serverName, serverTitle, serverVersion, transportProvider, DEFAULT_SERVER_REQUEST_TIMEOUT, null);
 	}
 
-	public ToolGroupServerConfig(String serverName, String serverTitle, TransportType transport) {
-		this(serverName, null, serverTitle, transport);
+	public ToolGroupServerConfig(String serverName, String serverTitle, TP transportProvider) {
+		this(serverName, null, serverTitle, transportProvider);
 	}
 
-	public ToolGroupServerConfig(TransportType transport) {
-		this(DEFAULT_SERVER_NAME, DEFAULT_SERVER_VERSION, transport);
+	public ToolGroupServerConfig(TP transportProvider) {
+		this(DEFAULT_SERVER_NAME, DEFAULT_SERVER_VERSION, transportProvider);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -55,7 +55,7 @@ public class ToolGroupServerConfig<TransportType> {
 		this((String) properties.get(ToolGroupServer.SERVER_NAME),
 				(String) properties.get(ToolGroupServer.SERVER_TITLE),
 				(String) properties.get(ToolGroupServer.SERVER_VERSION),
-				(TransportType) properties.get(ToolGroupServer.SERVER_TRANSPORT),
+				(TP) properties.get(ToolGroupServer.SERVER_TRANSPORT_PROVIDER),
 				(Long) properties.get(ToolGroupServer.SERVER_REQUEST_DURATION),
 				(String) properties.get(ToolGroupServer.SERVER_INSTRUCTIONS));
 	}
@@ -67,7 +67,7 @@ public class ToolGroupServerConfig<TransportType> {
 			result.put(ToolGroupServer.SERVER_TITLE, this.serverTitle);
 		}
 		result.put(ToolGroupServer.SERVER_VERSION, this.serverVersion);
-		result.put(ToolGroupServer.SERVER_TRANSPORT, this.transport);
+		result.put(ToolGroupServer.SERVER_TRANSPORT_PROVIDER, this.transportProvider);
 		result.put(ToolGroupServer.SERVER_REQUEST_DURATION, this.requestTimeout);
 		if (this.serverInstructions != null) {
 			result.put(ToolGroupServer.SERVER_INSTRUCTIONS, this.serverInstructions);

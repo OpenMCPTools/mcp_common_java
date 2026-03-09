@@ -44,7 +44,7 @@ public abstract class AbstractToolGroupClient<ToolType> implements ToolGroupClie
 		tools.removeAll(removableTools);
 		return removableTools;
 	}
-	
+
 	public Converter<Tool, ToolType> getToolConverter() {
 		return toolConverter;
 	}

@@ -85,6 +85,5 @@ public abstract class AbstractToolGroupClientImpl<ClientType> extends AbstractTo
 	protected void removeAddLocal(List<String> removed, List<Tool> added) {
 		this.localClient.updateLocal(removed, added);
 	}
-	
 
 }

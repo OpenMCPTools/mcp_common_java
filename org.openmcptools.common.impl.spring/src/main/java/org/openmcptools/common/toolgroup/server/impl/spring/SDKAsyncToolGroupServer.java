@@ -4,19 +4,26 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openmcptools.extensions.update.FieldValueUpdate;
 import org.openmcptools.extensions.update.PrimitiveUpdateConfig;
 import org.openmcptools.extensions.update.PrimitiveUpdateEvent;
 import org.openmcptools.extensions.update.PrimitiveUpdateEvent.EventType;
+import org.openmcptools.transport.server.MCPServerSessionFactory;
+import org.openmcptools.transport.server.MCPServerTransportProvider;
 
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.json.schema.JsonSchemaValidator;
 import io.modelcontextprotocol.server.McpAsyncServer;
+import io.modelcontextprotocol.server.McpNotificationHandler;
+import io.modelcontextprotocol.server.McpRequestHandler;
 import io.modelcontextprotocol.server.McpServerFeatures.Async;
 import io.modelcontextprotocol.server.McpServerFeatures.AsyncToolSpecification;
+import io.modelcontextprotocol.spec.McpSchema.JSONRPCMessage;
 import io.modelcontextprotocol.spec.McpSchema.Tool;
+import io.modelcontextprotocol.spec.McpServerTransport;
 import io.modelcontextprotocol.spec.McpServerTransportProvider;
 import io.modelcontextprotocol.spec.McpStreamableServerTransportProvider;
 import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
@@ -25,6 +32,26 @@ import reactor.core.publisher.Mono;
 public class SDKAsyncToolGroupServer extends McpAsyncServer {
 
 	private final List<PrimitiveUpdateEvent> toolUpdateEvents = new CopyOnWriteArrayList<PrimitiveUpdateEvent>();
+
+	SDKAsyncToolGroupServer(MCPServerTransportProvider<Mono<Void>, Mono<?>, JSONRPCMessage> transportProvider,
+			Duration requestTimeout, McpJsonMapper jsonMapper, JsonSchemaValidator jsonSchemaValidator, Async features,
+			McpUriTemplateManagerFactory uriTemplateManagerFactory) {
+		super((McpServerTransportProvider) transportProvider, jsonMapper, jsonSchemaValidator, features,
+				uriTemplateManagerFactory);
+
+		Map<String, McpRequestHandler<?>> requestHandlers = prepareRequestHandlers();
+		Map<String, McpNotificationHandler> notificationHandlers = prepareNotificationHandlers(features);
+
+		transportProvider.initServerSessionFactory(transport -> new UDSMcpServerSession(UUID.randomUUID().toString(),
+				requestTimeout, (McpServerTransport) transport, this::asyncInitializeRequestHandler, requestHandlers,
+				notificationHandlers));
+	}
+
+	@SuppressWarnings("unchecked")
+	protected void startServer(MCPServerSessionFactory<Mono<Void>, Mono<?>, JSONRPCMessage> factory) {
+		((MCPServerTransportProvider<Mono<Void>, Mono<?>, JSONRPCMessage>) this.mcpTransportProvider)
+				.initServerSessionFactory(factory);
+	}
 
 	public SDKAsyncToolGroupServer(McpServerTransportProvider mcpTransportProvider, McpJsonMapper jsonMapper,
 			Async features, Duration requestTimeout, McpUriTemplateManagerFactory uriTemplateManagerFactory,

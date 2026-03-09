@@ -14,7 +14,7 @@ public interface ToolGroupClient extends Closeable {
 	List<Tool> getTools();
 
 	List<Group> getToolGroupRoots();
-	
+
 	void refresh();
 
 }

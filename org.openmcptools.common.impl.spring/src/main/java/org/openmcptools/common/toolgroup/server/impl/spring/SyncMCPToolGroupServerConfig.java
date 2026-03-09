@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 import org.openmcptools.common.toolgroup.server.ToolGroupServer;
-import org.openmcptools.common.toolgroup.server.ToolGroupServerConfig;
+import org.openmcptools.transport.server.MCPServerTransportProvider;
 
 import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.json.McpJsonMapper;
@@ -20,72 +20,73 @@ import io.modelcontextprotocol.server.McpServerFeatures.SyncResourceTemplateSpec
 import io.modelcontextprotocol.server.McpServerFeatures.SyncToolSpecification;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
+import io.modelcontextprotocol.spec.McpSchema.JSONRPCMessage;
 import io.modelcontextprotocol.spec.McpSchema.ServerCapabilities;
-import io.modelcontextprotocol.spec.McpServerTransportProvider;
 import io.modelcontextprotocol.util.McpUriTemplateManagerFactory;
+import reactor.core.publisher.Mono;
 
-public class SyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTransportProvider> {
+public class SyncMCPToolGroupServerConfig extends AbstractMCPToolGroupServerConfig {
 
 	public static final String SERVER_FACTORY_NAME = "SyncToolGroupServerFactory";
 	public static final String SERVER_CF_TARGET = "(component.factory=" + SERVER_FACTORY_NAME + ")";
 
-	public SyncToolGroupServerConfig setServerCapabilities(ServerCapabilities serverCapabilities) {
+	public SyncMCPToolGroupServerConfig setServerCapabilities(ServerCapabilities serverCapabilities) {
 		this.serverCapabilities = serverCapabilities;
 		return this;
 	}
 
-	public SyncToolGroupServerConfig setPromptSpecifications(
+	public SyncMCPToolGroupServerConfig setPromptSpecifications(
 			Map<String, SyncPromptSpecification> promptSpecifications) {
 		this.promptSpecifications = promptSpecifications;
 		return this;
 	}
 
-	public SyncToolGroupServerConfig setRootsChangeConsumers(
+	public SyncMCPToolGroupServerConfig setRootsChangeConsumers(
 			List<BiConsumer<McpSyncServerExchange, List<McpSchema.Root>>> rootsChangeConsumers) {
 		this.rootsChangeConsumers = rootsChangeConsumers;
 		return this;
 	}
 
-	public SyncToolGroupServerConfig setJsonMapper(McpJsonMapper jsonMapper) {
+	public SyncMCPToolGroupServerConfig setJsonMapper(McpJsonMapper jsonMapper) {
 		this.jsonMapper = jsonMapper;
 		return this;
 	}
 
-	public SyncToolGroupServerConfig setToolSpecifications(List<SyncToolSpecification> toolSpecifications) {
+	public SyncMCPToolGroupServerConfig setToolSpecifications(List<SyncToolSpecification> toolSpecifications) {
 		this.toolSpecifications = toolSpecifications;
 		return this;
 	}
 
-	public SyncToolGroupServerConfig setUriTemplateManagerFactory(
+	public SyncMCPToolGroupServerConfig setUriTemplateManagerFactory(
 			McpUriTemplateManagerFactory uriTemplateManagerFactory) {
 		this.uriTemplateManagerFactory = uriTemplateManagerFactory;
 		return this;
 	}
 
-	public SyncToolGroupServerConfig setJsonSchemaValidator(JsonSchemaValidator jsonSchemaValidator) {
+	public SyncMCPToolGroupServerConfig setJsonSchemaValidator(JsonSchemaValidator jsonSchemaValidator) {
 		this.jsonSchemaValidator = jsonSchemaValidator;
 		return this;
 	}
 
-	public SyncToolGroupServerConfig setResourceSpecifications(
+	public SyncMCPToolGroupServerConfig setResourceSpecifications(
 			Map<String, SyncResourceSpecification> resourceSpecifications) {
 		this.resourceSpecifications = resourceSpecifications;
 		return this;
 	}
 
-	public SyncToolGroupServerConfig setResourceTemplateSpecifications(
+	public SyncMCPToolGroupServerConfig setResourceTemplateSpecifications(
 			Map<String, McpServerFeatures.SyncResourceTemplateSpecification> resourceTemplateSpecifications) {
 		this.resourceTemplateSpecifications = resourceTemplateSpecifications;
 		return this;
 	}
 
-	public SyncToolGroupServerConfig setServerCompletions(
+	public SyncMCPToolGroupServerConfig setServerCompletions(
 			Map<McpSchema.CompleteReference, McpServerFeatures.SyncCompletionSpecification> serverCompletions) {
 		this.serverCompletions = serverCompletions;
 		return this;
 	}
 
-	public SyncToolGroupServerConfig setImmediateExecution(Boolean immediateExecution) {
+	public SyncMCPToolGroupServerConfig setImmediateExecution(Boolean immediateExecution) {
 		this.immediateExecution = immediateExecution;
 		return this;
 	}
@@ -102,26 +103,29 @@ public class SyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTr
 	private Map<McpSchema.CompleteReference, McpServerFeatures.SyncCompletionSpecification> serverCompletions;
 	private Boolean immediateExecution = false;
 
-	public SyncToolGroupServerConfig(String serverName, String serverTitle, String serverVersion,
-			McpServerTransportProvider transport, Long requestTimeout, String serverInstructions) {
-		super(serverName, serverTitle, serverVersion, transport, requestTimeout, serverInstructions);
+	public SyncMCPToolGroupServerConfig(
+			MCPServerTransportProvider<Mono<Void>, Mono<?>, JSONRPCMessage> transportProvider) {
+		super(transportProvider);
 	}
 
-	public SyncToolGroupServerConfig(String serverName, String serverTitle, String serverVersion,
-			McpServerTransportProvider transport) {
-		super(serverName, serverTitle, serverVersion, transport);
+	public SyncMCPToolGroupServerConfig(String serverName, String serverTitle,
+			MCPServerTransportProvider<Mono<Void>, Mono<?>, JSONRPCMessage> transportProvider) {
+		super(serverName, serverTitle, transportProvider);
 	}
 
-	public SyncToolGroupServerConfig(McpServerTransportProvider transport) {
-		super(transport);
+	public SyncMCPToolGroupServerConfig(String serverName, String serverTitle, String serverVersion,
+			MCPServerTransportProvider<Mono<Void>, Mono<?>, JSONRPCMessage> transportProvider, Long requestTimeout,
+			String serverInstructions) {
+		super(serverName, serverTitle, serverVersion, transportProvider, requestTimeout, serverInstructions);
 	}
 
-	public SyncToolGroupServerConfig(String serverName, String serverVersion, McpServerTransportProvider transport) {
-		super(serverName, serverVersion, transport);
+	public SyncMCPToolGroupServerConfig(String serverName, String serverTitle, String serverVersion,
+			MCPServerTransportProvider<Mono<Void>, Mono<?>, JSONRPCMessage> transportProvider) {
+		super(serverName, serverTitle, serverVersion, transportProvider);
 	}
 
 	@SuppressWarnings("unchecked")
-	public SyncToolGroupServerConfig(Map<String, Object> properties) {
+	public SyncMCPToolGroupServerConfig(Map<String, Object> properties) {
 		super(properties);
 		this.serverCapabilities = (ServerCapabilities) properties.get(AbstractToolGroupServerImpl.SERVER_CAPABILITIES);
 		if (serverCapabilities == null) {
@@ -194,8 +198,10 @@ public class SyncToolGroupServerConfig extends ToolGroupServerConfig<McpServerTr
 	protected SDKAsyncToolGroupServer buildAsyncToolGroupServer() {
 		McpServerFeatures.Async mcpAsyncServerFeatures = McpServerFeatures.Async.fromSync(buildServerFeatures(),
 				immediateExecution);
-		return new SDKAsyncToolGroupServer(transportProvider, jsonMapper, mcpAsyncServerFeatures,
-				Duration.ofSeconds(requestTimeout), uriTemplateManagerFactory, jsonSchemaValidator);
+		return new SDKAsyncToolGroupServer(
+				(MCPServerTransportProvider<Mono<Void>, Mono<?>, JSONRPCMessage>) transportProvider,
+				Duration.ofSeconds(requestTimeout), jsonMapper, jsonSchemaValidator, mcpAsyncServerFeatures,
+				uriTemplateManagerFactory);
 	}
 
 	public SDKSyncToolGroupServer buildMcpSyncToolGroupServer() {
