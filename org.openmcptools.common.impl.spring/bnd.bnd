@@ -12,7 +12,8 @@
 	reactive-streams,\
 	org.openmcptools.extensions.update,\
 	org.openmcptools.common.client;version=snapshot,\
-	org.openmcptools.transport
+	org.openmcptools.transport,\
+	org.openmcptools.transport.spring
 	
 Bundle-Version: 2.2.0.${tstamp}
 	
