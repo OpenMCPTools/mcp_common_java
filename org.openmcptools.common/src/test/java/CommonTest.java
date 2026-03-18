@@ -18,13 +18,13 @@ import org.openmcptools.common.model.AbstractBase;
 import org.openmcptools.common.model.Annotations;
 import org.openmcptools.common.model.Converter;
 import org.openmcptools.common.model.Group;
+import org.openmcptools.common.model.Icon;
 import org.openmcptools.common.model.Prompt;
 import org.openmcptools.common.model.PromptArgument;
 import org.openmcptools.common.model.Resource;
+import org.openmcptools.common.model.Role;
 import org.openmcptools.common.model.Tool;
 import org.openmcptools.common.model.ToolAnnotations;
-import org.openmcptools.common.model.content.Icon;
-import org.openmcptools.common.model.content.Role;
 
 /**
  * Translation of the Common.ts test suite to Java JUnit 5.

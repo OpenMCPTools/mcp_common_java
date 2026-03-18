@@ -4,16 +4,16 @@ import java.util.List;
 import java.util.Objects;
 
 import org.openmcptools.common.model.Annotations;
-import org.openmcptools.common.model.content.AudioContent;
-import org.openmcptools.common.model.content.BlobResourceContents;
-import org.openmcptools.common.model.content.Content;
-import org.openmcptools.common.model.content.EmbeddedResource;
-import org.openmcptools.common.model.content.ImageContent;
-import org.openmcptools.common.model.content.ResourceContents;
-import org.openmcptools.common.model.content.ResourceLink;
-import org.openmcptools.common.model.content.Role;
-import org.openmcptools.common.model.content.TextContent;
-import org.openmcptools.common.model.content.TextResourceContents;
+import org.openmcptools.common.model.AudioContent;
+import org.openmcptools.common.model.BlobResourceContents;
+import org.openmcptools.common.model.Content;
+import org.openmcptools.common.model.EmbeddedResource;
+import org.openmcptools.common.model.ImageContent;
+import org.openmcptools.common.model.ResourceContents;
+import org.openmcptools.common.model.ResourceLink;
+import org.openmcptools.common.model.Role;
+import org.openmcptools.common.model.TextContent;
+import org.openmcptools.common.model.TextResourceContents;
 import org.osgi.service.component.annotations.Component;
 
 import io.modelcontextprotocol.spec.McpSchema;

@@ -5,5 +5,5 @@
 	org.osgi.annotation.versioning,\
 	org.openmcptools.transport
 
-Bundle-Version: 2.2.0.${tstamp}
+Bundle-Version: 3.0.0.${tstamp}
 	

@@ -15,5 +15,5 @@
 	org.openmcptools.transport,\
 	org.openmcptools.transport.spring
 	
-Bundle-Version: 2.2.0.${tstamp}
+Bundle-Version: 3.0.0.${tstamp}
 	

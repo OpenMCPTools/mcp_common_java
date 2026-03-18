@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.openmcptools.common.model.content.Content;
+import org.openmcptools.common.model.Content;
 
 public class CallToolResult {
 

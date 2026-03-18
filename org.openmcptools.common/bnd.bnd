@@ -2,7 +2,7 @@
 	org.osgi.annotation.bundle,\
 	org.osgi.annotation.versioning
 	
-Bundle-Version: 2.3.0.${tstamp}
+Bundle-Version: 3.0.0.${tstamp}
 	
 -testpath: \
 	slf4j.api,\
