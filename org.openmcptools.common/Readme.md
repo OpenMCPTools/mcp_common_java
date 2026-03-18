@@ -1,4 +1,4 @@
-# MCP Common API
+# MCP Server Common API
 
 A core Java library providing a hierarchical grouping object model for the **Model Context Protocol (MCP)**.
 
@@ -8,8 +8,9 @@ OpenMCPTools Common API is designed to simplify the development of MCP-compliant
 
 ## Features
 
-- **Hierarchical Grouping of MCP Primitives**: Organize tools, resources, and prompts into logical groups using a folder-like structure called a Group. Groups also have metadata that can be communicated to clients at the discretion of the MCP server.
+- **Hierarchical Grouping of MCP Primitives**: Organize tools, resources, and prompts into logical groups on the server using a folder-like structure called a Group. Groups may have metadata that can be communicated to clients at the discretion of the MCP server.
 - **Metadata Extension Support**: Every entity includes a `meta` map for custom extensions.
+- **Support for Dynamic Server Update of Model Entities**
 
 ## Project Structure
 
