@@ -1,6 +1,6 @@
-# MCP Common API
+# MCP Server Common API
 
-A core Java library providing a hierarchical object model for the **Model Context Protocol (MCP)**.
+A core Java library providing a hierarchical grouping object model for the **Model Context Protocol (MCP)**.
 
 ## Overview
 
@@ -8,11 +8,9 @@ OpenMCPTools Common API is designed to simplify the development of MCP-compliant
 
 ## Features
 
-- **Hierarchical Asset Management**: Organize tools and resources into logical groups using a folder-like structure.
-- **Fluent Builders**: Create complex objects easily with the built-in Builder pattern.
-- **Multi-Modal Content**: Unified support for Text, Image, Audio, and Resource-based content.
-- **Metadata Support**: Every entity includes a `meta` map for custom extensions.
-- **Thread-Safe**: Designed for concurrent environments using thread-safe collection implementations.
+- **Hierarchical Grouping of MCP Primitives**: Organize tools, resources, and prompts into logical groups on the server using a folder-like structure called a Group. Groups may have metadata that can be communicated to clients at the discretion of the MCP server.
+- **Metadata Extension Support**: Every entity includes a `meta` map for custom extensions.
+- **Support for Dynamic Server Update of Model Entities**
 
 ## Project Structure
 
@@ -41,9 +39,9 @@ pluginGroup.addChildTool(weatherTool);
 // Fully Qualified Name: utility_plugins.get_weather
 System.out.println(weatherTool.getFullyQualifiedName());
 ```
-
-w ImageContent(base64Data, "image/png");
-```
-
 ## Requirements
 - Java 17 or higher
+
+## [License - Apache 2](./LICENSE)
+
+
