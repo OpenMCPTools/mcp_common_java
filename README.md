@@ -1,5 +1,13 @@
 # MCP Common Java API
 
+### NEW (3/31/2026) - Bndtools-based project templates
+
+Bndtools is a [toolset](https://bndtools.org/installation.html) that supports OSGi server (and client) development.  Bndtools has templates to make building OSGi-based applications easier.
+
+Project templates for creating MCP Toolgroups servers and clients have now been added as part of the [ECF Remote Services workspace template](https://github.com/ECF/bndtools.workspace/). The templates make creating MCP servers and clients and OSGi and this repo code) more dynamic. For example, the code in the MCP ToolGroups Servers and Clients composes MCP Servers, MCP Clients, and addes tools and toolgroups to them dynamically using OSGi services.
+
+Please see the [Readme.md for the workspace template repo](https://github.com/ECF/bndtools.workspace) for instructions to create projects and launch the example MCP servers and clients.
+
 ### What's in here
 
 The project defines a tree-based data model to organize **tools**, **prompts**, and **resources** into **hierarchical groups** — like folders inside folders.
