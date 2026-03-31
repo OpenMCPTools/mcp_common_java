@@ -1,6 +1,6 @@
 # MCP Common Java API
 
-### NEW (3/31/2026) - Bndtools-based project templates
+### NEW (3/31/2026) - Bndtools Project Templates
 
 Bndtools is a [toolset](https://bndtools.org/installation.html) that supports OSGi server (and client) development.  Bndtools has templates to make building OSGi-based applications easier.
 
