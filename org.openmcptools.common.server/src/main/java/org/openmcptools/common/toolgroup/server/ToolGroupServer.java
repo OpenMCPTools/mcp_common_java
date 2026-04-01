@@ -48,13 +48,13 @@ public interface ToolGroupServer<SpecificationType> extends Closeable {
 	Tool addToolImpl(ToolImpl toolImpl);
 
 	default List<Tool> addToolImpls(List<ToolImpl> toolInvokers) {
-		return toolInvokers.stream().map(ti -> addToolImpl(ti)).filter(Objects::isNull).toList();
+		return toolInvokers.stream().map(ti -> addToolImpl(ti)).filter(Objects::nonNull).toList();
 	}
 
 	Tool addToolSpecification(ToolSpecification<SpecificationType> toolSpec);
 
 	default List<Tool> addToolSpecifications(List<ToolSpecification<SpecificationType>> toolSpecs) {
-		return toolSpecs.stream().map(ts -> addToolSpecification(ts)).filter(Objects::isNull).toList();
+		return toolSpecs.stream().map(ts -> addToolSpecification(ts)).filter(Objects::nonNull).toList();
 	}
 
 }

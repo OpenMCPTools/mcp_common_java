@@ -6,5 +6,5 @@
 	slf4j.api,\
 	org.openmcptools.transport
 	
-Bundle-Version: 3.0.0.${tstamp}
+Bundle-Version: 3.0.1.${tstamp}
 	
